@@ -4,6 +4,8 @@ import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, CaixaPassagem }
 import { uid } from './templates';
 
 const STORAGE_KEY = 'orca_eletrica_state';
+/** Pedido de pagamento em andamento (guardado na sessão pela janela do Pix). Apagado no Novo orçamento. */
+export const CHAVE_PEDIDO = 'orca_pedido';
 
 function defaultState(): AppState {
   return {
@@ -178,7 +180,12 @@ export const useStore = create<Store>((set) => {
       })),
     })),
     resetState: () => {
-      if (typeof window !== 'undefined') localStorage.removeItem(STORAGE_KEY);
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+          sessionStorage.removeItem(CHAVE_PEDIDO);
+        } catch { /* sem acesso ao armazenamento: segue mesmo assim */ }
+      }
       set(defaultState());
     },
     hydrateFromStorage: () => {
