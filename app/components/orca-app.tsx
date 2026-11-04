@@ -48,19 +48,19 @@ export default function OrcaApp() {
       <ProgressBar step={step} onStepClick={(s: number) => store.setStep(s)} />
 
       {/* Content */}
-      <main className="flex-1 px-4 pb-24 pt-2">
+      <main className="flex-1 px-4 pb-4 pt-2">
         <CurrentStep />
       </main>
 
-      {/* Bottom nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-md border-t border-border z-40">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      {/* Navegação: fica no fim da página (não fixa), com folga embaixo para o selo do Netlify não cobrir o botão */}
+      <div className="border-t border-border">
+        <div className="max-w-4xl mx-auto px-4 pt-4 pb-32 flex items-center justify-between">
           <Button variant="outline" onClick={() => store.setStep(Math.max(0, step - 1))} disabled={step === 0}>
             <ChevronLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
           {step < 4 ? (
             <Button onClick={() => store.setStep(Math.min(4, step + 1))}>
-              Próximo <ChevronRight className="w-4 h-4 ml-1" />
+              Avançar <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           ) : null}
         </div>
