@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore, CHAVE_PEDIDO as SESSAO } from '@/lib/store';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +21,6 @@ interface Pedido {
   expira: string;
 }
 
-const SESSAO = 'orca_pedido';
 const brl = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 export default function CheckoutModal({ onClose, valor }: { onClose: () => void; valor: number }) {
