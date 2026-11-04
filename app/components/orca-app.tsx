@@ -38,7 +38,7 @@ export default function OrcaApp() {
             if (confirm('Tem certeza que deseja começar um novo orçamento? Os dados atuais serão perdidos.')) {
               store.resetState();
             }
-          }} className="text-xs text-muted-foreground hover:text-destructive transition-colors">
+                   }} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
             Novo orçamento
           </button>
         </div>
