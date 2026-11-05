@@ -26,13 +26,6 @@ function routeLen(r: Room): number {
   return r.via ? num(r.dd) + num(r.dr) : num(r.dq);
 }
 
-export interface AcessoPdf {
-  codigo: string;   // já formatado, ex.: K7M2-9PQX-4TRH
-  expiraEm: string; // ISO
-  edicao: number;   // 0 = original; 1, 2, 3 = edições gratuitas
-  nome?: string;    // nome do cliente/empresa, se houver (hoje o wizard não coleta)
-}
-
 /** Deixa o texto seguro para nome de arquivo: sem acentos, espaços → hífen, só [A-Za-z0-9-]. */
 export function slugArquivo(v: unknown, max = 40): string {
   return String(v ?? '')
@@ -53,15 +46,14 @@ function dataArquivo(agora = new Date()): string {
 
 /**
  * Título único do relatório (o navegador usa como nome sugerido ao "Salvar como PDF").
- * Ordem: nome do cliente → código do acesso → só a data. Ex.: Orcamento-Joao-Silva-05-11-2026
+ * Nome do cliente (se houver) + data. Ex.: Orcamento-Joao-Silva-05-11-2026 ou Orcamento-05-11-2026
  */
-export function tituloPdf(dados: Partial<AppState> & Record<string, any>, acesso?: AcessoPdf, agora?: Date): string {
-  const nome = slugArquivo(acesso?.nome ?? dados?.nomeCliente ?? dados?.nomeEmpresa ?? dados?.nomeResponsavel);
-  const id = nome || slugArquivo(acesso?.codigo);
-  return ['Orcamento', id, dataArquivo(agora)].filter(Boolean).join('-');
+function tituloPdf(dados: Partial<AppState> & Record<string, any>, agora?: Date): string {
+  const nome = slugArquivo(dados?.nomeCliente ?? dados?.nomeEmpresa ?? dados?.nomeResponsavel);
+  return ['Orcamento', nome, dataArquivo(agora)].filter(Boolean).join('-');
 }
 
-export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
+export function gerarHtmlPdf(dados: AppState): string {
   const totais = calcTotais(dados);
   const pendencias = calcPendencias(dados);
   const resultado: ResultadoCalculo = calcularMateriais(dados);
@@ -154,7 +146,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>${esc(tituloPdf(dados, acesso))}</title>
+<title>${esc(tituloPdf(dados))}</title>
 <style>
   @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -212,8 +204,6 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   </div>
   <div class="meta">
     <div>Data: ${dataAtual}</div>
-    ${acesso ? `<div>Código do orçamento: <strong>${esc(acesso.codigo)}</strong></div>` : ''}
-    ${acesso && acesso.edicao > 0 ? `<div>Edição ${acesso.edicao}</div>` : ''}
   </div>
 </div>
 
@@ -331,7 +321,6 @@ ${pendHtml}
 <div class="footer">
   <strong>OrçaElétrica</strong> — Orçamento gerado automaticamente com base na NBR 5410<br>
   Este documento é uma estimativa de referência e não substitui o projeto elétrico elaborado por profissional habilitado.
-  ${acesso ? `<br>Para alterar este orçamento sem custo até ${new Date(acesso.expiraEm).toLocaleDateString('pt-BR')}, use «Abrir orçamento anterior» no site e informe o código acima e o e-mail usado no pagamento.` : ''}
 </div>
 
 </body>

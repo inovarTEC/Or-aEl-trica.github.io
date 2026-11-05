@@ -1,10 +1,7 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, DadosOrcamento, EdicaoAtiva, Room, Equip, Ponto, Luz, Comando, Sw, Modulo } from './types';
-
-const STORAGE_KEY = 'orca_eletrica_state';
-/** Pedido de pagamento em andamento (guardado na sessão pela janela do Pix). Apagado no Novo orçamento. */
-export const CHAVE_PEDIDO = 'orca_pedido';
+import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo } from './types';
+import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 
 function defaultState(): AppState {
   return {
@@ -16,24 +13,13 @@ function defaultState(): AppState {
     rooms: [],
     equips: [],
     step: 0,
-    edicao: null,
   };
 }
 
-function loadState(): AppState {
-  if (typeof window === 'undefined') return defaultState();
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as AppState;
-  } catch { /* ignore */ }
-  return defaultState();
-}
-
-function saveState(state: AppState) {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch { /* ignore */ }
+/** Grava os dados do wizard no estado local, preservando pagamento e entrega. */
+function saveState(dados: AppState) {
+  const atual = carregarEstado();
+  salvarEstado(atual ? { ...atual, dados } : novoEstado(dados));
 }
 
 interface StoreActions {
@@ -59,10 +45,8 @@ interface StoreActions {
   removeModulo: (roomId: string, pontoId: string, modId: string) => void;
   addSw: (roomId: string, cmdId: string, sw: Sw) => void;
   removeSw: (roomId: string, cmdId: string, swId: string) => void;
+  /** Novo orçamento: apaga tudo do navegador (dados, Pix e PDF) e volta ao início. */
   resetState: () => void;
-  /** Carrega um orçamento já pago para edição (ou como base de um orçamento novo, se edicao for null). */
-  carregarOrcamento: (dados: DadosOrcamento, edicao: EdicaoAtiva | null) => void;
-  atualizarEdicao: (edicao: EdicaoAtiva | null) => void;
   hydrateFromStorage: () => void;
 }
 
@@ -183,19 +167,12 @@ export const useStore = create<Store>((set) => {
       })),
     })),
     resetState: () => {
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-          sessionStorage.removeItem(CHAVE_PEDIDO);
-        } catch { /* sem acesso ao armazenamento: segue mesmo assim */ }
-      }
+      limparEstado();
       set(defaultState());
     },
-    carregarOrcamento: (dados, edicao) => update(() => ({ ...defaultState(), ...dados, edicao, step: 4 })),
-    atualizarEdicao: (edicao) => update(() => ({ edicao })),
     hydrateFromStorage: () => {
-      const loaded = loadState();
-      set(loaded);
+      const dados = carregarEstado()?.dados;
+      if (dados) set({ ...defaultState(), ...dados });
     },
   };
 });

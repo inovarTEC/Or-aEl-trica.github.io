@@ -1,98 +1,113 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useStore, CHAVE_PEDIDO as SESSAO } from '@/lib/store-cliente';
+import { useStore } from '@/lib/store-cliente';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { X, Copy, CheckCircle2, Loader2, Download, Mail, FileText, AlertTriangle, Printer, RefreshCw, Clock } from 'lucide-react';
+import { X, Copy, CheckCircle2, Loader2, Download, Mail, AlertTriangle, Printer, RefreshCw, Clock, Pencil, Ban } from 'lucide-react';
 import { toast } from 'sonner';
 import { dadosDoOrcamento } from './step-previa';
 import { imprimirHtml, baixarHtml } from '@/lib/pdf-cliente';
-import { guardarSalvo, formatarData } from '@/lib/meus-orcamentos';
+import {
+  EDICOES_MAX, EstadoLocal, alterarEstado, PagamentoLocal, carregarEstado, edicoesRestantes, formatarData,
+  novoEstado, podeEditar, salvarEstado,
+} from '@/lib/storage-local';
 
-type Fase = 'email' | 'pix' | 'vencido' | 'liberando' | 'pronto' | 'recusado' | 'jaentregue' | 'erro';
-
-interface Pedido {
-  orcamentoId: string;
-  chave: string;
-  pagamentoId: string;
-  qrCode: string;
-  qrBase64: string;
-  expira: string;
-  email: string;
-}
-
-interface Entrega {
-  codigo: string;
-  expiraEm: string;
-  restantes: number;
-}
+type Fase = 'email' | 'pix' | 'vencido' | 'liberando' | 'pronto' | 'limite' | 'recusado' | 'erro';
 
 const brl = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+/** Dados atuais do wizard (o que vai ao servidor) e a assinatura usada para saber se mudaram. */
+function dadosAtuais() {
+  const dados = dadosDoOrcamento(useStore.getState());
+  return { dados, assinatura: JSON.stringify(dados) };
+}
+
+const gravar = (fn: (e: EstadoLocal) => EstadoLocal) => alterarEstado(fn, useStore.getState());
+
 export default function CheckoutModal({ onClose, valor }: { onClose: () => void; valor: number }) {
-  const store = useStore();
   const [fase, setFase] = useState<Fase>('email');
   const [email, setEmail] = useState('');
   const [aceite, setAceite] = useState(false);
   const [carregando, setCarregando] = useState(false);
-  const [pedido, setPedido] = useState<Pedido | null>(null);
-  const [html, setHtml] = useState('');
-  const [entrega, setEntrega] = useState<Entrega | null>(null);
+  const [pedido, setPedido] = useState<PagamentoLocal | null>(null);
+  const [estado, setEstado] = useState<EstadoLocal | null>(null);
   const [restante, setRestante] = useState(0);
-  const liberando = useRef(false);
+  const ocupado = useRef(false);
 
-  const salvar = (p: Pedido | null, h = '', e: Entrega | null = null) => {
-    try {
-      if (p) sessionStorage.setItem(SESSAO, JSON.stringify({ p, h, e }));
-      else sessionStorage.removeItem(SESSAO);
-    } catch { /* sem sessionStorage: segue sem retomar */ }
-  };
+  const post = (url: string, p: PagamentoLocal) => fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-chave': p.chave },
+    body: JSON.stringify({ orcamentoId: p.orcamentoId, pagamentoId: p.pagamentoId, dados: dadosAtuais().dados }),
+  });
 
-  /* Retoma um pedido em andamento (ex.: usuário fechou a janela depois de gerar o Pix). */
-  useEffect(() => {
-    try {
-      const bruto = sessionStorage.getItem(SESSAO);
-      if (!bruto) return;
-      const { p, h, e } = JSON.parse(bruto);
-      if (!p?.orcamentoId) return;
-      setPedido(p);
-      if (h) { setHtml(h); setEntrega(e ?? null); setFase('pronto'); } else setFase('pix');
-    } catch { /* ignora */ }
+  /** PDF atualizado de um orçamento já pago. `edicao` = false só para recuperar o PDF original. */
+  const regerar = useCallback(async (p: PagamentoLocal, edicao: boolean) => {
+    const r = await post('/api/regerar', p);
+    if (r.status === 410) {
+      setEstado(carregarEstado());
+      setFase('limite');
+      return;
+    }
+    if (!r.ok) throw new Error('falha');
+    const { html } = await r.json();
+    const { assinatura } = dadosAtuais();
+    const e = gravar((s) => ({
+      ...s,
+      entrega: { html, edicoes: (s.entrega?.edicoes ?? 0) + (edicao ? 1 : 0), entregueEm: Date.now(), assinatura },
+    }));
+    setEstado(e);
+    setFase('pronto');
   }, []);
 
-  const cab = (p: Pedido) => ({ 'Content-Type': 'application/json', 'x-chave': p.chave });
-
-  const liberar = useCallback(async (p: Pedido) => {
-    if (liberando.current) return;
-    liberando.current = true;
+  /** Primeira entrega do pagamento aprovado. */
+  const liberar = useCallback(async (p: PagamentoLocal) => {
+    if (ocupado.current) return;
+    ocupado.current = true;
     setFase('liberando');
     try {
-      const r = await fetch('/api/liberar', {
-        method: 'POST',
-        headers: cab(p),
-        body: JSON.stringify({ orcamentoId: p.orcamentoId, pagamentoId: p.pagamentoId }),
-      });
-      if (r.status === 409) { salvar(null); setFase('jaentregue'); return; }
+      const r = await post('/api/liberar', p);
+      // Já entregue (ex.: a resposta anterior se perdeu): recupera o PDF sem gastar edição.
+      if (r.status === 409) return await regerar(p, false);
       if (!r.ok) throw new Error('falha');
-      const j = await r.json();
-      const e: Entrega = { codigo: j.codigo, expiraEm: j.expiraEm, restantes: j.restantes };
-      setHtml(j.html);
-      setEntrega(e);
-      salvar(p, j.html, e);
-      if (p.email) {
-        guardarSalvo({ codigo: e.codigo, email: p.email, expiraEm: e.expiraEm });
-        useStore.getState().atualizarEdicao({ ...e, email: p.email });
-      }
+      const { html } = await r.json();
+      const { assinatura } = dadosAtuais();
+      const agora = Date.now();
+      // Os 15 dias de edição contam a partir do pagamento.
+      const e = gravar((s) => ({
+        ...s,
+        criadoEm: agora,
+        expiraEm: agora + (s.expiraEm - s.criadoEm),
+        entrega: { html, edicoes: 0, entregueEm: agora, assinatura },
+      }));
+      setEstado(e);
       setFase('pronto');
     } catch {
-      liberando.current = false;
+      ocupado.current = false;
       toast.error('Não foi possível liberar o PDF agora. Tentando de novo...');
       setFase('pix');
     }
-  }, []);
+  }, [regerar]);
+
+  /* Ao abrir: decide a fase pelo que está salvo no navegador. */
+  useEffect(() => {
+    const e = carregarEstado();
+    setEstado(e);
+    const p = e?.pagamento ?? null;
+    setPedido(p);
+    if (e?.entrega && p) {
+      if (e.entrega.assinatura === dadosAtuais().assinatura) return setFase('pronto'); // nada mudou
+      if (!podeEditar(e)) return setFase('limite');
+      if (ocupado.current) return; // evita gastar duas edições se o efeito rodar duas vezes
+      ocupado.current = true;
+      setFase('liberando');
+      regerar(p, true).catch(() => setFase('erro'));
+      return;
+    }
+    if (p) setFase('pix');
+  }, [regerar]);
 
   /* Consulta o status do Pix a cada 3 s enquanto a tela do QR Code está aberta. */
   useEffect(() => {
@@ -115,7 +130,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
     return () => { parar = true; clearInterval(t); };
   }, [fase, pedido, liberar]);
 
-  /* Contagem regressiva */
+  /* Contagem regressiva do QR Code */
   useEffect(() => {
     if (fase !== 'pix' || !pedido?.expira) return;
     const tick = () => setRestante(Math.max(0, Math.floor((Date.parse(pedido.expira) - Date.now()) / 1000)));
@@ -124,7 +139,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
     return () => clearInterval(t);
   }, [fase, pedido]);
 
-  const criar = async (corpo: { email?: string; dados?: unknown; orcamentoId?: string; chave?: string }) => {
+  const criar = async (corpo: { email: string; dados: unknown } | { orcamentoId: string; chave: string }) => {
     setCarregando(true);
     try {
       const r = await fetch('/api/pagar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
@@ -137,18 +152,18 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
         );
         return;
       }
-      const novo: Pedido = {
+      const novo: PagamentoLocal = {
         orcamentoId: j.orcamentoId,
         chave: j.chave ?? pedido?.chave ?? '',
         pagamentoId: j.pagamentoId,
         qrCode: j.qrCode,
         qrBase64: j.qrBase64,
         expira: j.expira,
-        email: corpo.email ?? pedido?.email ?? '',
+        email: 'email' in corpo ? corpo.email : pedido?.email ?? '',
       };
-      liberando.current = false;
+      ocupado.current = false;
+      setEstado(gravar((s) => ({ ...s, pagamento: novo })));
       setPedido(novo);
-      salvar(novo);
       setFase('pix');
     } catch {
       toast.error('Erro de conexão. Tente novamente.');
@@ -160,19 +175,29 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
   const enviarEmail = () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) return toast.error('Digite um e-mail válido');
     if (!aceite) return toast.error('Marque o aceite para continuar');
-    criar({ email: email.trim(), dados: dadosDoOrcamento(store) });
+    criar({ email: email.trim(), dados: dadosAtuais().dados });
   };
 
   const novoQr = () => pedido && criar({ orcamentoId: pedido.orcamentoId, chave: pedido.chave });
+
+  /** Limite atingido: começa uma nova compra mantendo os dados do wizard. */
+  const pagarNovamente = () => {
+    const e = novoEstado(useStore.getState());
+    salvarEstado(e);
+    setEstado(e);
+    setPedido(null);
+    setEmail(pedido?.email ?? '');
+    ocupado.current = false;
+    setFase('email');
+  };
 
   const copiar = () => {
     if (!pedido) return;
     navigator.clipboard?.writeText(pedido.qrCode).then(() => toast.success('Código Pix copiado!')).catch(() => {});
   };
 
-  const imprimir = () => imprimirHtml(html);
-  const baixar = () => baixarHtml(html, `orcamento-eletrico-${pedido?.orcamentoId.slice(0, 8) ?? 'pdf'}.html`);
-
+  const html = estado?.entrega?.html ?? '';
+  const restantes = estado ? edicoesRestantes(estado) : 0;
   const mmss = `${String(Math.floor(restante / 60)).padStart(2, '0')}:${String(restante % 60).padStart(2, '0')}`;
 
   return (
@@ -247,45 +272,56 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
               <div className="space-y-4 text-center py-2">
                 <Clock className="w-14 h-14 text-amber-500 mx-auto" />
                 <h3 className="text-lg font-bold">O QR Code venceu</h3>
-                <p className="text-sm text-muted-foreground">Seu orçamento continua salvo. Gere um novo QR Code para pagar.</p>
+                <p className="text-sm text-muted-foreground">Seu orçamento continua salvo neste navegador. Você pode revisá-lo ou gerar um novo QR Code para pagar.</p>
                 <Button className="w-full" onClick={novoQr} disabled={carregando}>
                   {carregando ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                  Gerar novo QR Code
+                  Gerar novo QR
                 </Button>
-                <Button variant="outline" className="w-full" onClick={onClose}>Fechar</Button>
+                <Button variant="outline" className="w-full" onClick={onClose}>
+                  <Pencil className="w-4 h-4 mr-2" /> Editar orçamento
+                </Button>
               </div>
             )}
 
             {fase === 'liberando' && (
               <div className="space-y-4 text-center py-4">
                 <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
-                <h3 className="text-lg font-bold">Pagamento confirmado!</h3>
+                <h3 className="text-lg font-bold">{estado?.entrega ? 'Atualizando o seu PDF...' : 'Pagamento confirmado!'}</h3>
                 <p className="text-sm text-muted-foreground">Preparando o seu PDF...</p>
               </div>
             )}
 
-            {fase === 'pronto' && (
+            {fase === 'pronto' && html && (
               <div className="space-y-4 text-center">
                 <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
                 <h3 className="text-lg font-bold">Seu orçamento está pronto!</h3>
                 <p className="text-sm text-muted-foreground">
                   Clique em salvar e escolha <strong>“Salvar como PDF”</strong> na janela de impressão.
                 </p>
-                <Button className="w-full" onClick={imprimir}><Printer className="w-4 h-4 mr-2" /> Salvar como PDF</Button>
-                <Button variant="outline" className="w-full" onClick={baixar}><Download className="w-4 h-4 mr-2" /> Baixar cópia (.html)</Button>
-                {entrega && (
-                  <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-left">
-                    <p className="text-[11px] text-green-800">Código do seu orçamento</p>
-                    <p className="font-mono text-lg font-bold tracking-wider text-green-900">{entrega.codigo}</p>
-                    <p className="text-[11px] text-green-800 mt-1">
-                      Com este código e o seu e-mail você altera este orçamento sem custo até {formatarData(entrega.expiraEm)}
-                      {' '}({entrega.restantes} {entrega.restantes === 1 ? 'edição' : 'edições'}). O código também está no PDF.
-                    </p>
-                  </div>
+                <Button className="w-full" onClick={() => imprimirHtml(html)}><Printer className="w-4 h-4 mr-2" /> Salvar como PDF</Button>
+                <Button variant="outline" className="w-full" onClick={() => baixarHtml(html)}><Download className="w-4 h-4 mr-2" /> Baixar cópia (.html)</Button>
+                {estado && (
+                  <p className="text-[11px] text-green-800 bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-left">
+                    {restantes > 0
+                      ? <>Precisa mudar algo? Feche esta janela, edite o orçamento e gere o PDF de novo: {restantes === 1 ? 'resta 1 edição gratuita' : `restam ${restantes} edições gratuitas`} até {formatarData(estado.expiraEm)}.</>
+                      : <>Você já usou as {EDICOES_MAX} edições gratuitas deste orçamento.</>}
+                  </p>
                 )}
                 <p className="text-[11px] text-amber-700 bg-amber-50 rounded px-2 py-1">
-                  Salve agora: por segurança, o PDF de um pagamento é entregue uma única vez.
+                  O PDF fica guardado só neste navegador. «Novo orçamento» ou limpar os dados do navegador apagam tudo.
                 </p>
+              </div>
+            )}
+
+            {fase === 'limite' && (
+              <div className="space-y-4 text-center py-2">
+                <Ban className="w-14 h-14 text-amber-500 mx-auto" />
+                <h3 className="text-lg font-bold">Edições gratuitas encerradas</h3>
+                <p className="text-sm text-muted-foreground">
+                  Você usou suas 3 edições gratuitas (ou o prazo de 15 dias venceu). Para gerar um novo orçamento pago, clique abaixo.
+                </p>
+                <Button className="w-full" onClick={pagarNovamente}>Pagar novamente — {brl(valor)}</Button>
+                <Button variant="outline" className="w-full" onClick={onClose}>Fechar</Button>
               </div>
             )}
 
@@ -302,19 +338,11 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
               </div>
             )}
 
-            {fase === 'jaentregue' && (
-              <div className="space-y-4 text-center py-2">
-                <FileText className="w-14 h-14 text-muted-foreground mx-auto" />
-                <h3 className="text-lg font-bold">PDF já entregue</h3>
-                <p className="text-sm text-muted-foreground">O PDF deste pagamento já foi liberado. Se não conseguiu salvar, fale com o suporte informando o seu e-mail.</p>
-                <Button variant="outline" className="w-full" onClick={onClose}>Fechar</Button>
-              </div>
-            )}
-
             {fase === 'erro' && (
               <div className="space-y-4 text-center py-2">
                 <AlertTriangle className="w-14 h-14 text-amber-500 mx-auto" />
-                <h3 className="text-lg font-bold">Algo deu errado</h3>
+                <h3 className="text-lg font-bold">Não foi possível gerar o PDF agora</h3>
+                <p className="text-sm text-muted-foreground">Nenhuma edição foi gasta. Verifique a conexão e tente de novo.</p>
                 <Button variant="outline" className="w-full" onClick={onClose}>Fechar</Button>
               </div>
             )}

@@ -31,7 +31,7 @@ export function rota(nome: string, fn: Handler): Handler {
 
 /**
  * Valida os dados do orçamento vindos do cliente e devolve só os campos do cálculo.
- * `completo` = exige também os campos obrigatórios do wizard (usado antes de cobrar ou reemitir).
+ * `completo` = exige também os campos obrigatórios do wizard (usado antes de cobrar ou gerar o PDF).
  */
 export function exigirDados(d: unknown, completo: boolean): DadosOrcamento {
   const problema = problemaEstrutura(d);
