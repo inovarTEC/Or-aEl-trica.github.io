@@ -2,10 +2,8 @@
 import { useStore } from '@/lib/store-cliente';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Building2, FolderOpen, Hammer, Layers, Zap } from 'lucide-react';
+import { Building2, Hammer, Layers, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import AbrirOrcamento from './abrir-orcamento';
 
 const OPTIONS: { key: 'imovel' | 'obra' | 'cobertura' | 'rede'; label: string; icon: any; items: string[]; help: string }[] = [
   { key: 'imovel', label: 'Tipo de imóvel', icon: Building2, items: ['Casa', 'Apartamento', 'Comércio pequeno'], help: 'Qual é o tipo do seu imóvel?' },
@@ -16,15 +14,11 @@ const OPTIONS: { key: 'imovel' | 'obra' | 'cobertura' | 'rede'; label: string; i
 
 export default function StepImovel() {
   const store = useStore();
-  const [abrindo, setAbrindo] = useState(false);
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-2xl mx-auto">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Sobre o imóvel</h2>
         <p className="text-muted-foreground mt-1">Informe as características gerais do seu imóvel</p>
-        <button type="button" onClick={() => setAbrindo(true)} className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-          <FolderOpen className="w-3.5 h-3.5" /> Já pagou um orçamento? Abrir orçamento anterior
-        </button>
       </div>
       {OPTIONS.map((opt) => {
         const Icon = opt.icon;
@@ -57,7 +51,6 @@ export default function StepImovel() {
           </Card>
         );
       })}
-      {abrindo && <AbrirOrcamento onClose={() => setAbrindo(false)} />}
     </motion.div>
   );
 }

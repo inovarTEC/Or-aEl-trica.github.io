@@ -1,11 +1,9 @@
 'use client';
 import { useEffect } from 'react';
-import { useStore, CHAVE_PEDIDO } from '@/lib/store-cliente';
-import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
+import { useStore } from '@/lib/store-cliente';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
 import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
-import PainelTeste from './painel-teste';
 import StepImovel from './step-imovel';
 import StepComodos from './step-comodos';
 import StepPontos from './step-pontos';
@@ -58,29 +56,12 @@ export default function OrcaApp() {
             </div>
             <span className="font-bold text-lg tracking-tight">OrçaElétrica</span>
           </div>
-          <button type="button" onClick={() => {
-            // Se o PDF já foi entregue nesta sessão, avisa que ele será apagado da tela.
-            let pdfNaTela = false;
-            try {
-              pdfNaTela = !!JSON.parse(sessionStorage.getItem(CHAVE_PEDIDO) ?? 'null')?.h;
-            } catch { /* sem acesso ao armazenamento: usa o aviso padrão */ }
-            const aviso = pdfNaTela
-              ? 'Você já pagou e o PDF deste orçamento ainda está nesta tela. Se continuar, ele será apagado e não poderá ser baixado de novo. Já salvou o PDF?'
-              : 'Tem certeza que deseja começar um novo orçamento? Os dados atuais serão perdidos.';
-            if (confirm(aviso)) {
-              store.resetState();
-            }
-          }} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
+          {/* Apaga tudo do navegador (dados, Pix e PDF) e volta ao início, sem confirmação. */}
+          <button type="button" onClick={store.resetState} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
             Novo orçamento
           </button>
         </div>
       </header>
-
-      {edicaoVigente(store.edicao) && (
-        <div className="border-b border-green-200 bg-green-50 px-4 py-2 text-center text-xs text-green-900">
-          Você está editando um orçamento já pago · {store.edicao.restantes} {store.edicao.restantes === 1 ? 'edição gratuita' : 'edições gratuitas'} até {formatarData(store.edicao.expiraEm)}
-        </div>
-      )}
 
       {/* Progress */}
       <ProgressBar step={step} onStepClick={irPara} />
@@ -103,9 +84,6 @@ export default function OrcaApp() {
           ) : null}
         </div>
       </div>
-
-      {/* Só aparece com NEXT_PUBLIC_MODO_TESTE=true */}
-      <PainelTeste />
     </div>
   );
 }

@@ -1,13 +1,18 @@
-/* Armazenamento (Netlify Blobs). Roda apenas no servidor. */
+/*
+ * Netlify Blobs — só o mínimo para o Pix (roda apenas no servidor):
+ *   orc/{orcamentoId}   dono do pedido (hash da chave secreta + e-mail). NENHUM dado do orçamento.
+ *   pag/{pagamentoId}   vínculo Pix → pedido.
+ *   entrega/{pagId}     trava: o PDF original é entregue uma única vez por pagamento.
+ * Os dados do orçamento, o PDF e a contagem de edições ficam no navegador (lib/storage-local.ts).
+ */
 import { getStore } from '@netlify/blobs';
 
 const loja = () => getStore({ name: 'orca-eletrica', consistency: 'strong' });
 
 export interface Orcamento {
-  id: string;
-  chaveHash: string;
+  orcamentoId: string;
   email: string;
-  dados: unknown;
+  chaveHash: string;
   criadoEm: string;
 }
 
@@ -31,76 +36,7 @@ export async function travarEntrega(pagamentoId: string): Promise<boolean> {
   return r.modified === true;
 }
 
-/* ---------- Acesso para editar um orçamento já pago ---------- */
-
-export interface Acesso {
-  pagamentoId: string;
-  orcamentoId: string;
-  codigo: string;
-  entregueEm: string;
-  expiraEm: string;
-  removerApos: string;
-}
-
-/**
- * Grava o acesso (duas chaves). Idempotente: regravar o MESMO acesso só sobrescreve com os mesmos valores.
- * `acesso/` vai primeiro: se `cod/` falhar, a próxima tentativa encontra o acesso e reaproveita o mesmo código.
- */
-export async function gravarAcesso(a: Acesso): Promise<void> {
-  await loja().setJSON(`acesso/${a.pagamentoId}`, a);
-  await loja().setJSON(`cod/${a.codigo}`, { pagamentoId: a.pagamentoId });
-}
-
-/** Acesso já registrado para este pagamento (ou null). */
-export async function acessoPorPagamento(pagamentoId: string): Promise<Acesso | null> {
-  return lerJSON<Acesso>(`acesso/${pagamentoId}`);
-}
-
-/** Executa `fn` até `tentativas` vezes, com espera crescente (para falhas passageiras do Blobs). */
-export async function comRetentativas<T>(fn: () => Promise<T>, tentativas = 3, esperaMs = 250): Promise<T> {
-  let ultimo: unknown;
-  for (let i = 1; i <= tentativas; i++) {
-    try {
-      return await fn();
-    } catch (e) {
-      ultimo = e;
-      if (i < tentativas) await new Promise((ok) => setTimeout(ok, esperaMs * i));
-    }
-  }
-  throw ultimo;
-}
-
-export async function acessoPorCodigo(codigo: string): Promise<Acesso | null> {
-  const ref = (await loja().get(`cod/${codigo}`, { type: 'json' })) as { pagamentoId?: string } | null;
-  if (!ref?.pagamentoId) return null;
-  return (await loja().get(`acesso/${ref.pagamentoId}`, { type: 'json' })) as Acesso | null;
-}
-
-/** Quantas edições deste pagamento já foram usadas. */
-export async function edicoesUsadas(pagamentoId: string): Promise<number> {
-  const r = await loja().list({ prefix: `edicao/${pagamentoId}/` });
-  return r.blobs.length;
-}
-
-/**
- * Usa uma edição de forma segura: cada número (1, 2, 3...) só pode ser tomado uma vez,
- * então dois pedidos ao mesmo tempo nunca gastam a mesma edição nem passam do limite.
- * Devolve o número da edição usada, ou null se acabaram.
- */
-export async function usarEdicao(pagamentoId: string, maximo: number): Promise<number | null> {
-  for (let n = 1; n <= maximo; n++) {
-    const r = await loja().set(`edicao/${pagamentoId}/${n}`, new Date().toISOString(), { onlyIfNew: true });
-    if (r.modified === true) return n;
-  }
-  return null;
-}
-
-/** Apaga dados pessoais e o acesso. Mantém o registro de entrega (impede entregar de novo). */
-export async function apagarAcesso(a: Acesso): Promise<void> {
-  const l = loja();
-  const usadas = await l.list({ prefix: `edicao/${a.pagamentoId}/` });
-  await Promise.all(usadas.blobs.map((b) => l.delete(b.key)));
-  await l.delete(`cod/${a.codigo}`);
-  await l.delete(`acesso/${a.pagamentoId}`);
-  await l.delete(`orc/${a.orcamentoId}`);
+/** O PDF original deste pagamento já foi entregue? (libera a regeração nas edições gratuitas) */
+export async function entregaFeita(pagamentoId: string): Promise<boolean> {
+  return (await loja().get(`entrega/${pagamentoId}`)) !== null;
 }

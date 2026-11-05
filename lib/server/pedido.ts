@@ -50,7 +50,7 @@ export async function conferir(
   orcamentoId: string,
   pagamentoId: string,
   chave: string,
-): Promise<{ orc: Orcamento; mp: PagamentoMP; estado: Situacao } | { falha: Response }> {
+): Promise<{ orc: Orcamento; pag: Pagamento; mp: PagamentoMP; estado: Situacao } | { falha: Response }> {
   if (!UUID.test(orcamentoId) || !ID_MP.test(pagamentoId) || !chave) return { falha: erro(400, 'dados_invalidos') };
   const orc = await lerJSON<Orcamento>(`orc/${orcamentoId}`);
   if (!orc || !chaveConfere(chave, orc.chaveHash)) return { falha: erro(404, 'nao_encontrado') };
@@ -58,7 +58,7 @@ export async function conferir(
   if (!pag || pag.orcamentoId !== orcamentoId) return { falha: erro(404, 'nao_encontrado') };
   try {
     const mp = await buscarPagamento(pagamentoId);
-    return { orc, mp, estado: situacao(mp, orcamentoId) };
+    return { orc, pag, mp, estado: situacao(mp, orcamentoId) };
   } catch {
     return { falha: erro(502, 'mp_indisponivel') };
   }

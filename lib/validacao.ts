@@ -55,7 +55,7 @@ export function primeiraEtapaInvalida(s: DadosOrcamento): number {
   return 4;
 }
 
-/** Todos os erros obrigatórios (usado antes de cobrar/reemitir). */
+/** Todos os erros obrigatórios (usado antes de cobrar ou gerar o PDF). */
 export function faltasObrigatorias(s: DadosOrcamento): string[] {
   return [0, 1, 2, 3].flatMap((i) => errosEtapa(s, i));
 }

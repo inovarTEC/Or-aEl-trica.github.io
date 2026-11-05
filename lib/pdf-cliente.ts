@@ -19,8 +19,10 @@ export function imprimirHtml(html: string): void {
   document.body.appendChild(f);
 }
 
-/** Baixa uma cópia do relatório em .html. */
-export function baixarHtml(html: string, nomeArquivo: string): void {
+/** Baixa uma cópia do relatório em .html (nome = <title> do relatório, ex.: Orcamento-05-11-2026.html). */
+export function baixarHtml(html: string): void {
+  const titulo = /<title>([^<]*)<\/title>/.exec(html)?.[1]?.trim() || 'Orcamento';
+  const nomeArquivo = `${titulo.replace(/[^A-Za-z0-9-]+/g, '-')}.html`;
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
   const a = document.createElement('a');
   a.href = url;

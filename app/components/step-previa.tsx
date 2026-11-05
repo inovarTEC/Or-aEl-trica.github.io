@@ -1,7 +1,7 @@
 'use client';
 import { useStore } from '@/lib/store-cliente';
-import { DadosOrcamento, EdicaoAtiva, Pendencia } from '@/lib/types';
-import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
+import { DadosOrcamento, Pendencia } from '@/lib/types';
+import { EstadoLocal, carregarEstado, edicoesRestantes, formatarData, podeEditar } from '@/lib/storage-local';
 import { faltasObrigatorias } from '@/lib/validacao';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import {
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
-import EdicaoModal from './edicao-modal';
 
 interface Previa {
   valor: number;
@@ -32,9 +31,12 @@ export default function StepPrevia() {
   const [previa, setPrevia] = useState<Previa | null>(null);
   const [falha, setFalha] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [edicaoModal, setEdicaoModal] = useState<EdicaoAtiva | null>(null);
+  const [local, setLocal] = useState<EstadoLocal | null>(null);
 
   const dados = JSON.stringify(dadosDoOrcamento(store));
+
+  // Releitura do estado salvo a cada abertura/fechamento do modal (o modal altera pagamento/entrega).
+  useEffect(() => { setLocal(carregarEstado()); }, [showCheckout]);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -66,7 +68,7 @@ export default function StepPrevia() {
 
   const { totais, pendencias, resumo } = previa;
   const erros = pendencias.filter((p) => p?.tipo === 'erro');
-  // Mesmas regras que o servidor usa para recusar a cobrança/reemissão (dados_incompletos).
+  // Mesmas regras que o servidor usa para recusar a cobrança/regeração (dados_incompletos).
   const faltas = faltasObrigatorias(dadosDoOrcamento(store));
 
   const stats = [
@@ -183,15 +185,15 @@ export default function StepPrevia() {
         </Card>
       )}
 
-      {edicaoVigente(store.edicao) ? (
+      {local && podeEditar(local) ? (
         <Card className="shadow-md border-green-300 bg-gradient-to-r from-green-50 to-green-100/60">
           <CardContent className="pt-6 pb-6 text-center">
             <FileText className="w-8 h-8 text-green-700 mx-auto mb-3" />
             <h3 className="text-lg font-bold">Atualize o PDF do seu orçamento</h3>
             <p className="text-sm text-muted-foreground mt-1 mb-4">
-              Este orçamento já foi pago. Você tem {store.edicao.restantes} {store.edicao.restantes === 1 ? 'edição gratuita' : 'edições gratuitas'} até {formatarData(store.edicao.expiraEm)}.
+              Este orçamento já foi pago. {edicoesRestantes(local) === 1 ? 'Resta 1 edição gratuita' : `Restam ${edicoesRestantes(local)} edições gratuitas`} até {formatarData(local.expiraEm)}.
             </p>
-            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setEdicaoModal(store.edicao ?? null)} disabled={faltas.length > 0}>
+            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowCheckout(true)} disabled={faltas.length > 0}>
               <Zap className="w-4 h-4 mr-2" /> Gerar PDF atualizado
             </Button>
           </CardContent>
@@ -203,7 +205,7 @@ export default function StepPrevia() {
             <h3 className="text-lg font-bold">Gere o PDF completo do seu orçamento</h3>
             <p className="text-sm text-muted-foreground mt-1 mb-4">Com lista de materiais detalhada, circuitos e observações técnicas</p>
             <Button size="lg" className="px-8" onClick={() => setShowCheckout(true)} disabled={faltas.length > 0}>
-              <Zap className="w-4 h-4 mr-2" /> Gerar meu PDF
+              <Zap className="w-4 h-4 mr-2" /> {local?.entrega ? 'Ver meu PDF' : 'Gerar meu PDF'}
             </Button>
             {erros.length > 0 && faltas.length === 0 && (
               <p className="text-xs text-destructive mt-3">⚠ Há {erros.length} pendência(s) importante(s) — revise antes de pagar para o PDF não ficar incompleto</p>
@@ -213,7 +215,6 @@ export default function StepPrevia() {
       )}
 
       {showCheckout && <CheckoutModal valor={previa.valor} onClose={() => setShowCheckout(false)} />}
-      {edicaoModal && <EdicaoModal edicao={edicaoModal} onClose={() => setEdicaoModal(null)} />}
     </motion.div>
   );
 }

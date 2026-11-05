@@ -94,14 +94,6 @@ export interface Equip {
   alim: 'Unidade externa' | 'Unidade interna' | '';
 }
 
-/** Orçamento pago que está sendo editado (edição gratuita dentro do prazo). Só existe no navegador. */
-export interface EdicaoAtiva {
-  codigo: string;
-  email: string;
-  expiraEm: string;
-  restantes: number;
-}
-
 export interface AppState {
   id: string;
   imovel: TipoImovel;
@@ -111,7 +103,6 @@ export interface AppState {
   rooms: Room[];
   equips: Equip[];
   step: number;
-  edicao?: EdicaoAtiva | null;
 }
 
 /** Só os campos que alimentam o cálculo (é o que vai ao servidor). */
