@@ -1,4 +1,4 @@
-import { Room, Ponto, Luz, Comando, Sw } from './types';
+import { Room, Ponto, Luz, Comando } from './types';
 
 let _uid = 0;
 export function uid(): string {

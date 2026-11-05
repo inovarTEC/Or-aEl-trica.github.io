@@ -3,17 +3,15 @@ import { formatarCodigo } from '@/lib/server/codigo';
 import { buscarPagamento } from '@/lib/server/mercadopago';
 import { gerarHtmlPdf } from '@/lib/server/pdf-template';
 import { erro, ok, situacao } from '@/lib/server/pedido';
-import { gravarJSON, usarEdicao } from '@/lib/server/store';
+import { comRetentativas, gravarJSON, usarEdicao } from '@/lib/server/store-blobs';
+import { ErroApi, exigirDados, lerCorpo, rota } from '@/lib/server/rota';
 
 export const runtime = 'nodejs';
 
 /** Gera o PDF atualizado de um orçamento já pago, sem cobrar, dentro do prazo e do limite de edições. */
-export async function POST(req: Request) {
-  const texto = await req.text();
-  if (texto.length > 300_000) return erro(413, 'muito_grande');
-  let corpo: any;
-  try { corpo = JSON.parse(texto); } catch { return erro(400, 'json_invalido'); }
-  if (!corpo?.dados || !Array.isArray(corpo.dados.rooms)) return erro(400, 'dados_invalidos');
+export const POST = rota('reemitir', async (req) => {
+  const corpo = await lerCorpo(req);
+  const dados = exigirDados(corpo?.dados, true);
 
   const r = await carregarAcesso(req, String(corpo?.codigo ?? ''), String(corpo?.email ?? ''));
   if ('falha' in r) return r.falha;
@@ -31,15 +29,22 @@ export async function POST(req: Request) {
   const proxima = EDICOES_MAX - r.restantes + 1;
   let html: string;
   try {
-    html = gerarHtmlPdf(corpo.dados, { codigo: formatarCodigo(r.acesso.codigo), expiraEm: r.acesso.expiraEm, edicao: proxima });
+    html = gerarHtmlPdf(dados as any, { codigo: formatarCodigo(r.acesso.codigo), expiraEm: r.acesso.expiraEm, edicao: proxima });
   } catch (e) {
-    console.error('[reemitir] falha ao gerar', e);
-    return erro(422, 'calculo_falhou');
+    throw new ErroApi(422, 'calculo_falhou', e);
   }
 
+  // 1) Salva os dados novos ANTES de gastar a edição. Antes era o contrário: se a gravação
+  //    falhasse, a edição já estava gasta (irreversível) e o cliente não recebia o PDF.
+  try {
+    await comRetentativas(() => gravarJSON(`orc/${r.orc.id}`, { ...r.orc, dados }));
+  } catch (e) {
+    throw new ErroApi(500, 'dados_nao_salvos', e);
+  }
+
+  // 2) Só então consome a edição (cada número só pode ser tomado uma vez).
   const numero = await usarEdicao(r.acesso.pagamentoId, EDICOES_MAX);
   if (numero === null) return erro(410, 'edicoes_esgotadas');
 
-  await gravarJSON(`orc/${r.orc.id}`, { ...r.orc, dados: corpo.dados });
   return ok({ html, restantes: EDICOES_MAX - numero, expiraEm: r.acesso.expiraEm, edicao: numero });
-}
+});

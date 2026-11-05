@@ -1,5 +1,6 @@
 /* ===== Motor de cálculo de materiais (NBR 5410) ===== */
-import { AppState, Room, Equip } from '../types';
+import { AppState, Room } from '../types';
+import { countMods } from './calculator';
 import {
   potenciaIluminacao,
   potenciaTUG,
@@ -8,7 +9,6 @@ import {
   disjuntorGeral,
   eletrodutoDN,
   nCondutoresCircuito,
-  secaoMinima,
   MaterialItem,
 } from './nbr5410';
 
@@ -24,21 +24,6 @@ function routeLen(r: Room, rooms: Room[]): number {
     return num(r.dd) + num(r.dr);
   }
   return num(r.dq);
-}
-
-function countTomadasRoom(r: Room): number {
-  let c = 0;
-  for (const p of r?.pontos ?? []) {
-    for (const m of p?.mods ?? []) {
-      if (m.t.startsWith('T')) c++;
-    }
-  }
-  for (const cmd of r?.comandos ?? []) {
-    for (const sw of cmd?.sws ?? []) {
-      if (sw.tom && sw.tom.startsWith('T')) c++;
-    }
-  }
-  return c;
 }
 
 function tensaoCircuito(rede: string, tipo: string): number {
@@ -88,9 +73,8 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   /* ----- Circuitos por cômodo ----- */
   for (const r of state.rooms ?? []) {
     const area = num(r.c) * num(r.l);
-    const perimetro = 2 * (num(r.c) + num(r.l));
     const distQuadro = routeLen(r, state.rooms);
-    const nTomadas = countTomadasRoom(r);
+    const nTomadas = countMods(r, 'T');
     const nLuzes = r.luzes?.length ?? 0;
     const roomName = r.nome || r.base || 'Cômodo';
 

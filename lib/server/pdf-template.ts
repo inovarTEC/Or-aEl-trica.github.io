@@ -9,6 +9,10 @@ function num(v: string | number | undefined | null): number {
   return isNaN(n) ? 0 : n;
 }
 
+/** Escapa texto digitado pelo cliente antes de inserir no HTML (evita XSS no relatório). */
+const esc = (v: unknown): string =>
+  String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
 const fmt = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
 const fmtD = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 
@@ -26,6 +30,35 @@ export interface AcessoPdf {
   codigo: string;   // já formatado, ex.: K7M2-9PQX-4TRH
   expiraEm: string; // ISO
   edicao: number;   // 0 = original; 1, 2, 3 = edições gratuitas
+  nome?: string;    // nome do cliente/empresa, se houver (hoje o wizard não coleta)
+}
+
+/** Deixa o texto seguro para nome de arquivo: sem acentos, espaços → hífen, só [A-Za-z0-9-]. */
+export function slugArquivo(v: unknown, max = 40): string {
+  return String(v ?? '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, max)
+    .replace(/-+$/g, '');
+}
+
+/** Data de hoje no fuso de Brasília, no formato DD-MM-AAAA. */
+function dataArquivo(agora = new Date()): string {
+  const p = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric' })
+    .formatToParts(agora);
+  const v = (t: string) => p.find(x => x.type === t)?.value ?? '';
+  return `${v('day')}-${v('month')}-${v('year')}`;
+}
+
+/**
+ * Título único do relatório (o navegador usa como nome sugerido ao "Salvar como PDF").
+ * Ordem: nome do cliente → código do acesso → só a data. Ex.: Orcamento-Joao-Silva-05-11-2026
+ */
+export function tituloPdf(dados: Partial<AppState> & Record<string, any>, acesso?: AcessoPdf, agora?: Date): string {
+  const nome = slugArquivo(acesso?.nome ?? dados?.nomeCliente ?? dados?.nomeEmpresa ?? dados?.nomeResponsavel);
+  const id = nome || slugArquivo(acesso?.codigo);
+  return ['Orcamento', id, dataArquivo(agora)].filter(Boolean).join('-');
 }
 
 export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
@@ -37,7 +70,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   const circuitosHtml = resultado.circuitos.map((c: CircuitoCalc, i: number) => `
     <tr>
       <td>${i + 1}</td>
-      <td>${c.nome}</td>
+      <td>${esc(c.nome)}</td>
       <td>${tipoLabel(c.tipo)}</td>
       <td class="r">${fmt(c.potenciaW)}</td>
       <td class="r">${c.tensaoV}</td>
@@ -52,16 +85,16 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   const materiaisHtml = resultado.materiais.map((m, i) => `
     <tr>
       <td>${i + 1}</td>
-      <td>${m.item}</td>
+      <td>${esc(m.item)}</td>
       <td class="r">${m.qtd}</td>
       <td>${m.unidade}</td>
-      <td>${m.detalhe || '—'}</td>
+      <td>${esc(m.detalhe || '—')}</td>
     </tr>
   `).join('');
 
   const comodosHtml = (totais.porComodo ?? []).map(c => `
     <tr>
-      <td>${c.nome}</td>
+      <td>${esc(c.nome)}</td>
       <td class="r">${c.caixas}</td>
       <td class="r">${c.tomadas}</td>
       <td class="r">${c.interruptores}</td>
@@ -75,7 +108,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
       <h2>Pendências</h2>
       <p class="note">Os itens abaixo precisam ser revisados para um orçamento mais preciso.</p>
       <ul class="pend">
-        ${pendencias.map(p => `<li class="${p.tipo}">${p.msg}</li>`).join('')}
+        ${pendencias.map(p => `<li class="${esc(p.tipo)}">${esc(p.msg)}</li>`).join('')}
       </ul>
     </div>
   ` : `
@@ -104,10 +137,10 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
             const dist = num(eq.dist) || (room ? routeLen(room) + num(eq.dint) : 0);
             return `
               <tr>
-                <td>${eq.tipo || '—'}</td>
-                <td>${room ? (room.nome || room.base) : '—'}</td>
+                <td>${esc(eq.tipo || '—')}</td>
+                <td>${esc(room ? (room.nome || room.base) : '—')}</td>
                 <td class="r">${num(eq.pot)}</td>
-                <td class="r">${eq.tens || '—'}</td>
+                <td class="r">${esc(eq.tens || '—')}</td>
                 <td class="r">${fmt(dist)}</td>
               </tr>
             `;
@@ -121,6 +154,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<title>${esc(tituloPdf(dados, acesso))}</title>
 <style>
   @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -178,7 +212,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   </div>
   <div class="meta">
     <div>Data: ${dataAtual}</div>
-    ${acesso ? `<div>Código do orçamento: <strong>${acesso.codigo}</strong></div>` : ''}
+    ${acesso ? `<div>Código do orçamento: <strong>${esc(acesso.codigo)}</strong></div>` : ''}
     ${acesso && acesso.edicao > 0 ? `<div>Edição ${acesso.edicao}</div>` : ''}
   </div>
 </div>
@@ -187,10 +221,10 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
 <div class="section">
   <h2>Dados do Imóvel</h2>
   <div class="info-grid">
-    <div><div class="label">Tipo de imóvel</div><div class="value">${dados.imovel || 'Não informado'}</div></div>
-    <div><div class="label">Tipo de obra</div><div class="value">${dados.obra || 'Não informado'}</div></div>
-    <div><div class="label">Cobertura / Teto</div><div class="value">${dados.cobertura || 'Não informado'}</div></div>
-    <div><div class="label">Ligação da rede</div><div class="value">${dados.rede || 'Não informado'}</div></div>
+    <div><div class="label">Tipo de imóvel</div><div class="value">${esc(dados.imovel || 'Não informado')}</div></div>
+    <div><div class="label">Tipo de obra</div><div class="value">${esc(dados.obra || 'Não informado')}</div></div>
+    <div><div class="label">Cobertura / Teto</div><div class="value">${esc(dados.cobertura || 'Não informado')}</div></div>
+    <div><div class="label">Ligação da rede</div><div class="value">${esc(dados.rede || 'Não informado')}</div></div>
   </div>
 </div>
 

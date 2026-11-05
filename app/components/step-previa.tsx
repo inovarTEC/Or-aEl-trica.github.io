@@ -1,7 +1,8 @@
 'use client';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { DadosOrcamento, EdicaoAtiva, Pendencia } from '@/lib/types';
 import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
+import { faltasObrigatorias } from '@/lib/validacao';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -65,6 +66,8 @@ export default function StepPrevia() {
 
   const { totais, pendencias, resumo } = previa;
   const erros = pendencias.filter((p) => p?.tipo === 'erro');
+  // Mesmas regras que o servidor usa para recusar a cobrança/reemissão (dados_incompletos).
+  const faltas = faltasObrigatorias(dadosDoOrcamento(store));
 
   const stats = [
     { icon: Box, label: 'Caixas', value: totais?.totalCaixas ?? 0, color: 'text-primary' },
@@ -169,6 +172,17 @@ export default function StepPrevia() {
         Cálculo baseado na NBR 5410 (ABNT), método B1, condutor de cobre com isolação PVC. Valores de referência.
       </p>
 
+      {faltas.length > 0 && (
+        <Card className="shadow-sm border-destructive/40 bg-destructive/5">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm font-semibold text-destructive mb-2">Complete os dados obrigatórios antes de gerar o PDF:</p>
+            <ul className="list-disc pl-5 space-y-1 text-xs">
+              {faltas.map((f, i) => <li key={i}>{f}</li>)}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
       {edicaoVigente(store.edicao) ? (
         <Card className="shadow-md border-green-300 bg-gradient-to-r from-green-50 to-green-100/60">
           <CardContent className="pt-6 pb-6 text-center">
@@ -177,7 +191,7 @@ export default function StepPrevia() {
             <p className="text-sm text-muted-foreground mt-1 mb-4">
               Este orçamento já foi pago. Você tem {store.edicao.restantes} {store.edicao.restantes === 1 ? 'edição gratuita' : 'edições gratuitas'} até {formatarData(store.edicao.expiraEm)}.
             </p>
-            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setEdicaoModal(store.edicao ?? null)}>
+            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setEdicaoModal(store.edicao ?? null)} disabled={faltas.length > 0}>
               <Zap className="w-4 h-4 mr-2" /> Gerar PDF atualizado
             </Button>
           </CardContent>
@@ -188,11 +202,11 @@ export default function StepPrevia() {
             <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
             <h3 className="text-lg font-bold">Gere o PDF completo do seu orçamento</h3>
             <p className="text-sm text-muted-foreground mt-1 mb-4">Com lista de materiais detalhada, circuitos e observações técnicas</p>
-            <Button size="lg" className="px-8" onClick={() => setShowCheckout(true)}>
+            <Button size="lg" className="px-8" onClick={() => setShowCheckout(true)} disabled={faltas.length > 0}>
               <Zap className="w-4 h-4 mr-2" /> Gerar meu PDF
             </Button>
-            {erros.length > 0 && (
-              <p className="text-xs text-destructive mt-3">⚠ Há {erros.length} pendência(s) obrigatória(s) — o PDF será gerado mesmo assim, mas pode ficar incompleto</p>
+            {erros.length > 0 && faltas.length === 0 && (
+              <p className="text-xs text-destructive mt-3">⚠ Há {erros.length} pendência(s) importante(s) — revise antes de pagar para o PDF não ficar incompleto</p>
             )}
           </CardContent>
         </Card>

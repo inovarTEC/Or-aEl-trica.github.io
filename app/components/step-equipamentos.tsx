@@ -1,6 +1,8 @@
 'use client';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { uid } from '@/lib/templates';
+import { semNegativo } from '@/lib/validacao';
+import { POTENCIAS_TIPICAS } from '@/lib/nbr5410-regras';
 import { Equip, Room, TipoEquip, Tensao } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -60,7 +62,16 @@ export default function StepEquipamentos() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="text-xs">Tipo</Label>
-                    <select value={e?.tipo ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { tipo: ev?.target?.value as TipoEquip })}
+                    <select value={e?.tipo ?? ''} onChange={(ev: any) => {
+                      const tipo = ev?.target?.value as TipoEquip;
+                      // Pré-preenche potência/tensão típicas só nos campos que o usuário ainda não preencheu
+                      const tip = POTENCIAS_TIPICAS[tipo];
+                      store.updateEquip(e?.id ?? '', {
+                        tipo,
+                        ...(tip && !e?.pot ? { pot: String(tip.pot) } : {}),
+                        ...(tip && !e?.tens ? { tens: `${tip.tens}V` as Tensao } : {}),
+                      });
+                    }}
                       className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm">
                       <option value="">Selecione...</option>
                       {EQUIP_TIPOS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -79,7 +90,7 @@ export default function StepEquipamentos() {
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <Label className="text-xs">Potência (W)</Label>
-                    <Input type="number" min="0" value={e?.pot ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { pot: ev?.target?.value ?? '' })} placeholder="Ex: 5500" className="mt-1" />
+                    <Input type="number" min="0" value={e?.pot ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { pot: semNegativo(ev?.target?.value) })} placeholder="Ex: 5500" className="mt-1" />
                   </div>
                   <div>
                     <Label className="text-xs">Tensão</Label>
@@ -92,7 +103,7 @@ export default function StepEquipamentos() {
                   </div>
                   <div>
                     <Label className="text-xs">Distância ao quadro (m)</Label>
-                    <Input type="number" step="0.1" min="0" value={e?.dist ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { dist: ev?.target?.value ?? '' })} placeholder="0.0" className="mt-1" />
+                    <Input type="number" step="0.1" min="0" value={e?.dist ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { dist: semNegativo(ev?.target?.value) })} placeholder="0.0" className="mt-1" />
                   </div>
                 </div>
 

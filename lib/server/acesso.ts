@@ -2,11 +2,11 @@
 import { createHash } from 'crypto';
 import { erro } from './pedido';
 import { normalizarCodigo } from './codigo';
-import { Acesso, Orcamento, acessoPorCodigo, apagarAcesso, edicoesUsadas, gravarJSON, lerJSON } from './store';
+import { Acesso, Orcamento, acessoPorCodigo, apagarAcesso, edicoesUsadas, gravarJSON, lerJSON } from './store-blobs';
 
-export const PRAZO_DIAS = 15;      // edição gratuita vale por 15 dias, contados da entrega do primeiro PDF
+const PRAZO_DIAS = 15;      // edição gratuita vale por 15 dias, contados da entrega do primeiro PDF
 export const EDICOES_MAX = 3;      // no máximo 3 edições gratuitas
-export const RETENCAO_DIAS = 15;   // depois do prazo, os dados ainda ficam guardados por mais 15 dias
+const RETENCAO_DIAS = 15;   // depois do prazo, os dados ainda ficam guardados por mais 15 dias
 const DIA = 86_400_000;
 
 export function novoAcesso(orc: Orcamento, pagamentoId: string, codigo: string): Acesso {
