@@ -1,6 +1,7 @@
 'use client';
 import { useStore } from '@/lib/store';
-import { Pendencia } from '@/lib/types';
+import { DadosOrcamento, EdicaoAtiva, Pendencia } from '@/lib/types';
+import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +12,7 @@ import {
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
+import EdicaoModal from './edicao-modal';
 
 interface Previa {
   valor: number;
@@ -20,7 +22,7 @@ interface Previa {
 }
 
 /** Só os campos que alimentam o cálculo — o resto do estado (step, id...) não vai ao servidor. */
-export function dadosDoOrcamento(s: any) {
+export function dadosDoOrcamento(s: DadosOrcamento): DadosOrcamento {
   return { imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips };
 }
 
@@ -29,6 +31,7 @@ export default function StepPrevia() {
   const [previa, setPrevia] = useState<Previa | null>(null);
   const [falha, setFalha] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [edicaoModal, setEdicaoModal] = useState<EdicaoAtiva | null>(null);
 
   const dados = JSON.stringify(dadosDoOrcamento(store));
 
@@ -166,21 +169,37 @@ export default function StepPrevia() {
         Cálculo baseado na NBR 5410 (ABNT), método B1, condutor de cobre com isolação PVC. Valores de referência.
       </p>
 
-      <Card className="shadow-md border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-        <CardContent className="pt-6 pb-6 text-center">
-          <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
-          <h3 className="text-lg font-bold">Gere o PDF completo do seu orçamento</h3>
-          <p className="text-sm text-muted-foreground mt-1 mb-4">Com lista de materiais detalhada, circuitos e observações técnicas</p>
-          <Button size="lg" className="px-8" onClick={() => setShowCheckout(true)}>
-            <Zap className="w-4 h-4 mr-2" /> Gerar meu PDF
-          </Button>
-          {erros.length > 0 && (
-            <p className="text-xs text-destructive mt-3">⚠ Há {erros.length} pendência(s) obrigatória(s) — o PDF será gerado mesmo assim, mas pode ficar incompleto</p>
-          )}
-        </CardContent>
-      </Card>
+      {edicaoVigente(store.edicao) ? (
+        <Card className="shadow-md border-green-300 bg-gradient-to-r from-green-50 to-green-100/60">
+          <CardContent className="pt-6 pb-6 text-center">
+            <FileText className="w-8 h-8 text-green-700 mx-auto mb-3" />
+            <h3 className="text-lg font-bold">Atualize o PDF do seu orçamento</h3>
+            <p className="text-sm text-muted-foreground mt-1 mb-4">
+              Este orçamento já foi pago. Você tem {store.edicao.restantes} {store.edicao.restantes === 1 ? 'edição gratuita' : 'edições gratuitas'} até {formatarData(store.edicao.expiraEm)}.
+            </p>
+            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setEdicaoModal(store.edicao ?? null)}>
+              <Zap className="w-4 h-4 mr-2" /> Gerar PDF atualizado
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="shadow-md border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+          <CardContent className="pt-6 pb-6 text-center">
+            <FileText className="w-8 h-8 text-primary mx-auto mb-3" />
+            <h3 className="text-lg font-bold">Gere o PDF completo do seu orçamento</h3>
+            <p className="text-sm text-muted-foreground mt-1 mb-4">Com lista de materiais detalhada, circuitos e observações técnicas</p>
+            <Button size="lg" className="px-8" onClick={() => setShowCheckout(true)}>
+              <Zap className="w-4 h-4 mr-2" /> Gerar meu PDF
+            </Button>
+            {erros.length > 0 && (
+              <p className="text-xs text-destructive mt-3">⚠ Há {erros.length} pendência(s) obrigatória(s) — o PDF será gerado mesmo assim, mas pode ficar incompleto</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {showCheckout && <CheckoutModal valor={previa.valor} onClose={() => setShowCheckout(false)} />}
+      {edicaoModal && <EdicaoModal edicao={edicaoModal} onClose={() => setEdicaoModal(null)} />}
     </motion.div>
   );
 }

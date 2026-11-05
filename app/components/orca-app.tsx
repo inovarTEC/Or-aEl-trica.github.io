@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore, CHAVE_PEDIDO } from '@/lib/store';
+import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
 import ProgressBar from './progress-bar';
 import StepImovel from './step-imovel';
 import StepComodos from './step-comodos';
@@ -9,7 +10,6 @@ import StepEquipamentos from './step-equipamentos';
 import StepPrevia from './step-previa';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function OrcaApp() {
   const store = useStore();
@@ -35,14 +35,28 @@ export default function OrcaApp() {
             <span className="font-bold text-lg tracking-tight">OrçaElétrica</span>
           </div>
           <button type="button" onClick={() => {
-            if (confirm('Tem certeza que deseja começar um novo orçamento? Os dados atuais serão perdidos.')) {
+            // Se o PDF já foi entregue nesta sessão, avisa que ele será apagado da tela.
+            let pdfNaTela = false;
+            try {
+              pdfNaTela = !!JSON.parse(sessionStorage.getItem(CHAVE_PEDIDO) ?? 'null')?.h;
+            } catch { /* sem acesso ao armazenamento: usa o aviso padrão */ }
+            const aviso = pdfNaTela
+              ? 'Você já pagou e o PDF deste orçamento ainda está nesta tela. Se continuar, ele será apagado e não poderá ser baixado de novo. Já salvou o PDF?'
+              : 'Tem certeza que deseja começar um novo orçamento? Os dados atuais serão perdidos.';
+            if (confirm(aviso)) {
               store.resetState();
             }
-                   }} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
+          }} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
             Novo orçamento
           </button>
         </div>
       </header>
+
+      {edicaoVigente(store.edicao) && (
+        <div className="border-b border-green-200 bg-green-50 px-4 py-2 text-center text-xs text-green-900">
+          Você está editando um orçamento já pago · {store.edicao.restantes} {store.edicao.restantes === 1 ? 'edição gratuita' : 'edições gratuitas'} até {formatarData(store.edicao.expiraEm)}
+        </div>
+      )}
 
       {/* Progress */}
       <ProgressBar step={step} onStepClick={(s: number) => store.setStep(s)} />

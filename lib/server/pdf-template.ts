@@ -1,5 +1,5 @@
 /* ===== Template HTML do PDF do Orçamento Elétrico ===== */
-import { AppState, Room, Equip } from '../types';
+import { AppState, Room } from '../types';
 import { calcTotais, calcPendencias } from './calculator';
 import { calcularMateriais, CircuitoCalc, ResultadoCalculo } from './calc-materiais';
 
@@ -22,7 +22,13 @@ function routeLen(r: Room): number {
   return r.via ? num(r.dd) + num(r.dr) : num(r.dq);
 }
 
-export function gerarHtmlPdf(dados: AppState, email?: string): string {
+export interface AcessoPdf {
+  codigo: string;   // já formatado, ex.: K7M2-9PQX-4TRH
+  expiraEm: string; // ISO
+  edicao: number;   // 0 = original; 1, 2, 3 = edições gratuitas
+}
+
+export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   const totais = calcTotais(dados);
   const pendencias = calcPendencias(dados);
   const resultado: ResultadoCalculo = calcularMateriais(dados);
@@ -172,7 +178,8 @@ export function gerarHtmlPdf(dados: AppState, email?: string): string {
   </div>
   <div class="meta">
     <div>Data: ${dataAtual}</div>
-    ${email ? `<div>E-mail: ${email}</div>` : ''}
+    ${acesso ? `<div>Código do orçamento: <strong>${acesso.codigo}</strong></div>` : ''}
+    ${acesso && acesso.edicao > 0 ? `<div>Edição ${acesso.edicao}</div>` : ''}
   </div>
 </div>
 
@@ -290,6 +297,7 @@ ${pendHtml}
 <div class="footer">
   <strong>OrçaElétrica</strong> — Orçamento gerado automaticamente com base na NBR 5410<br>
   Este documento é uma estimativa de referência e não substitui o projeto elétrico elaborado por profissional habilitado.
+  ${acesso ? `<br>Para alterar este orçamento sem custo até ${new Date(acesso.expiraEm).toLocaleDateString('pt-BR')}, use «Abrir orçamento anterior» no site e informe o código acima e o e-mail usado no pagamento.` : ''}
 </div>
 
 </body>

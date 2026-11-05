@@ -1,7 +1,6 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, CaixaPassagem } from './types';
-import { uid } from './templates';
+import { AppState, DadosOrcamento, EdicaoAtiva, Room, Equip, Ponto, Luz, Comando, Sw, Modulo } from './types';
 
 const STORAGE_KEY = 'orca_eletrica_state';
 /** Pedido de pagamento em andamento (guardado na sessão pela janela do Pix). Apagado no Novo orçamento. */
@@ -17,6 +16,7 @@ function defaultState(): AppState {
     rooms: [],
     equips: [],
     step: 0,
+    edicao: null,
   };
 }
 
@@ -60,6 +60,9 @@ interface StoreActions {
   addSw: (roomId: string, cmdId: string, sw: Sw) => void;
   removeSw: (roomId: string, cmdId: string, swId: string) => void;
   resetState: () => void;
+  /** Carrega um orçamento já pago para edição (ou como base de um orçamento novo, se edicao for null). */
+  carregarOrcamento: (dados: DadosOrcamento, edicao: EdicaoAtiva | null) => void;
+  atualizarEdicao: (edicao: EdicaoAtiva | null) => void;
   hydrateFromStorage: () => void;
 }
 
@@ -188,6 +191,8 @@ export const useStore = create<Store>((set) => {
       }
       set(defaultState());
     },
+    carregarOrcamento: (dados, edicao) => update(() => ({ ...defaultState(), ...dados, edicao, step: 4 })),
+    atualizarEdicao: (edicao) => update(() => ({ edicao })),
     hydrateFromStorage: () => {
       const loaded = loadState();
       set(loaded);
