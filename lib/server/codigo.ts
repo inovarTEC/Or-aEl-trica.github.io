@@ -2,7 +2,7 @@
 import { randomInt } from 'crypto';
 
 const ALFABETO = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-export const TAMANHO_CODIGO = 12;
+const TAMANHO_CODIGO = 12;
 
 export function gerarCodigo(): string {
   let c = '';

@@ -1,4 +1,6 @@
 /* Mercado Pago — somente Pix. Roda apenas no servidor. */
+import { logErro } from './log';
+
 const API = 'https://api.mercadopago.com';
 
 export function preco(): number {
@@ -46,12 +48,12 @@ export async function criarPix(opts: { orcamentoId: string; email: string; idemp
   });
   const data: any = await res.json().catch(() => ({}));
   if (!res.ok) {
-    console.error('[mp] erro ao criar Pix', res.status, JSON.stringify(data).slice(0, 500));
+    logErro('mp', 'erro ao criar Pix', res.status, JSON.stringify(data).slice(0, 500));
     throw new Error('mp_criar_falhou');
   }
   const td = data?.point_of_interaction?.transaction_data;
   if (!data?.id || !td?.qr_code) {
-    console.error('[mp] resposta sem QR', JSON.stringify(data).slice(0, 500));
+    logErro('mp', 'resposta sem QR', JSON.stringify(data).slice(0, 500));
     throw new Error('mp_sem_qr');
   }
   return {
@@ -79,7 +81,7 @@ export async function buscarPagamento(id: string): Promise<PagamentoMP> {
   });
   const data: any = await res.json().catch(() => ({}));
   if (!res.ok) {
-    console.error('[mp] erro ao consultar', res.status, JSON.stringify(data).slice(0, 300));
+    logErro('mp', 'erro ao consultar', res.status, JSON.stringify(data).slice(0, 300));
     throw new Error('mp_consulta_falhou');
   }
   return {

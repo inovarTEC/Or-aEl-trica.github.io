@@ -2,14 +2,15 @@ import { EDICOES_MAX, novoAcesso } from '@/lib/server/acesso';
 import { formatarCodigo, gerarCodigo } from '@/lib/server/codigo';
 import { gerarHtmlPdf } from '@/lib/server/pdf-template';
 import { conferir, erro, ok } from '@/lib/server/pedido';
-import { gravarAcesso, travarEntrega } from '@/lib/server/store';
+import { gravarAcesso, travarEntrega } from '@/lib/server/store-blobs';
+import { ErroApi, lerCorpo, rota } from '@/lib/server/rota';
+import { logErro } from '@/lib/server/log';
 
 export const runtime = 'nodejs';
 
 /** Entrega o relatório completo UMA vez por pagamento aprovado e abre a edição gratuita (prazo e limite). */
-export async function POST(req: Request) {
-  let corpo: any;
-  try { corpo = await req.json(); } catch { return erro(400, 'json_invalido'); }
+export const POST = rota('liberar', async (req) => {
+  const corpo = await lerCorpo(req, 10_000);
   const r = await conferir(
     String(corpo?.orcamentoId ?? ''),
     String(corpo?.pagamentoId ?? ''),
@@ -25,8 +26,7 @@ export async function POST(req: Request) {
   try {
     html = gerarHtmlPdf(r.orc.dados as any, { codigo: formatarCodigo(codigo), expiraEm: acesso.expiraEm, edicao: 0 });
   } catch (e) {
-    console.error('[liberar] falha ao gerar', e);
-    return erro(500, 'geracao_falhou');
+    throw new ErroApi(500, 'geracao_falhou', e);
   }
 
   // Só a primeira chamada deste pagamento passa daqui.
@@ -36,8 +36,9 @@ export async function POST(req: Request) {
   try {
     await gravarAcesso(acesso);
   } catch (e) {
-    console.error('[liberar] não foi possível gravar o acesso de edição', e);
+    // Não bloqueia a entrega: o cliente já pagou e o PDF tem de sair.
+    logErro('liberar', 'não foi possível gravar o acesso de edição', e);
   }
 
   return ok({ html, codigo: formatarCodigo(codigo), expiraEm: acesso.expiraEm, restantes: EDICOES_MAX });
-}
+});

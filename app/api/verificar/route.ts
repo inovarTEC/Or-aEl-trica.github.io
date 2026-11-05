@@ -1,9 +1,10 @@
 import { conferir, ok } from '@/lib/server/pedido';
+import { rota } from '@/lib/server/rota';
 
 export const runtime = 'nodejs';
 
 /** Consulta o status real do Pix no Mercado Pago. Não libera nada, só informa. */
-export async function GET(req: Request) {
+export const GET = rota('verificar', async (req) => {
   const u = new URL(req.url);
   const r = await conferir(
     u.searchParams.get('orcamentoId') ?? '',
@@ -12,4 +13,4 @@ export async function GET(req: Request) {
   );
   if ('falha' in r) return r.falha;
   return ok({ status: r.estado });
-}
+});

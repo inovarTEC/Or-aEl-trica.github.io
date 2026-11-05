@@ -1,7 +1,7 @@
 'use client';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { ROOM_TEMPLATES } from '@/lib/templates';
-import { uid } from '@/lib/templates';
+import { semNegativo } from '@/lib/validacao';
 import { Room } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Bed, Sofa, CookingPot, Bath, WashingMachine, Plus, Trash2, ChevronDown,
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
 
 const ICONS: Record<string, any> = { Bed, Sofa, CookingPot, Bath, WashingMachine, Plus };
 
@@ -91,7 +93,7 @@ export default function StepComodos() {
                       <p className="text-sm font-semibold">{r?.nome || r?.base || 'Cômodo'}</p>
                       <p className="text-xs text-muted-foreground">
                         {r?.c && r?.l ? `${r.c}m × ${r.l}m` : 'Medidas pendentes'}
-                        {' · '}{(r?.pontos?.length ?? 0)} tomadas · {(r?.luzes?.length ?? 0)} luzes
+                        {' · '}{plural(r?.pontos?.length ?? 0, 'tomada', 'tomadas')} · {plural(r?.luzes?.length ?? 0, 'luz', 'luzes')}
                       </p>
                     </div>
                   </div>
@@ -109,11 +111,11 @@ export default function StepComodos() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label className="text-xs flex items-center gap-1"><Ruler className="w-3 h-3" /> Comprimento (m)</Label>
-                        <Input type="number" step="0.1" min="0" value={r?.c ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { c: e?.target?.value ?? '' })} placeholder="0.0" className="mt-1" />
+                        <Input type="number" step="0.1" min="0" value={r?.c ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { c: semNegativo(e?.target?.value) })} placeholder="0.0" className="mt-1" />
                       </div>
                       <div>
                         <Label className="text-xs flex items-center gap-1"><Ruler className="w-3 h-3" /> Largura (m)</Label>
-                        <Input type="number" step="0.1" min="0" value={r?.l ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { l: e?.target?.value ?? '' })} placeholder="0.0" className="mt-1" />
+                        <Input type="number" step="0.1" min="0" value={r?.l ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { l: semNegativo(e?.target?.value) })} placeholder="0.0" className="mt-1" />
                       </div>
                     </div>
 
@@ -139,7 +141,7 @@ export default function StepComodos() {
                     {!r?.via ? (
                       <div>
                         <Label className="text-xs">Distância até o quadro elétrico (m)</Label>
-                        <Input type="number" step="0.1" min="0" value={r?.dq ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dq: e?.target?.value ?? '' })} placeholder="Estimativa em metros" className="mt-1" />
+                        <Input type="number" step="0.1" min="0" value={r?.dq ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dq: semNegativo(e?.target?.value) })} placeholder="Estimativa em metros" className="mt-1" />
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -155,11 +157,11 @@ export default function StepComodos() {
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label className="text-xs">Trecho compartilhado (m)</Label>
-                            <Input type="number" step="0.1" min="0" value={r?.dd ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dd: e?.target?.value ?? '' })} placeholder="0.0" className="mt-1" />
+                            <Input type="number" step="0.1" min="0" value={r?.dd ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dd: semNegativo(e?.target?.value) })} placeholder="0.0" className="mt-1" />
                           </div>
                           <div>
                             <Label className="text-xs">Desvio até aqui (m)</Label>
-                            <Input type="number" step="0.1" min="0" value={r?.dr ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dr: e?.target?.value ?? '' })} placeholder="0.0" className="mt-1" />
+                            <Input type="number" step="0.1" min="0" value={r?.dr ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dr: semNegativo(e?.target?.value) })} placeholder="0.0" className="mt-1" />
                           </div>
                         </div>
                       </div>
@@ -187,11 +189,11 @@ export default function StepComodos() {
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label className="text-xs">Pé-direito (m)</Label>
-                            <Input type="number" step="0.1" min="0" value={r?.pe ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { pe: e?.target?.value ?? '' })} className="mt-1" />
+                            <Input type="number" step="0.1" min="0" value={r?.pe ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { pe: semNegativo(e?.target?.value) })} className="mt-1" />
                           </div>
                           <div>
                             <Label className="text-xs">Distância padrão entre pontos (m)</Label>
-                            <Input type="number" step="0.1" min="0" value={r?.dpad ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dpad: e?.target?.value ?? '' })} className="mt-1" />
+                            <Input type="number" step="0.1" min="0" value={r?.dpad ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { dpad: semNegativo(e?.target?.value) })} className="mt-1" />
                           </div>
                         </div>
                         <div>

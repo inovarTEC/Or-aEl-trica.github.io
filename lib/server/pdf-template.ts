@@ -9,6 +9,10 @@ function num(v: string | number | undefined | null): number {
   return isNaN(n) ? 0 : n;
 }
 
+/** Escapa texto digitado pelo cliente antes de inserir no HTML (evita XSS no relatório). */
+const esc = (v: unknown): string =>
+  String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
 const fmt = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
 const fmtD = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 
@@ -37,7 +41,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   const circuitosHtml = resultado.circuitos.map((c: CircuitoCalc, i: number) => `
     <tr>
       <td>${i + 1}</td>
-      <td>${c.nome}</td>
+      <td>${esc(c.nome)}</td>
       <td>${tipoLabel(c.tipo)}</td>
       <td class="r">${fmt(c.potenciaW)}</td>
       <td class="r">${c.tensaoV}</td>
@@ -52,16 +56,16 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   const materiaisHtml = resultado.materiais.map((m, i) => `
     <tr>
       <td>${i + 1}</td>
-      <td>${m.item}</td>
+      <td>${esc(m.item)}</td>
       <td class="r">${m.qtd}</td>
       <td>${m.unidade}</td>
-      <td>${m.detalhe || '—'}</td>
+      <td>${esc(m.detalhe || '—')}</td>
     </tr>
   `).join('');
 
   const comodosHtml = (totais.porComodo ?? []).map(c => `
     <tr>
-      <td>${c.nome}</td>
+      <td>${esc(c.nome)}</td>
       <td class="r">${c.caixas}</td>
       <td class="r">${c.tomadas}</td>
       <td class="r">${c.interruptores}</td>
@@ -75,7 +79,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
       <h2>Pendências</h2>
       <p class="note">Os itens abaixo precisam ser revisados para um orçamento mais preciso.</p>
       <ul class="pend">
-        ${pendencias.map(p => `<li class="${p.tipo}">${p.msg}</li>`).join('')}
+        ${pendencias.map(p => `<li class="${esc(p.tipo)}">${esc(p.msg)}</li>`).join('')}
       </ul>
     </div>
   ` : `
@@ -104,10 +108,10 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
             const dist = num(eq.dist) || (room ? routeLen(room) + num(eq.dint) : 0);
             return `
               <tr>
-                <td>${eq.tipo || '—'}</td>
-                <td>${room ? (room.nome || room.base) : '—'}</td>
+                <td>${esc(eq.tipo || '—')}</td>
+                <td>${esc(room ? (room.nome || room.base) : '—')}</td>
                 <td class="r">${num(eq.pot)}</td>
-                <td class="r">${eq.tens || '—'}</td>
+                <td class="r">${esc(eq.tens || '—')}</td>
                 <td class="r">${fmt(dist)}</td>
               </tr>
             `;
@@ -178,7 +182,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
   </div>
   <div class="meta">
     <div>Data: ${dataAtual}</div>
-    ${acesso ? `<div>Código do orçamento: <strong>${acesso.codigo}</strong></div>` : ''}
+    ${acesso ? `<div>Código do orçamento: <strong>${esc(acesso.codigo)}</strong></div>` : ''}
     ${acesso && acesso.edicao > 0 ? `<div>Edição ${acesso.edicao}</div>` : ''}
   </div>
 </div>
@@ -187,10 +191,10 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
 <div class="section">
   <h2>Dados do Imóvel</h2>
   <div class="info-grid">
-    <div><div class="label">Tipo de imóvel</div><div class="value">${dados.imovel || 'Não informado'}</div></div>
-    <div><div class="label">Tipo de obra</div><div class="value">${dados.obra || 'Não informado'}</div></div>
-    <div><div class="label">Cobertura / Teto</div><div class="value">${dados.cobertura || 'Não informado'}</div></div>
-    <div><div class="label">Ligação da rede</div><div class="value">${dados.rede || 'Não informado'}</div></div>
+    <div><div class="label">Tipo de imóvel</div><div class="value">${esc(dados.imovel || 'Não informado')}</div></div>
+    <div><div class="label">Tipo de obra</div><div class="value">${esc(dados.obra || 'Não informado')}</div></div>
+    <div><div class="label">Cobertura / Teto</div><div class="value">${esc(dados.cobertura || 'Não informado')}</div></div>
+    <div><div class="label">Ligação da rede</div><div class="value">${esc(dados.rede || 'Não informado')}</div></div>
   </div>
 </div>
 

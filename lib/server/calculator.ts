@@ -1,4 +1,5 @@
 import { AppState, Room, Pendencia, Totais } from '../types';
+import { tomadasNbr } from '../validacao';
 
 /* ---------- helpers ---------- */
 function num(v: string | undefined | null): number {
@@ -10,7 +11,8 @@ function routeLen(r: Room): number {
   return r?.via ? num(r?.dd) : num(r?.dq);
 }
 
-function countMods(r: Room, prefix: string): number {
+/** Fonte única de contagem de módulos (tomadas 'T*', 'USB'...), inclusive os montados junto a interruptores. */
+export function countMods(r: Room, prefix: string): number {
   let c = 0;
   for (const p of r?.pontos ?? []) {
     for (const m of p?.mods ?? []) {
@@ -21,16 +23,6 @@ function countMods(r: Room, prefix: string): number {
   for (const cmd of r?.comandos ?? []) {
     for (const sw of cmd?.sws ?? []) {
       if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c++;
-    }
-  }
-  return c;
-}
-
-function countSwType(r: Room, t: string): number {
-  let c = 0;
-  for (const cmd of r?.comandos ?? []) {
-    if (cmd?.t === t) {
-      c += (cmd?.sws?.length ?? 0);
     }
   }
   return c;
@@ -85,8 +77,7 @@ export function calcTotais(state: AppState): Totais {
     const nCaixas = r?.caixas?.length ?? 0;
     const caixas = nPontos + nSws + nLuzes + nCaixas;
     const tomadas = countMods(r, 'T');
-    const usb = countMods(r, 'USB') - countMods(r, 'U'); // USB only from mods starting with USB
-    const usbCount = (r?.pontos ?? []).reduce((a: number, p: any) => a + ((p?.mods ?? []).filter((m: any) => m?.t === 'USB')?.length ?? 0), 0);
+    const usbCount = countMods(r, 'USB');
     const interruptores = nSws;
     const dInterna = entre(r);
 
@@ -148,6 +139,16 @@ export function calcPendencias(state: AppState): Pendencia[] {
     }
     if ((r?.pontos?.length ?? 0) === 0 && (r?.luzes?.length ?? 0) === 0) {
       p.push({ tipo: 'aviso', msg: `${rn}: nenhum ponto elétrico adicionado`, step: 2, roomId: r?.id });
+    }
+    // NBR 5410 (9.5.2.2.1): quantidade mínima de pontos de tomada pelo perímetro/tipo do cômodo
+    const nbr = tomadasNbr(r);
+    if (nbr && nbr.atual < nbr.minimo) {
+      p.push({
+        tipo: 'aviso',
+        msg: `${rn}: ${nbr.atual} ${nbr.atual === 1 ? 'tomada' : 'tomadas'} — a NBR 5410 pede no mínimo ${nbr.minimo} para este cômodo`,
+        step: 2,
+        roomId: r?.id,
+      });
     }
     if (!r?.inst) p.push({ tipo: 'aviso', msg: `${rn}: tipo de instalação não definido`, step: 2, roomId: r?.id });
 

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { DadosOrcamento } from '@/lib/types';
 import { OrcamentoSalvo, formatarData, guardarSalvo, lerSalvos, removerSalvo } from '@/lib/meus-orcamentos';
 import { Card, CardContent } from '@/components/ui/card';

@@ -1,14 +1,12 @@
 'use client';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { uid } from '@/lib/templates';
 import { luzCount } from '@/lib/luz';
 import { Room, Ponto, Luz, Comando } from '@/lib/types';
+import { tomadasNbr } from '@/lib/validacao';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Plug, Lightbulb, ToggleLeft, Plus, Trash2, ChevronDown, ChevronUp, Settings2, MapPin } from 'lucide-react';
+import { Plug, Lightbulb, ToggleLeft, Plus, Trash2, MapPin, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -17,9 +15,9 @@ export default function StepPontos() {
   const store = useStore();
   const rooms = store?.rooms ?? [];
   const [activeRoom, setActiveRoom] = useState<string>(rooms?.[0]?.id ?? '');
-  const [advOpen, setAdvOpen] = useState<Record<string, boolean>>({});
 
   const r = rooms.find((x: Room) => x?.id === activeRoom) ?? rooms?.[0];
+  const nbr = r ? tomadasNbr(r) : null;
 
   const addTomada = () => {
     if (!r) return;
@@ -110,6 +108,18 @@ export default function StepPontos() {
                     className="text-destructive hover:text-destructive/80 ml-auto"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               ))}
+              {nbr && nbr.atual < nbr.minimo && (
+                <div className="mt-3 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                  <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                  <span>
+                    A NBR 5410 pede no mínimo <strong>{nbr.minimo}</strong> {nbr.minimo === 1 ? 'tomada' : 'tomadas'} para este cômodo
+                    (pelo tamanho e tipo). Faltam {nbr.minimo - nbr.atual}.
+                  </span>
+                </div>
+              )}
+              {!nbr && (
+                <p className="mt-3 text-[11px] text-muted-foreground">Informe as medidas do cômodo para conferir o mínimo de tomadas da NBR 5410.</p>
+              )}
             </CardContent>
           </Card>
 

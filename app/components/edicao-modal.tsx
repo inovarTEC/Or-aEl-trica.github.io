@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store-cliente';
 import { EdicaoAtiva } from '@/lib/types';
 import { baixarHtml, imprimirHtml } from '@/lib/pdf-cliente';
 import { formatarData, guardarSalvo } from '@/lib/meus-orcamentos';
@@ -37,6 +37,7 @@ export default function EdicaoModal({ edicao, onClose }: { edicao: EdicaoAtiva; 
         setMensagem(
           j?.erro === 'pagamento_nao_aprovado' ? 'O pagamento deste orçamento não está mais aprovado.'
           : j?.erro === 'calculo_falhou' || j?.erro === 'dados_invalidos' ? 'Não foi possível calcular com os dados atuais. Confira as telas e tente de novo.'
+          : j?.erro === 'dados_incompletos' ? 'Há dados obrigatórios faltando. Confira as etapas do orçamento. Nenhuma edição foi usada.'
           : j?.erro === 'muitas_tentativas' ? 'Muitas tentativas. Aguarde alguns minutos.'
           : 'Não foi possível gerar agora. Nenhuma edição foi usada. Tente novamente.',
         );

@@ -12,21 +12,7 @@ export function potenciaIluminacao(areaM2: number): number {
   return 100 + excedente * 60;
 }
 
-/**
- * Número mínimo de tomadas de uso geral (TUGs) por cômodo (NBR 5410 / 9.5.2.2)
- * Banheiro: mínimo 1
- * Cozinha/Copa/Área de serviço: 1 para cada 3,5 m de perímetro (mín 1)
- * Demais: 1 se A ≤ 6 m², senão 1 para cada 5 m de perímetro (mín 1)
- */
-export function minTomadas(areaM2: number, perimetro: number, tipoCmodo: string): number {
-  const t = tipoCmodo.toLowerCase();
-  if (t.includes('banheiro') || t.includes('lavabo')) return Math.max(1, Math.floor(perimetro / 5));
-  if (t.includes('cozinha') || t.includes('copa') || t.includes('servi')) {
-    return Math.max(1, Math.floor(perimetro / 3.5));
-  }
-  if (areaM2 <= 6) return 1;
-  return Math.max(1, Math.floor(perimetro / 5));
-}
+/* minTomadas() foi movida para lib/nbr5410-regras.ts (usada também no navegador). */
 
 /**
  * Potência atribuída por TUG (VA) — NBR 5410 / 9.5.2.2.2
@@ -99,7 +85,7 @@ export function secaoMinima(tipoCircuito: 'iluminacao' | 'tug' | 'tue'): number 
  * @param condCarregados - 2 (monofásico/bifásico) ou 3 (trifásico)
  * @param minSecao - seção mínima obrigatória
  */
-export function bitolaPorCorrente(correnteA: number, condCarregados: 2 | 3 = 2, minSecao: number = 1.5): number {
+function bitolaPorCorrente(correnteA: number, condCarregados: 2 | 3 = 2, minSecao: number = 1.5): number {
   const tab = condCarregados === 3 ? CONDUTOR_B1_3COND : CONDUTOR_B1_2COND;
   for (const row of tab) {
     if (row.secao >= minSecao && row.cap >= correnteA) return row.secao;
@@ -112,7 +98,7 @@ export function bitolaPorCorrente(correnteA: number, condCarregados: 2 | 3 = 2, 
  * Fórmula simplificada: S ≥ (2 × ρ × L × I) / (ΔV)
  * ρ(cobre) = 0.0172 Ω·mm²/m, ΔV = tensão × 0.02 (2%)
  */
-export function bitolaPorQueda(correnteA: number, comprimentoM: number, tensao: number, condCarregados: 2 | 3 = 2): number {
+function bitolaPorQueda(correnteA: number, comprimentoM: number, tensao: number, condCarregados: 2 | 3 = 2): number {
   const rho = 0.0172; // resistividade do cobre
   const quedaMax = tensao * 0.02; // 2%
   if (quedaMax <= 0 || correnteA <= 0) return 1.5;
@@ -232,14 +218,6 @@ export interface MaterialItem {
   detalhe?: string;
 }
 
-/** Lista os condutores mais comuns num orçamento residencial */
-export const CORES_CONDUTOR = {
-  fase: 'Preto ou Vermelho',
-  neutro: 'Azul',
-  terra: 'Verde ou Verde/Amarelo',
-  retorno: 'Amarelo ou Branco',
-};
-
 /** Número de condutores num circuito monofásico ou bifásico */
 export function nCondutoresCircuito(tipo: 'iluminacao' | 'tug' | 'tue', rede: string): number {
   // iluminação: fase + neutro + terra + retorno(s) → contamos 3 (fase+neutro+terra)
@@ -249,17 +227,4 @@ export function nCondutoresCircuito(tipo: 'iluminacao' | 'tug' | 'tue', rede: st
   return 3;
 }
 
-/* ---------- POTÊNCIAS TÍPICAS ---------- */
-
-export const POTENCIAS_TIPICAS: Record<string, { pot: number; tens: number }> = {
-  'Chuveiro elétrico': { pot: 5500, tens: 220 },
-  'Torneira elétrica': { pot: 3200, tens: 220 },
-  'Ar-condicionado': { pot: 1400, tens: 220 },
-  'Forno elétrico': { pot: 1500, tens: 127 },
-  'Cooktop elétrico': { pot: 2000, tens: 220 },
-  'Máquina de lavar': { pot: 1200, tens: 127 },
-  'Secadora': { pot: 3200, tens: 220 },
-  'Aquecedor': { pot: 4500, tens: 220 },
-  'Bomba': { pot: 750, tens: 220 },
-  'Carregador de veículo elétrico': { pot: 7400, tens: 220 },
-};
+/* POTENCIAS_TIPICAS foi movida para lib/nbr5410-regras.ts (pré-preenche a tela de equipamentos). */

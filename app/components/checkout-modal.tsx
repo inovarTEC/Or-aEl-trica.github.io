@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useStore, CHAVE_PEDIDO as SESSAO } from '@/lib/store';
+import { useStore, CHAVE_PEDIDO as SESSAO } from '@/lib/store-cliente';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -130,7 +130,11 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
       const r = await fetch('/api/pagar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
       const j = await r.json();
       if (!r.ok) {
-        toast.error(j?.erro === 'email_invalido' ? 'E-mail inválido' : 'Não foi possível gerar o Pix. Tente novamente.');
+        toast.error(
+          j?.erro === 'email_invalido' ? 'E-mail inválido'
+          : j?.erro === 'dados_incompletos' || j?.erro === 'dados_invalidos' ? 'Há dados obrigatórios faltando ou inválidos. Confira as etapas do orçamento.'
+          : 'Não foi possível gerar o Pix. Tente novamente.',
+        );
         return;
       }
       const novo: Pedido = {

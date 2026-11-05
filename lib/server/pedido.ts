@@ -2,10 +2,11 @@
 import { createHash, randomBytes, timingSafeEqual } from 'crypto';
 import { NextResponse } from 'next/server';
 import { buscarPagamento, preco, PagamentoMP } from './mercadopago';
-import { lerJSON, Orcamento, Pagamento } from './store';
+import { logErro } from './log';
+import { lerJSON, Orcamento, Pagamento } from './store-blobs';
 
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-export const ID_MP = /^\d{3,20}$/;
+const ID_MP = /^\d{3,20}$/;
 export const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 
 export const hashChave = (c: string) => createHash('sha256').update(c).digest('hex');
@@ -31,7 +32,7 @@ export function situacao(mp: PagamentoMP, orcamentoId: string): Situacao {
   if (mp.status === 'approved') {
     // Só vale se for este orçamento e o valor cobrado.
     if (mp.referencia !== orcamentoId || Math.abs(mp.valor - preco()) > 0.001) {
-      console.error('[pedido] pagamento aprovado não confere', mp.id);
+      logErro('pedido', 'pagamento aprovado não confere', mp.id);
       return 'recusado';
     }
     return 'aprovado';

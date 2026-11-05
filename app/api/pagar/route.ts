@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
 import { criarPix, preco } from '@/lib/server/mercadopago';
 import { EMAIL, UUID, chaveConfere, erro, hashChave, novaChave, ok } from '@/lib/server/pedido';
-import { gravarJSON, lerJSON, Orcamento, Pagamento } from '@/lib/server/store';
+import { gravarJSON, lerJSON, Orcamento, Pagamento } from '@/lib/server/store-blobs';
+import { exigirDados, lerCorpo, rota } from '@/lib/server/rota';
 
 export const runtime = 'nodejs';
 
@@ -10,11 +11,8 @@ export const runtime = 'nodejs';
  *  - Pedido novo:   { email, dados }            -> devolve orcamentoId + chave (segredo do cliente)
  *  - Novo QR Code:  { orcamentoId, chave }      -> mesmo orçamento, novo Pix (o anterior venceu)
  */
-export async function POST(req: Request) {
-  const texto = await req.text();
-  if (texto.length > 300_000) return erro(413, 'muito_grande');
-  let corpo: any;
-  try { corpo = JSON.parse(texto); } catch { return erro(400, 'json_invalido'); }
+export const POST = rota('pagar', async (req) => {
+  const corpo = await lerCorpo(req);
 
   let orc: Orcamento;
   let chaveNova: string | undefined;
@@ -27,13 +25,14 @@ export async function POST(req: Request) {
   } else {
     const email = String(corpo?.email ?? '').trim().toLowerCase();
     if (!EMAIL.test(email)) return erro(400, 'email_invalido');
-    if (!corpo?.dados || !Array.isArray(corpo.dados.rooms)) return erro(400, 'dados_invalidos');
+    // Não cobra por orçamento vazio/incompleto: mesmas regras que bloqueiam o wizard.
+    const dados = exigirDados(corpo?.dados, true);
     chaveNova = novaChave();
     orc = {
       id: randomUUID(),
       chaveHash: hashChave(chaveNova),
       email,
-      dados: corpo.dados,
+      dados,
       criadoEm: new Date().toISOString(),
     };
     await gravarJSON(`orc/${orc.id}`, orc);
@@ -55,4 +54,4 @@ export async function POST(req: Request) {
   } catch {
     return erro(502, 'mp_indisponivel');
   }
-}
+});

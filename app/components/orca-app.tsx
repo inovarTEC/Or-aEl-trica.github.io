@@ -1,7 +1,9 @@
 'use client';
 import { useEffect } from 'react';
-import { useStore, CHAVE_PEDIDO } from '@/lib/store';
+import { useStore, CHAVE_PEDIDO } from '@/lib/store-cliente';
 import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
+import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
+import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
 import StepImovel from './step-imovel';
 import StepComodos from './step-comodos';
@@ -19,6 +21,27 @@ export default function OrcaApp() {
     store.hydrateFromStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** Avança só se a etapa atual estiver completa; mostra o que falta. */
+  const avancar = () => {
+    const erros = errosEtapa(store, step);
+    if (erros.length > 0) {
+      toast.error(erros[0], { description: erros.length > 1 ? `e mais ${erros.length - 1} pendência(s) nesta etapa` : undefined });
+      return;
+    }
+    store.setStep(Math.min(4, step + 1));
+  };
+
+  /** Pela barra de progresso: voltar é livre; pular para frente só até a primeira etapa incompleta. */
+  const irPara = (s: number) => {
+    if (s <= step) return store.setStep(s);
+    const limite = primeiraEtapaInvalida(store);
+    if (s > limite) {
+      toast.error(errosEtapa(store, limite)[0] ?? 'Complete as etapas anteriores primeiro');
+      return store.setStep(Math.max(step, Math.min(limite, s)));
+    }
+    store.setStep(s);
+  };
 
   const steps = [StepImovel, StepComodos, StepPontos, StepEquipamentos, StepPrevia];
   const CurrentStep = steps[step] ?? StepImovel;
@@ -59,7 +82,7 @@ export default function OrcaApp() {
       )}
 
       {/* Progress */}
-      <ProgressBar step={step} onStepClick={(s: number) => store.setStep(s)} />
+      <ProgressBar step={step} onStepClick={irPara} />
 
       {/* Content */}
       <main className="flex-1 px-4 pb-4 pt-2">
@@ -73,7 +96,7 @@ export default function OrcaApp() {
             <ChevronLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
           {step < 4 ? (
-            <Button onClick={() => store.setStep(Math.min(4, step + 1))}>
+            <Button onClick={avancar}>
               Avançar <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           ) : null}
