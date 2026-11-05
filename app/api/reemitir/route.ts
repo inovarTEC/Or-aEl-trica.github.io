@@ -3,7 +3,7 @@ import { formatarCodigo } from '@/lib/server/codigo';
 import { buscarPagamento } from '@/lib/server/mercadopago';
 import { gerarHtmlPdf } from '@/lib/server/pdf-template';
 import { erro, ok, situacao } from '@/lib/server/pedido';
-import { gravarJSON, usarEdicao } from '@/lib/server/store-blobs';
+import { comRetentativas, gravarJSON, usarEdicao } from '@/lib/server/store-blobs';
 import { ErroApi, exigirDados, lerCorpo, rota } from '@/lib/server/rota';
 
 export const runtime = 'nodejs';
@@ -34,9 +34,17 @@ export const POST = rota('reemitir', async (req) => {
     throw new ErroApi(422, 'calculo_falhou', e);
   }
 
+  // 1) Salva os dados novos ANTES de gastar a edição. Antes era o contrário: se a gravação
+  //    falhasse, a edição já estava gasta (irreversível) e o cliente não recebia o PDF.
+  try {
+    await comRetentativas(() => gravarJSON(`orc/${r.orc.id}`, { ...r.orc, dados }));
+  } catch (e) {
+    throw new ErroApi(500, 'dados_nao_salvos', e);
+  }
+
+  // 2) Só então consome a edição (cada número só pode ser tomado uma vez).
   const numero = await usarEdicao(r.acesso.pagamentoId, EDICOES_MAX);
   if (numero === null) return erro(410, 'edicoes_esgotadas');
 
-  await gravarJSON(`orc/${r.orc.id}`, { ...r.orc, dados });
   return ok({ html, restantes: EDICOES_MAX - numero, expiraEm: r.acesso.expiraEm, edicao: numero });
 });

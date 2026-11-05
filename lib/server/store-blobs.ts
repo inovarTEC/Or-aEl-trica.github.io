@@ -42,9 +42,32 @@ export interface Acesso {
   removerApos: string;
 }
 
+/**
+ * Grava o acesso (duas chaves). Idempotente: regravar o MESMO acesso só sobrescreve com os mesmos valores.
+ * `acesso/` vai primeiro: se `cod/` falhar, a próxima tentativa encontra o acesso e reaproveita o mesmo código.
+ */
 export async function gravarAcesso(a: Acesso): Promise<void> {
   await loja().setJSON(`acesso/${a.pagamentoId}`, a);
   await loja().setJSON(`cod/${a.codigo}`, { pagamentoId: a.pagamentoId });
+}
+
+/** Acesso já registrado para este pagamento (ou null). */
+export async function acessoPorPagamento(pagamentoId: string): Promise<Acesso | null> {
+  return lerJSON<Acesso>(`acesso/${pagamentoId}`);
+}
+
+/** Executa `fn` até `tentativas` vezes, com espera crescente (para falhas passageiras do Blobs). */
+export async function comRetentativas<T>(fn: () => Promise<T>, tentativas = 3, esperaMs = 250): Promise<T> {
+  let ultimo: unknown;
+  for (let i = 1; i <= tentativas; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      ultimo = e;
+      if (i < tentativas) await new Promise((ok) => setTimeout(ok, esperaMs * i));
+    }
+  }
+  throw ultimo;
 }
 
 export async function acessoPorCodigo(codigo: string): Promise<Acesso | null> {
