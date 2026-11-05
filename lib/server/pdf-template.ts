@@ -30,6 +30,35 @@ export interface AcessoPdf {
   codigo: string;   // já formatado, ex.: K7M2-9PQX-4TRH
   expiraEm: string; // ISO
   edicao: number;   // 0 = original; 1, 2, 3 = edições gratuitas
+  nome?: string;    // nome do cliente/empresa, se houver (hoje o wizard não coleta)
+}
+
+/** Deixa o texto seguro para nome de arquivo: sem acentos, espaços → hífen, só [A-Za-z0-9-]. */
+export function slugArquivo(v: unknown, max = 40): string {
+  return String(v ?? '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, max)
+    .replace(/-+$/g, '');
+}
+
+/** Data de hoje no fuso de Brasília, no formato DD-MM-AAAA. */
+function dataArquivo(agora = new Date()): string {
+  const p = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric' })
+    .formatToParts(agora);
+  const v = (t: string) => p.find(x => x.type === t)?.value ?? '';
+  return `${v('day')}-${v('month')}-${v('year')}`;
+}
+
+/**
+ * Título único do relatório (o navegador usa como nome sugerido ao "Salvar como PDF").
+ * Ordem: nome do cliente → código do acesso → só a data. Ex.: Orcamento-Joao-Silva-05-11-2026
+ */
+export function tituloPdf(dados: Partial<AppState> & Record<string, any>, acesso?: AcessoPdf, agora?: Date): string {
+  const nome = slugArquivo(acesso?.nome ?? dados?.nomeCliente ?? dados?.nomeEmpresa ?? dados?.nomeResponsavel);
+  const id = nome || slugArquivo(acesso?.codigo);
+  return ['Orcamento', id, dataArquivo(agora)].filter(Boolean).join('-');
 }
 
 export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
@@ -125,6 +154,7 @@ export function gerarHtmlPdf(dados: AppState, acesso?: AcessoPdf): string {
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<title>${esc(tituloPdf(dados, acesso))}</title>
 <style>
   @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }

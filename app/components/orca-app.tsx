@@ -5,6 +5,7 @@ import { edicaoVigente, formatarData } from '@/lib/meus-orcamentos';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
 import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
+import PainelTeste from './painel-teste';
 import StepImovel from './step-imovel';
 import StepComodos from './step-comodos';
 import StepPontos from './step-pontos';
@@ -102,6 +103,9 @@ export default function OrcaApp() {
           ) : null}
         </div>
       </div>
+
+      {/* Só aparece com NEXT_PUBLIC_MODO_TESTE=true */}
+      <PainelTeste />
     </div>
   );
 }

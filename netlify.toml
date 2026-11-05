@@ -1,3 +1,24 @@
+# ============================================================================
+# Variáveis de ambiente — defina no painel do Netlify:
+#   Site configuration → Environment variables → Add a variable
+#   (NUNCA coloque valores reais neste arquivo: ele vai para o GitHub.)
+#   Depois de criar ou alterar uma variável, faça um novo deploy
+#   (Deploys → Trigger deploy → Deploy site) para ela valer.
+#
+#   MP_ACCESS_TOKEN        Token do Mercado Pago (obrigatório).
+#                          TEST-...    → sandbox (pagamentos de teste)
+#                          APP_USR-... → produção (pagamentos reais)
+#   PRECO                  Preço do PDF em R$, com ponto decimal. Padrão: 5.90
+#   PIX_EXPIRA_MIN         Minutos até o QR Code Pix expirar. Padrão: 30 (mínimo 30)
+#   TESTE_SENHA            Senha da rota /api/pdf-teste (PDF de exemplo sem pagamento).
+#                          Deixe SEM definir em produção real: a rota passa a responder 404.
+#   NEXT_PUBLIC_MODO_TESTE 'true' mostra o painel de teste na página.
+#                          Deixe SEM definir em produção. Atenção: é embutida no
+#                          JavaScript durante o build — mudar exige novo deploy.
+#
+# Localmente, use um arquivo .env (já está no .gitignore), copiando de .env.example.
+# ============================================================================
+
 [build]
   command = "npm run build"
 

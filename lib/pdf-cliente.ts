@@ -6,8 +6,14 @@ export function imprimirHtml(html: string): void {
   f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
   f.srcdoc = html;
   f.onload = () => {
+    // Alguns navegadores sugerem o nome do arquivo pelo título da página principal, não do iframe:
+    // usa o <title> do relatório durante a impressão e restaura depois.
+    const tituloOriginal = document.title;
+    const tituloRelatorio = f.contentDocument?.title;
+    if (tituloRelatorio) document.title = tituloRelatorio;
     f.contentWindow?.focus();
     f.contentWindow?.print();
+    setTimeout(() => { document.title = tituloOriginal; }, 1_000);
     setTimeout(() => f.remove(), 60_000);
   };
   document.body.appendChild(f);
