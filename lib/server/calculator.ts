@@ -1,5 +1,6 @@
 import { AppState, Room, Pendencia, Totais } from '../types';
 import { tomadasNbr } from '../validacao';
+import { tomadasFisicas } from '../nbr5410-regras';
 
 /* ---------- helpers ---------- */
 function num(v: string | undefined | null): number {
@@ -7,22 +8,26 @@ function num(v: string | undefined | null): number {
   return isNaN(n) ? 0 : n;
 }
 
-function routeLen(r: Room): number {
-  return r?.via ? num(r?.dd) : num(r?.dq);
+/** Trajeto do quadro até o cômodo: direto (dq) ou pelo caminho de outro (trecho compartilhado dd + desvio dr). */
+export function routeLen(r: Room): number {
+  return r?.via ? num(r?.dd) + num(r?.dr) : num(r?.dq);
 }
 
-/** Fonte única de contagem de módulos (tomadas 'T*', 'USB'...), inclusive os montados junto a interruptores. */
+/**
+ * Fonte única de contagem de tomadas físicas por prefixo ('T' = tomadas, 'USB'), inclusive as montadas
+ * na caixa do interruptor. Dupla (T10D/T20D) conta 2, tripla (T10T/T20T) conta 3.
+ */
 export function countMods(r: Room, prefix: string): number {
   let c = 0;
   for (const p of r?.pontos ?? []) {
     for (const m of p?.mods ?? []) {
-      if ((m?.t ?? '').startsWith(prefix)) c++;
+      if ((m?.t ?? '').startsWith(prefix)) c += tomadasFisicas(m?.t);
     }
   }
-  // tomadas em interruptores
+  // tomadas na caixa do interruptor (não geram caixa extra)
   for (const cmd of r?.comandos ?? []) {
     for (const sw of cmd?.sws ?? []) {
-      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c++;
+      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c += tomadasFisicas(sw.tom);
     }
   }
   return c;
@@ -53,24 +58,21 @@ export function calcTotais(state: AppState): Totais {
   const porComodo: Totais['porComodo'] = [];
   let totalCaixas = 0, totalTomadas = 0, totalInterruptores = 0, totalUsb = 0, totalLuzes = 0, distEletroduto = 0;
 
-  // trunk: soma de routeLen sem repetir trecho compartilhado
-  const usedVia = new Set<string>();
+  // Trajetos até o quadro sem repetir trecho compartilhado: o dd de um cômodo "pelo caminho de outro" já está
+  // dentro da rota do cômodo de referência; soma-se só o desvio dr (+ o que exceder essa rota, que vira pendência).
+  const rooms = state?.rooms ?? [];
   let distTrunk = 0;
-  for (const r of state?.rooms ?? []) {
-    const rl = routeLen(r);
+  for (const r of rooms) {
     if (r?.via) {
-      // trecho dd contado só uma vez
-      if (!usedVia.has(r.via)) {
-        distTrunk += num(r.dd);
-        usedVia.add(r.via);
-      }
-      distTrunk += num(r.dr);
+      const pai = rooms.find((x) => x?.id === r.via);
+      const excesso = pai ? Math.max(0, num(r.dd) - routeLen(pai)) : num(r.dd);
+      distTrunk += num(r.dr) + excesso;
     } else {
-      distTrunk += rl;
+      distTrunk += num(r?.dq);
     }
   }
 
-  for (const r of state?.rooms ?? []) {
+  for (const r of rooms) {
     const nPontos = r?.pontos?.length ?? 0;
     const nLuzes = r?.luzes?.length ?? 0;
     const nSws = (r?.comandos ?? []).reduce((a: number, c: any) => a + (c?.sws?.length ?? 0), 0);
@@ -89,6 +91,7 @@ export function calcTotais(state: AppState): Totais {
       interruptores,
       luzes: nLuzes,
       distInterna: Math.round(dInterna * 10) / 10,
+      distTrajeto: Math.round(routeLen(r) * 10) / 10,
     });
 
     totalCaixas += caixas;
@@ -96,8 +99,11 @@ export function calcTotais(state: AppState): Totais {
     totalInterruptores += interruptores;
     totalUsb += usbCount;
     totalLuzes += nLuzes;
-    distEletroduto += dInterna + routeLen(r);
+    distEletroduto += dInterna;
   }
+  // Eletroduto da prévia = trechos internos + trajetos até o quadro (sem duplicar trecho compartilhado).
+  // Equipamentos não entram: o circuito deles é dimensionado só no PDF pago.
+  distEletroduto += distTrunk;
 
   return {
     totalCaixas,

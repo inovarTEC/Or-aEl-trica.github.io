@@ -6,7 +6,8 @@ export type TipoCobertura = 'Laje' | 'Forro de gesso' | 'Telhado aparente' | 'N�
 export type TipoRede = 'Monofásico' | 'Bifásico' | 'Trifásico' | 'Não sei' | '';
 export type AlturaP = 'baixa' | 'media' | 'alta';
 export type TipoCaixa = '4x2' | '4x4' | 'Redonda';
-export type TipoModulo = 'T10' | 'T10D' | 'T20' | 'T20D' | 'USB';
+/** D = dupla (2 tomadas físicas), T = tripla (3 tomadas físicas). */
+export type TipoModulo = 'T10' | 'T10D' | 'T10T' | 'T20' | 'T20D' | 'T20T' | 'USB';
 export type TipoInstalacao = 'Embutida na parede' | 'Aparente' | 'Pela laje' | '';
 export type TipoComando = 'IS' | 'IP' | 'II';
 export type TipoCaixaPass = 'Redonda' | '4x4' | '4x2';
@@ -92,6 +93,10 @@ export interface Equip {
   dint: string; // dist dentro do cômodo
   dist: string; // dist direta ao quadro
   alim: 'Unidade externa' | 'Unidade interna' | '';
+  /** Caixa do ponto do equipamento (opcional — orçamentos antigos não têm). */
+  cx?: '4x2' | '4x4';
+  /** O que vai na caixa: tomada 20A, tomada 20A dupla, borne/conector ou só tampa (ligação direta). */
+  ponto?: 'T20' | 'T20D' | 'borne' | 'tampa';
 }
 
 export interface AppState {
@@ -132,5 +137,7 @@ export interface Totais {
     interruptores: number;
     luzes: number;
     distInterna: number;
+    /** Trajeto do quadro até o cômodo (dq, ou dd + dr quando passa por outro cômodo). */
+    distTrajeto: number;
   }[];
 }
