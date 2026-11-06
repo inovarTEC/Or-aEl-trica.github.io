@@ -13,6 +13,9 @@ function defaultState(): AppState {
     rooms: [],
     equips: [],
     step: 0,
+    activeRoomId: '',
+    activeEquipId: '',
+    veioDaPrevia: false,
   };
 }
 
@@ -25,6 +28,9 @@ function saveState(dados: AppState) {
 interface StoreActions {
   setField: <K extends keyof AppState>(key: K, value: AppState[K]) => void;
   setStep: (step: number) => void;
+  setActiveRoomId: (id: string) => void;
+  setActiveEquipId: (id: string) => void;
+  setVeioDaPrevia: (v: boolean) => void;
   addRoom: (room: Room) => void;
   updateRoom: (id: string, patch: Partial<Room>) => void;
   removeRoom: (id: string) => void;
@@ -75,6 +81,9 @@ export const useStore = create<Store>((set) => {
     ...defaultState(),
     setField: (key, value) => update(() => ({ [key]: value } as any)),
     setStep: (step) => update(() => ({ step })),
+    setActiveRoomId: (activeRoomId) => update(() => ({ activeRoomId })),
+    setActiveEquipId: (activeEquipId) => update(() => ({ activeEquipId })),
+    setVeioDaPrevia: (veioDaPrevia) => update(() => ({ veioDaPrevia })),
     addRoom: (room) => update((s) => ({ rooms: [...(s?.rooms ?? []), room] })),
     updateRoom: (id, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], id, (r) => ({ ...r, ...patch })),

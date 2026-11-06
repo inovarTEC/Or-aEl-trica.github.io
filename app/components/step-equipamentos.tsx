@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Zap, Cpu, AlertTriangle, ClipboardList } from 'lucide-react';
 import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto } from '@/lib/ponto-equip';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -46,6 +46,19 @@ export default function StepEquipamentos() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [equips.length]);
 
+  // Vindo de uma pendência da prévia: rola até o equipamento indicado e limpa a marcação.
+  const refs = useRef<Record<string, HTMLDivElement | null>>({});
+  useEffect(() => {
+    const id = store.activeEquipId;
+    if (!id) return;
+    const t = setTimeout(() => {
+      refs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      store.setActiveEquipId('');
+    }, 150);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const selCls = 'mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm';
 
   return (
@@ -57,7 +70,7 @@ export default function StepEquipamentos() {
 
       <AnimatePresence mode="popLayout">
         {equips.map((e: Equip, idx: number) => (
-          <motion.div key={e?.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+          <motion.div key={e?.id} ref={(el: HTMLDivElement | null) => { refs.current[e?.id] = el; }} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
             <Card className="shadow-sm">
               <CardContent className="pt-4 pb-4 space-y-3">
                 <div className="flex items-center justify-between">

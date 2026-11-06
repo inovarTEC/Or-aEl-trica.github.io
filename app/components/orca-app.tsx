@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useStore } from '@/lib/store-cliente';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
+import { STEP_COMODOS, STEP_EQUIPAMENTOS, STEP_PREVIA } from '@/lib/navegacao';
 import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
 import StepImovel from './step-imovel';
@@ -73,6 +74,14 @@ export default function OrcaApp() {
 
       {/* Content */}
       <main className="flex-1 px-4 pb-4 pt-2">
+        {store.veioDaPrevia && step >= STEP_COMODOS && step <= STEP_EQUIPAMENTOS && (
+          <div className="max-w-2xl mx-auto mb-2">
+            <button type="button" onClick={() => { store.setVeioDaPrevia(false); store.setStep(STEP_PREVIA); }}
+              className="text-sm text-primary hover:underline">
+              ← Voltar à prévia
+            </button>
+          </div>
+        )}
         <CurrentStep />
       </main>
 

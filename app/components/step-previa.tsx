@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
+import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
 
 interface Previa {
   valor: number;
@@ -128,12 +129,16 @@ export default function StepPrevia() {
             <div className="space-y-2">
               {(totais?.porComodo ?? []).map((c: any) => (
                 <div key={c?.roomId} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                  <span className="text-sm font-medium">{c?.nome}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-medium mr-1">{c?.nome}</span>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => abrirPendencia({ step: STEP_COMODOS, roomId: c?.roomId }, store)}>Cômodo</Button>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => abrirPendencia({ step: STEP_PONTOS, roomId: c?.roomId }, store)}>Pontos</Button>
+                  </div>
                   <div className="flex gap-3 text-xs text-muted-foreground">
                     <span>{c?.caixas} cx</span>
                     <span>{c?.tomadas} tom</span>
                     <span>{c?.luzes} luz</span>
-                    <span>{c?.distInterna}m</span>
+                    <span>{(c?.distTrajeto ?? 0) > 0 ? `${c?.distInterna} m internos + ${c?.distTrajeto} m trajeto` : `${c?.distInterna} m`}</span>
                   </div>
                 </div>
               ))}
@@ -155,7 +160,7 @@ export default function StepPrevia() {
                   {p?.tipo === 'erro' ? <XCircle className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" /> :
                    p?.tipo === 'aviso' ? <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 mt-0.5 shrink-0" /> :
                    <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />}
-                  <span className="text-xs">{p?.msg}</span>
+                  <span className="text-xs underline cursor-pointer hover:text-primary" onClick={() => abrirPendencia(p, store)}>{p?.msg}</span>
                 </div>
               ))}
             </div>

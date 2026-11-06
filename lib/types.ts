@@ -108,6 +108,10 @@ export interface AppState {
   rooms: Room[];
   equips: Equip[];
   step: number;
+  /** Navegação (não vai ao servidor): cômodo/equipamento a abrir e se veio da prévia. */
+  activeRoomId: string;
+  activeEquipId: string;
+  veioDaPrevia: boolean;
 }
 
 /** Só os campos que alimentam o cálculo (é o que vai ao servidor). */

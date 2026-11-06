@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plug, Lightbulb, ToggleLeft, Plus, Trash2, MapPin, AlertTriangle, ClipboardList } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { toast } from 'sonner';
 
 const TIPOS_TOMADA: { v: TipoModulo; label: string }[] = [
@@ -28,7 +27,9 @@ const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um :
 export default function StepPontos() {
   const store = useStore();
   const rooms = store?.rooms ?? [];
-  const [activeRoom, setActiveRoom] = useState<string>(rooms?.[0]?.id ?? '');
+  // Cômodo ativo fica no store: a prévia pode abrir este passo já no cômodo certo.
+  const activeRoom = rooms.some((x: Room) => x?.id === store.activeRoomId) ? store.activeRoomId : (rooms?.[0]?.id ?? '');
+  const setActiveRoom = (id: string) => store.setActiveRoomId(id);
 
   const r = rooms.find((x: Room) => x?.id === activeRoom) ?? rooms?.[0];
   const nbr = r ? tomadasNbr(r) : null;
