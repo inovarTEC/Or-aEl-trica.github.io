@@ -1,6 +1,6 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo } from './types';
+import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando } from './types';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 
 function defaultState(): AppState {
@@ -45,6 +45,11 @@ interface StoreActions {
   removeModulo: (roomId: string, pontoId: string, modId: string) => void;
   addSw: (roomId: string, cmdId: string, sw: Sw) => void;
   removeSw: (roomId: string, cmdId: string, swId: string) => void;
+  updateSw: (roomId: string, cmdId: string, swId: string, patch: Partial<Sw>) => void;
+  /** Liga a luz ao comando indicado (tirando-a de qualquer outro). cmdId '' = desvincula. */
+  vincularLuzComando: (roomId: string, luzId: string, cmdId: string) => void;
+  /** Troca o tipo do comando ajustando a quantidade de caixas (IS=1, IP=2, II>=3). */
+  setTipoComando: (roomId: string, cmdId: string, t: TipoComando, novoSw: () => Sw) => void;
   /** Novo orçamento: apaga tudo do navegador (dados, Pix e PDF) e volta ao início. */
   resetState: () => void;
   hydrateFromStorage: () => void;
@@ -164,6 +169,36 @@ export const useStore = create<Store>((set) => {
         comandos: (r?.comandos ?? []).map((c: Comando) =>
           c?.id === cmdId ? { ...c, sws: (c?.sws ?? []).filter((sw: Sw) => sw?.id !== swId) } : c
         ),
+      })),
+    })),
+    updateSw: (roomId, cmdId, swId, patch) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) =>
+          c?.id === cmdId ? { ...c, sws: (c?.sws ?? []).map((sw: Sw) => sw?.id === swId ? { ...sw, ...patch } : sw) } : c
+        ),
+      })),
+    })),
+    vincularLuzComando: (roomId, luzId, cmdId) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) => {
+          const sem = (c?.luzes ?? []).filter((lid: string) => lid !== luzId);
+          return { ...c, luzes: c?.id === cmdId ? [...sem, luzId] : sem };
+        }),
+      })),
+    })),
+    setTipoComando: (roomId, cmdId, t, novoSw) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) => {
+          if (c?.id !== cmdId) return c;
+          let sws = [...(c?.sws ?? [])];
+          const min = t === 'IS' ? 1 : t === 'IP' ? 2 : 3;
+          while (sws.length < min) sws.push(novoSw());
+          if (t !== 'II') sws = sws.slice(0, min);
+          return { ...c, t, sws };
+        }),
       })),
     })),
     resetState: () => {
