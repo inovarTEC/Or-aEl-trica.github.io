@@ -24,6 +24,11 @@ export default function OrcaApp() {
   /** Avança só se a etapa atual estiver completa; mostra o que falta. */
   const avancar = () => {
     const erros = errosEtapa(store, step);
+    // Passo 4: cômodo do equipamento é recomendado (só aviso — não bloqueia; validacao.ts não muda nesta etapa).
+    if (step === 3 && erros.length === 0) {
+      const semComodo = (store.equips ?? []).filter((e) => !e?.room).length;
+      if (semComodo > 0) toast.warning(`${semComodo} equipamento(s) sem cômodo definido`, { description: 'Você pode voltar e informar o cômodo para um orçamento mais preciso.' });
+    }
     if (erros.length > 0) {
       toast.error(erros[0], { description: erros.length > 1 ? `e mais ${erros.length - 1} pendência(s) nesta etapa` : undefined });
       return;

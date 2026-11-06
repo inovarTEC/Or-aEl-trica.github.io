@@ -72,13 +72,33 @@ export function calcTotais(state: AppState): Totais {
     }
   }
 
+  // Ponto dos equipamentos: 1 caixa por equipamento com caixa definida; tomada 20A conta as tomadas físicas.
+  // Equipamento sem cômodo entra só no total geral.
+  const equipPorRoom = new Map<string, { caixas: number; tomadas: number }>();
+  let eqCaixasSemRoom = 0, eqTomadasSemRoom = 0;
+  for (const e of state?.equips ?? []) {
+    const cx = e?.cx ? 1 : 0;
+    const tom = e?.ponto === 'T20' || e?.ponto === 'T20D' ? tomadasFisicas(e.ponto) : 0;
+    if (!cx && !tom) continue;
+    if (e?.room && rooms.some((r) => r?.id === e.room)) {
+      const acc = equipPorRoom.get(e.room) ?? { caixas: 0, tomadas: 0 };
+      acc.caixas += cx; acc.tomadas += tom;
+      equipPorRoom.set(e.room, acc);
+    } else {
+      eqCaixasSemRoom += cx; eqTomadasSemRoom += tom;
+    }
+  }
+  totalCaixas += eqCaixasSemRoom;
+  totalTomadas += eqTomadasSemRoom;
+
   for (const r of rooms) {
+    const eq = equipPorRoom.get(r?.id ?? '') ?? { caixas: 0, tomadas: 0 };
     const nPontos = r?.pontos?.length ?? 0;
     const nLuzes = r?.luzes?.length ?? 0;
     const nSws = (r?.comandos ?? []).reduce((a: number, c: any) => a + (c?.sws?.length ?? 0), 0);
     const nCaixas = r?.caixas?.length ?? 0;
-    const caixas = nPontos + nSws + nLuzes + nCaixas;
-    const tomadas = countMods(r, 'T');
+    const caixas = nPontos + nSws + nLuzes + nCaixas + eq.caixas;
+    const tomadas = countMods(r, 'T') + eq.tomadas;
     const usbCount = countMods(r, 'USB');
     const interruptores = nSws;
     const dInterna = entre(r);
