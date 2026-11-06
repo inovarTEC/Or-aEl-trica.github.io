@@ -8,10 +8,32 @@ export const PONTO_LABEL: Record<PontoEquip, string> = {
   T20D: 'Tomada 20A dupla',
   borne: 'Borne/terminal',
   tampa: 'Tampa cega',
+  emenda: 'Emenda / Conector Wago (ligação direta)',
 };
 
-/** Sugestão visual (não aplicada automaticamente). */
-export function pontoSugerido(tipo: TipoEquip | string): PontoEquip | null {
+/** Corrente estimada (A): I = P / (V × 0,92). Bivolt usa 127 V (conservador). Sem dados → null. */
+export function correnteEquip(pot: string | undefined, tens: string | undefined): number | null {
+  const p = parseFloat(String(pot ?? ''));
+  const t = String(tens ?? '').toLowerCase() === 'bivolt' ? 127 : parseFloat(String(tens ?? ''));
+  if (!(p > 0) || !(t > 0)) return null;
+  return p / (t * 0.92);
+}
+
+export type AvisoCorrente = 'ok' | 'prefira20A' | 'ligacaoDireta';
+
+/** ≤10 A: tomada 10A/20A ok · ≤16 A: prefira 20A · >16 A: ligação direta (tampa cega + emenda/Wago). */
+export function avisoCorrente(I: number): AvisoCorrente {
+  if (I <= 10) return 'ok';
+  if (I <= 16) return 'prefira20A';
+  return 'ligacaoDireta';
+}
+
+/** Sugestão visual (não aplicada automaticamente). A corrente, quando informada, tem prioridade sobre o tipo. */
+export function pontoSugerido(tipo: TipoEquip | string, pot?: string, tens?: string): PontoEquip | null {
+  const I = correnteEquip(pot, tens);
+  if (I !== null && avisoCorrente(I) === 'ligacaoDireta') {
+    return tipo === 'Chuveiro elétrico' || tipo === 'Torneira elétrica' ? 'borne' : 'emenda';
+  }
   if (tipo === 'Chuveiro elétrico' || tipo === 'Torneira elétrica') return 'borne';
   if (['Ar-condicionado', 'Forno elétrico', 'Cooktop elétrico', 'Máquina de lavar', 'Secadora',
     'Carregador de veículo elétrico'].includes(tipo)) return 'T20';

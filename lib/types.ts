@@ -96,7 +96,7 @@ export interface Equip {
   /** Caixa do ponto do equipamento (opcional — orçamentos antigos não têm). */
   cx?: '4x2' | '4x4';
   /** O que vai na caixa: tomada 20A, tomada 20A dupla, borne/conector ou só tampa (ligação direta). */
-  ponto?: 'T20' | 'T20D' | 'borne' | 'tampa';
+  ponto?: 'T20' | 'T20D' | 'borne' | 'tampa' | 'emenda';
 }
 
 export interface AppState {

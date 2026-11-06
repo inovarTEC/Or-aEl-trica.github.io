@@ -82,7 +82,7 @@ const COBERTURA = ['', 'Laje', 'Forro de gesso', 'Telhado aparente', 'Não sei']
 const REDE = ['', 'Monofásico', 'Bifásico', 'Trifásico', 'Não sei'];
 const MODULO = ['T10', 'T10D', 'T10T', 'T20', 'T20D', 'T20T', 'USB'];
 const EQUIP_CX = ['4x2', '4x4'];
-const EQUIP_PONTO = ['T20', 'T20D', 'borne', 'tampa'];
+const EQUIP_PONTO = ['T20', 'T20D', 'borne', 'tampa', 'emenda'];
 const EQUIP = ['', 'Chuveiro elétrico', 'Torneira elétrica', 'Ar-condicionado', 'Forno elétrico', 'Cooktop elétrico',
   'Máquina de lavar', 'Secadora', 'Aquecedor', 'Bomba', 'Carregador de veículo elétrico', 'Outro'];
 const TENSAO = ['', '127V', '220V'];

@@ -1,6 +1,7 @@
 import { AppState, Room, Pendencia, Totais } from '../types';
 import { tomadasNbr } from '../validacao';
 import { tomadasFisicas } from '../nbr5410-regras';
+import { correnteEquip } from '../ponto-equip';
 
 /* ---------- helpers ---------- */
 function num(v: string | undefined | null): number {
@@ -200,6 +201,10 @@ export function calcPendencias(state: AppState): Pendencia[] {
     if (!e?.room) p.push({ tipo: 'aviso', msg: `${en}: cômodo não definido`, step: 3, equipId: e?.id });
     if (!e?.pot) p.push({ tipo: 'aviso', msg: `${en}: potência não informada`, step: 3, equipId: e?.id });
     if (!e?.tens) p.push({ tipo: 'aviso', msg: `${en}: tensão não informada`, step: 3, equipId: e?.id });
+    const I = correnteEquip(e?.pot, e?.tens);
+    if (I !== null && I > 16 && e?.ponto !== 'emenda' && e?.ponto !== 'borne') {
+      p.push({ tipo: 'aviso', msg: `${en}: corrente estimada ${I.toFixed(1).replace('.', ',')} A — considere ligação direta`, step: 3, equipId: e?.id });
+    }
   }
 
   return p;

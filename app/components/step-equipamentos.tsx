@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Zap, Cpu, AlertTriangle, ClipboardList } from 'lucide-react';
-import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto } from '@/lib/ponto-equip';
+import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto, correnteEquip, avisoCorrente } from '@/lib/ponto-equip';
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -130,6 +130,28 @@ export default function StepEquipamentos() {
                     <Input type="number" step="0.1" min="0" value={e?.dist ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { dist: semNegativo(ev?.target?.value) })} placeholder="0.0" className="mt-1" />
                   </div>
                 </div>
+                {(() => {
+                  const I = correnteEquip(e?.pot, e?.tens);
+                  if (I === null) return null;
+                  const av = avisoCorrente(I);
+                  return (
+                    <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                      <span className="text-muted-foreground">Corrente estimada: {I.toFixed(1).replace('.', ',')} A</span>
+                      {av === 'prefira20A' && (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">Prefira tomada 20A ou ligação direta</span>
+                      )}
+                      {av === 'ligacaoDireta' && (
+                        <>
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 font-medium text-red-700">Recomendado: ligação direta (Wago/emenda)</span>
+                          {e?.ponto !== 'emenda' && e?.ponto !== 'borne' && (
+                            <button type="button" onClick={() => store.updateEquip(e?.id ?? '', { ponto: 'emenda', cx: '4x2' })}
+                              className="text-primary hover:underline">usar sugestão</button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <div className="grid grid-cols-3 gap-3">
                   <div className="col-span-1">
@@ -166,7 +188,7 @@ export default function StepEquipamentos() {
                         {(Object.keys(PONTO_LABEL) as PontoEquip[]).map((k) => <option key={k} value={k}>{PONTO_LABEL[k]}</option>)}
                       </select>
                       {(() => {
-                        const sug = pontoSugerido(e?.tipo ?? '');
+                        const sug = pontoSugerido(e?.tipo ?? '', e?.pot, e?.tens);
                         return sug && e?.ponto !== sug ? (
                           <button type="button" onClick={() => store.updateEquip(e?.id ?? '', { ponto: sug })}
                             className="mt-1 text-[11px] text-primary hover:underline">Sugestão: {PONTO_LABEL[sug]} (usar)</button>
