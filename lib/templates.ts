@@ -29,6 +29,18 @@ function mkComandoSimples(luzIds: string[]): Comando {
   };
 }
 
+/**
+ * Distância padrão entre pontos (m) por tipo de cômodo:
+ * cozinha/copa/serviço/lavanderia/banheiro 1,0 · garagem/varanda/terraço/subsolo 2,0 ·
+ * sala, quarto, suíte e demais 1,5 (padrão).
+ */
+export function dpadPorTipo(tipo: string): string {
+  const t = (tipo ?? '').toLowerCase();
+  if (/cozinha|copa|servi|lavanderia|banheiro|lavabo/.test(t)) return '1.0';
+  if (/garagem|varanda|terra[cç]o|subsolo/.test(t)) return '2.0';
+  return '1.5';
+}
+
 function emptyRoom(base: string, nome: string): Room {
   return {
     id: uid(), base, nome,
@@ -36,7 +48,7 @@ function emptyRoom(base: string, nome: string): Room {
     medE: false,
     via: '', dq: '', dd: '', dr: '',
     dqE: false, ddE: false, drE: false,
-    dpad: '1.5', dpadE: true,
+    dpad: dpadPorTipo(`${base} ${nome}`), dpadE: true,
     pontos: [], luzes: [], comandos: [], caixas: [],
     luzAuto: true, inst: 'Embutida na parede', pe: '2.8', obs: '',
   };
