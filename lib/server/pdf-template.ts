@@ -252,9 +252,13 @@ export function gerarHtmlPdf(dados: AppState): string {
 <meta charset="utf-8">
 <title>${esc(tituloPdf(dados))}</title>
 <style>
-  @page { size: A4; margin: 22mm 20mm 28mm 20mm;
-    /* Número da página na margem inferior: o Chrome só resolve counter(page) em caixas de margem do @page */
-    @bottom-center { content: "Página " counter(page) " de " counter(pages); font-family: 'Segoe UI', Arial, sans-serif; font-size: 7.5pt; color: #94a3b8; vertical-align: top; padding-top: 2mm; }
+  @page { size: A4; margin: 22mm 20mm 32mm 20mm;
+    /* Rodapé inteiro (o Chrome só resolve counter(page) em caixas de margem do @page) na margem inferior: repete em todas as páginas e nunca cobre o conteúdo */
+    @bottom-center {
+      content: "OrçaElétrica — Orçamento de referência  ·  Página " counter(page) " de " counter(pages) "\\A Este documento é uma estimativa de referência e não substitui o projeto elétrico elaborado por profissional habilitado.";
+      white-space: pre; font-family: 'Segoe UI', Arial, sans-serif; font-size: 7.5pt; line-height: 1.5; color: #94a3b8; text-align: center;
+      vertical-align: top; padding-top: 4mm; border-top: 2px solid #2563EB; margin-top: 6mm;
+    }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; font-size: 10pt; color: #1a1a2e; line-height: 1.55; padding: 0 6px; }
@@ -309,20 +313,8 @@ export function gerarHtmlPdf(dados: AppState): string {
   .footer-fixo { margin-top: 32px; padding: 10px 0; border-top: 2px solid #2563EB; font-size: 7.5pt; color: #94a3b8; text-align: center; }
   .footer-fixo strong { color: #2563EB; }
   @media print {
-    .footer-fixo {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin-top: 0;
-      background: white;
-      border-top: 2px solid #2563EB;
-      padding: 6px 20px;
-      font-size: 7.5pt;
-      color: #94a3b8;
-      text-align: center;
-    }
-    .footer-fixo .pg-txt { display: none; }
+    /* Na impressão o rodapé vem do @page (acima); este bloco só aparece na visualização no navegador */
+    .footer-fixo { display: none !important; }
   }
 </style>
 </head>
