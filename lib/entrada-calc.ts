@@ -80,7 +80,8 @@ export function materiaisEntrada(e: EntradaPrincipal): MaterialEntrada[] {
   // Cabo e disjuntor: reservados ao PDF (a prévia gratuita não mostra bitola nem disjuntor).
   const nCondutores = e.sistema === 'trifasico' ? 5 : 3;
   items.push({ descricao: `Cabo ${e.bitola} mm² isolação 1 kV (alimentador)`, qtd: Math.ceil(percurso * nCondutores * 1.1), unidade: 'm', mostrarNaPrevia: false });
-  items.push({ descricao: `Disjuntor geral ${faixaDisjuntor(e.bitola)} (${e.sistema})`, qtd: 1, unidade: 'un', mostrarNaPrevia: false });
+  const sistemaLabel: Record<string, string> = { monofasico: 'Monofásico', bifasico: 'Bifásico', trifasico: 'Trifásico' };
+  items.push({ descricao: `Disjuntor geral ${faixaDisjuntor(e.bitola)} (${sistemaLabel[e.sistema] ?? e.sistema})`, qtd: 1, unidade: 'un', mostrarNaPrevia: false });
 
   const caixaTipo = e.sistema === 'monofasico' ? 'Monofásica' : e.sistema === 'bifasico' ? 'Bifásica' : 'Trifásica';
   items.push({ descricao: `Caixa padrão concessionária ${caixaTipo}`, qtd: 1, unidade: 'un', mostrarNaPrevia: true });
