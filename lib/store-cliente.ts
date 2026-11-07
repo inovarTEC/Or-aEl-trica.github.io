@@ -1,8 +1,9 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal } from './types';
+import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal, AterramentoPrincipal } from './types';
+import { aterramentoPadrao } from './aterramento-calc';
 import { entradaPadrao } from './entrada-calc';
-import { STEP_ENTRADA, STEP_PREVIA } from './navegacao';
+import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_PREVIA } from './navegacao';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 
 function defaultState(): AppState {
@@ -15,6 +16,7 @@ function defaultState(): AppState {
     rooms: [],
     equips: [],
     entrada: entradaPadrao(),
+    aterramento: aterramentoPadrao(),
     step: 0,
     activeRoomId: '',
     activeEquipId: '',
@@ -41,6 +43,7 @@ interface StoreActions {
   updateEquip: (id: string, patch: Partial<Equip>) => void;
   removeEquip: (id: string) => void;
   updateEntrada: (patch: Partial<EntradaPrincipal>) => void;
+  updateAterramento: (patch: Partial<AterramentoPrincipal>) => void;
   // Points helpers
   addPonto: (roomId: string, ponto: Ponto) => void;
   updatePonto: (roomId: string, pontoId: string, patch: Partial<Ponto>) => void;
@@ -104,6 +107,7 @@ export const useStore = create<Store>((set) => {
       equips: (s?.equips ?? []).filter((e: Equip) => e?.id !== id),
     })),
     updateEntrada: (patch) => update((s) => ({ entrada: { ...entradaPadrao(), ...(s?.entrada ?? {}), ...patch } })),
+    updateAterramento: (patch) => update((s) => ({ aterramento: { ...aterramentoPadrao(), ...(s?.aterramento ?? {}), ...patch } })),
     addPonto: (roomId, ponto) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({ ...r, pontos: [...(r?.pontos ?? []), ponto] })),
     })),
@@ -222,10 +226,15 @@ export const useStore = create<Store>((set) => {
     hydrateFromStorage: () => {
       const dados = carregarEstado()?.dados;
       if (!dados) return;
-      // Orçamentos salvos antes da Etapa 7 não têm `entrada`, e o passo 4 deles era a Prévia (hoje é a Entrada).
-      const antigo = !(dados as Partial<AppState>).entrada;
-      const step = antigo && (dados.step ?? 0) >= STEP_ENTRADA ? STEP_PREVIA : dados.step;
-      set({ ...defaultState(), ...dados, step, entrada: { ...entradaPadrao(), ...((dados as Partial<AppState>).entrada ?? {}) } });
+      // Orçamentos antigos: sem `entrada` a Prévia era o passo 4; sem `aterramento` era o passo 5. Levamos à Prévia atual.
+      const d = dados as Partial<AppState>;
+      const passo = dados.step ?? 0;
+      const step = (!d.entrada && passo >= STEP_ENTRADA) || (!d.aterramento && passo >= STEP_ATERRAMENTO) ? STEP_PREVIA : passo;
+      set({
+        ...defaultState(), ...dados, step,
+        entrada: { ...entradaPadrao(), ...(d.entrada ?? {}) },
+        aterramento: { ...aterramentoPadrao(), ...(d.aterramento ?? {}) },
+      });
     },
   };
 });

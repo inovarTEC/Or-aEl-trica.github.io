@@ -49,10 +49,10 @@ export function errosEtapa(s: DadosOrcamento, step: number): string[] {
   return e;
 }
 
-/** Índice da primeira etapa com erro (5 = todas OK; a Entrada, passo 4, só gera avisos). */
+/** Índice da primeira etapa com erro (6 = todas OK; Entrada e Aterramento, passos 4 e 5, só geram avisos). */
 export function primeiraEtapaInvalida(s: DadosOrcamento): number {
-  for (let i = 0; i < 5; i++) if (errosEtapa(s, i).length > 0) return i;
-  return 5;
+  for (let i = 0; i < 6; i++) if (errosEtapa(s, i).length > 0) return i;
+  return 6;
 }
 
 /** Todos os erros obrigatórios (usado antes de cobrar ou gerar o PDF). */
@@ -148,6 +148,14 @@ export function problemaEstrutura(d: any): string | null {
       || !texto(en.obs, LIM.obs)) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
   }
+  const at = d.aterramento;
+  if (at !== undefined) {
+    if (!at || typeof at !== 'object' || Array.isArray(at)) return 'aterramento inválido';
+    const inteiro = (v: unknown, max: number) => v === undefined || (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= max);
+    if (!inteiro(at.nHastes, 50) || !inteiro(at.nCaixasInspecao, 50) || !opcional(at.comprimentoHaste, ['2.4'])
+      || !opcional(at.bitolaCabo, ['6', '10']) || !texto(at.obs, LIM.obs)) return 'aterramento inválido';
+    if (!medida(at.distancia, LIM.metros)) return 'medida do aterramento inválida';
+  }
   return null;
 }
 
@@ -157,5 +165,6 @@ export function somenteDados(d: any): DadosOrcamento {
     imovel: d.imovel ?? '', obra: d.obra ?? '', cobertura: d.cobertura ?? '', rede: d.rede ?? '',
     rooms: d.rooms ?? [], equips: d.equips ?? [],
     ...(d.entrada ? { entrada: d.entrada } : {}),
+    ...(d.aterramento ? { aterramento: d.aterramento } : {}),
   };
 }

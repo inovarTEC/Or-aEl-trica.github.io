@@ -10,7 +10,8 @@ export const STEP_COMODOS = 1;
 export const STEP_PONTOS = 2;
 export const STEP_EQUIPAMENTOS = 3;
 export const STEP_ENTRADA = 4;
-export const STEP_PREVIA = 5;
+export const STEP_ATERRAMENTO = 5;
+export const STEP_PREVIA = 6;
 
 export function abrirPendencia(p: { step: number; roomId?: string; equipId?: string }, store: NavStore) {
   if (p.roomId) store.setActiveRoomId(p.roomId);

@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useStore } from '@/lib/store-cliente';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
-import { STEP_COMODOS, STEP_ENTRADA, STEP_PREVIA } from '@/lib/navegacao';
+import { STEP_ATERRAMENTO, STEP_COMODOS, STEP_PREVIA } from '@/lib/navegacao';
 import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
 import StepImovel from './step-imovel';
@@ -10,6 +10,7 @@ import StepComodos from './step-comodos';
 import StepPontos from './step-pontos';
 import StepEquipamentos from './step-equipamentos';
 import StepEntrada from './step-entrada';
+import StepAterramento from './step-aterramento';
 import StepPrevia from './step-previa';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react';
@@ -49,7 +50,7 @@ export default function OrcaApp() {
     store.setStep(s);
   };
 
-  const steps = [StepImovel, StepComodos, StepPontos, StepEquipamentos, StepEntrada, StepPrevia];
+  const steps = [StepImovel, StepComodos, StepPontos, StepEquipamentos, StepEntrada, StepAterramento, StepPrevia];
   const CurrentStep = steps[step] ?? StepImovel;
 
   return (
@@ -75,7 +76,7 @@ export default function OrcaApp() {
 
       {/* Content */}
       <main className="flex-1 px-4 pb-4 pt-2">
-        {store.veioDaPrevia && step >= STEP_COMODOS && step <= STEP_ENTRADA && (
+        {store.veioDaPrevia && step >= STEP_COMODOS && step <= STEP_ATERRAMENTO && (
           <div className="max-w-2xl mx-auto mb-2">
             <button type="button" onClick={() => { store.setVeioDaPrevia(false); store.setStep(STEP_PREVIA); }}
               className="text-sm text-primary hover:underline">

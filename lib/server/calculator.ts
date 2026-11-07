@@ -3,7 +3,8 @@ import { tomadasNbr } from '../validacao';
 import { tomadasFisicas } from '../nbr5410-regras';
 import { correnteEquip } from '../ponto-equip';
 import { avisosEntrada } from '../entrada-calc';
-import { STEP_ENTRADA } from '../navegacao';
+import { avisosAterramento } from '../aterramento-calc';
+import { STEP_ATERRAMENTO, STEP_ENTRADA } from '../navegacao';
 
 /* ---------- helpers ---------- */
 function num(v: string | undefined | null): number {
@@ -217,6 +218,11 @@ export function calcPendencias(state: AppState): Pendencia[] {
       if (!ent.percurso && a.msg.startsWith('Informe o percurso')) continue; // já coberto acima
       p.push({ tipo: 'aviso', msg: `Entrada: ${a.msg}`, step: STEP_ENTRADA });
     }
+  }
+
+  // Aterramento principal (passo 5). Sem `aterramento` (orçamentos antigos / fluxo do PDF) não gera pendência.
+  if (state?.aterramento) {
+    for (const a of avisosAterramento(state.aterramento)) p.push({ tipo: a.tipo, msg: `Aterramento: ${a.msg}`, step: STEP_ATERRAMENTO });
   }
 
   return p;

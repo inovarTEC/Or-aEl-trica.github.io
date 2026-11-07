@@ -2,7 +2,7 @@
 import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const STEPS = ['Imóvel', 'Cômodos', 'Pontos', 'Equipamentos', 'Entrada', 'Prévia'];
+const STEPS = ['Imóvel', 'Cômodos', 'Pontos', 'Equipamentos', 'Entrada', 'Aterramento', 'Prévia'];
 
 export default function ProgressBar({ step, onStepClick }: { step: number; onStepClick: (s: number) => void }) {
   return (

@@ -123,6 +123,16 @@ export interface EntradaPrincipal {
   obs: string;
 }
 
+/** Aterramento principal da casa (Etapa 8). */
+export interface AterramentoPrincipal {
+  nHastes: number;
+  comprimentoHaste: '2.4';
+  nCaixasInspecao: number;
+  bitolaCabo: '6' | '10';
+  distancia: string;
+  obs: string;
+}
+
 export interface AppState {
   id: string;
   imovel: TipoImovel;
@@ -132,6 +142,7 @@ export interface AppState {
   rooms: Room[];
   equips: Equip[];
   entrada: EntradaPrincipal;
+  aterramento: AterramentoPrincipal;
   step: number;
   /** Navegação (não vai ao servidor): cômodo/equipamento a abrir e se veio da prévia. */
   activeRoomId: string;
@@ -143,6 +154,7 @@ export interface AppState {
 export type DadosOrcamento = Pick<AppState, 'imovel' | 'obra' | 'cobertura' | 'rede' | 'rooms' | 'equips'> & {
   /** Opcional: orçamentos antigos e o fluxo do PDF não enviam a entrada. */
   entrada?: EntradaPrincipal;
+  aterramento?: AterramentoPrincipal;
 };
 
 export interface Pendencia {
