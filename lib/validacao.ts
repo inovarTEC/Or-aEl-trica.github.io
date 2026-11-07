@@ -133,7 +133,7 @@ export function problemaEstrutura(d: any): string | null {
     }
     for (const l of r.luzes ?? []) if (!l || !medida(l.d, LIM.metros)) return 'luz inválida';
     for (const c of r.comandos ?? []) {
-      if (!c || !lista(c.luzes, LIM.itens) || !lista(c.sws, 20)) return 'interruptor inválido';
+      if (!c || !lista(c.luzes, LIM.itens) || !lista(c.sws, 20) || !bool(c.comTomada)) return 'interruptor inválido';
       for (const sw of c.sws ?? []) if (!sw || !medida(sw.d, LIM.metros) || !(sw.tom === '' || sw.tom === undefined || MODULO.includes(sw.tom))) return 'interruptor inválido';
     }
   }

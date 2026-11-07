@@ -11,6 +11,14 @@ export function tomadasFisicas(t: string | undefined | null): number {
   return s ? 1 : 0;
 }
 
+/** Teclas por placa de interruptor: 1 a 3 luzes numa placa; acima disso, novas placas em grupos de 3 (0 luzes = 1 tecla). */
+export function gruposTeclas(nLuzes: number): number[] {
+  const n = Math.max(1, Math.floor(nLuzes || 0));
+  const g: number[] = [];
+  for (let r = n; r > 0; r -= 3) g.push(Math.min(3, r));
+  return g;
+}
+
 export const perimetro = (c: number, l: number): number => 2 * (c + l);
 
 /**

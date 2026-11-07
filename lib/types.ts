@@ -51,6 +51,8 @@ export interface Comando {
   t: TipoComando;
   luzes: string[]; // ids de Luz
   sws: Sw[];
+  /** Tomada simples 10A na mesma placa do interruptor (opcional; ausente = false). */
+  comTomada?: boolean;
 }
 
 export interface CaixaPassagem {
