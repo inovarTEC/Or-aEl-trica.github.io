@@ -2,6 +2,8 @@ import { AppState, Room, Pendencia, Totais } from '../types';
 import { tomadasNbr } from '../validacao';
 import { tomadasFisicas } from '../nbr5410-regras';
 import { correnteEquip } from '../ponto-equip';
+import { avisosEntrada } from '../entrada-calc';
+import { STEP_ENTRADA } from '../navegacao';
 
 /* ---------- helpers ---------- */
 function num(v: string | undefined | null): number {
@@ -204,6 +206,16 @@ export function calcPendencias(state: AppState): Pendencia[] {
     const I = correnteEquip(e?.pot, e?.tens);
     if (I !== null && I > 16 && e?.ponto !== 'emenda' && e?.ponto !== 'borne') {
       p.push({ tipo: 'aviso', msg: `${en}: corrente estimada ${I.toFixed(1).replace('.', ',')} A — considere ligação direta`, step: 3, equipId: e?.id });
+    }
+  }
+
+  // Entrada / alimentador (passo 4). Orçamentos sem `entrada` (antigos ou do fluxo do PDF) não geram pendência.
+  const ent = state?.entrada;
+  if (ent) {
+    if (!ent.percurso) p.push({ tipo: 'aviso', msg: 'Entrada: percurso não informado', step: STEP_ENTRADA });
+    for (const a of avisosEntrada(ent)) {
+      if (!ent.percurso && a.msg.startsWith('Informe o percurso')) continue; // já coberto acima
+      p.push({ tipo: 'aviso', msg: `Entrada: ${a.msg}`, step: STEP_ENTRADA });
     }
   }
 

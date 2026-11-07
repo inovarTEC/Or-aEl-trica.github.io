@@ -99,6 +99,30 @@ export interface Equip {
   ponto?: 'T20' | 'T20D' | 'borne' | 'tampa' | 'emenda';
 }
 
+export type TipoEntrada = 'aerea' | 'subterranea' | 'parede';
+export type SistemaAlimentacao = 'monofasico' | 'bifasico' | 'trifasico';
+export type BitolaCabo = '6' | '10' | '16';
+export type DiametroEletroduto = '3/4' | '1' | '1-1/4';
+export type TipoEletroduto = 'rigido' | 'flexivel';
+export type TipoPoste = '6m' | '7m' | 'nao-tem';
+
+/** Entrada / alimentador principal (Etapa 7). Campos numéricos ficam como string, como no resto do wizard. */
+export interface EntradaPrincipal {
+  tipoEntrada: TipoEntrada;
+  poste: TipoPoste;
+  sistema: SistemaAlimentacao;
+  sistemaManual: boolean;
+  bitola: BitolaCabo;
+  bitolaManual: boolean;
+  diametroEletroduto: DiametroEletroduto;
+  diametroManual: boolean;
+  tipoEletroduto: TipoEletroduto;
+  percurso: string;
+  tensao: string;
+  potenciaDemandada: string;
+  obs: string;
+}
+
 export interface AppState {
   id: string;
   imovel: TipoImovel;
@@ -107,6 +131,7 @@ export interface AppState {
   rede: TipoRede;
   rooms: Room[];
   equips: Equip[];
+  entrada: EntradaPrincipal;
   step: number;
   /** Navegação (não vai ao servidor): cômodo/equipamento a abrir e se veio da prévia. */
   activeRoomId: string;
@@ -115,7 +140,10 @@ export interface AppState {
 }
 
 /** Só os campos que alimentam o cálculo (é o que vai ao servidor). */
-export type DadosOrcamento = Pick<AppState, 'imovel' | 'obra' | 'cobertura' | 'rede' | 'rooms' | 'equips'>;
+export type DadosOrcamento = Pick<AppState, 'imovel' | 'obra' | 'cobertura' | 'rede' | 'rooms' | 'equips'> & {
+  /** Opcional: orçamentos antigos e o fluxo do PDF não enviam a entrada. */
+  entrada?: EntradaPrincipal;
+};
 
 export interface Pendencia {
   tipo: 'erro' | 'aviso' | 'info';

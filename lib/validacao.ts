@@ -49,10 +49,10 @@ export function errosEtapa(s: DadosOrcamento, step: number): string[] {
   return e;
 }
 
-/** Índice da primeira etapa com erro (4 = todas as etapas de dados estão OK). */
+/** Índice da primeira etapa com erro (5 = todas OK; a Entrada, passo 4, só gera avisos). */
 export function primeiraEtapaInvalida(s: DadosOrcamento): number {
-  for (let i = 0; i < 4; i++) if (errosEtapa(s, i).length > 0) return i;
-  return 4;
+  for (let i = 0; i < 5; i++) if (errosEtapa(s, i).length > 0) return i;
+  return 5;
 }
 
 /** Todos os erros obrigatórios (usado antes de cobrar ou gerar o PDF). */
@@ -86,6 +86,14 @@ const EQUIP_PONTO = ['T20', 'T20D', 'borne', 'tampa', 'emenda'];
 const EQUIP = ['', 'Chuveiro elétrico', 'Torneira elétrica', 'Ar-condicionado', 'Forno elétrico', 'Cooktop elétrico',
   'Máquina de lavar', 'Secadora', 'Aquecedor', 'Bomba', 'Carregador de veículo elétrico', 'Outro'];
 const TENSAO = ['', '127V', '220V'];
+const ENT_TIPO = ['aerea', 'subterranea', 'parede'];
+const ENT_POSTE = ['6m', '7m', 'nao-tem'];
+const ENT_SISTEMA = ['monofasico', 'bifasico', 'trifasico'];
+const ENT_BITOLA = ['6', '10', '16'];
+const ENT_DIAM = ['3/4', '1', '1-1/4'];
+const ENT_ELETRODUTO = ['rigido', 'flexivel'];
+const ENT_TENSAO = ['', '127', '220', '380'];
+const bool = (v: unknown) => v === undefined || typeof v === 'boolean';
 
 const LIM = { comodos: 60, itens: 200, equips: 60, texto: 120, obs: 500, metros: 1000, watts: 100_000 };
 
@@ -131,6 +139,15 @@ export function problemaEstrutura(d: any): string | null {
       || !opcional(q.cx, EQUIP_CX) || !opcional(q.ponto, EQUIP_PONTO)) return 'equipamento inválido';
     if (!medida(q.pot, LIM.watts) || !medida(q.dist, LIM.metros) || !medida(q.dint, LIM.metros)) return 'medida do equipamento inválida';
   }
+  const en = d.entrada;
+  if (en !== undefined) {
+    if (!en || typeof en !== 'object' || Array.isArray(en)) return 'entrada inválida';
+    if (!opcional(en.tipoEntrada, ENT_TIPO) || !opcional(en.poste, ENT_POSTE) || !opcional(en.sistema, ENT_SISTEMA)
+      || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
+      || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
+      || !texto(en.obs, LIM.obs)) return 'entrada inválida';
+    if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
+  }
   return null;
 }
 
@@ -139,5 +156,6 @@ export function somenteDados(d: any): DadosOrcamento {
   return {
     imovel: d.imovel ?? '', obra: d.obra ?? '', cobertura: d.cobertura ?? '', rede: d.rede ?? '',
     rooms: d.rooms ?? [], equips: d.equips ?? [],
+    ...(d.entrada ? { entrada: d.entrada } : {}),
   };
 }

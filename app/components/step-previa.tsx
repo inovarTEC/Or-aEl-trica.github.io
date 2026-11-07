@@ -34,7 +34,8 @@ export default function StepPrevia() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [local, setLocal] = useState<EstadoLocal | null>(null);
 
-  const dados = JSON.stringify(dadosDoOrcamento(store));
+  // A entrada vai só para a prévia (/api/calcular); dadosDoOrcamento segue igual para não mudar a assinatura do checkout.
+  const dados = JSON.stringify({ ...dadosDoOrcamento(store), entrada: store.entrada });
 
   // Releitura do estado salvo a cada abertura/fechamento do modal (o modal altera pagamento/entrega).
   useEffect(() => { setLocal(carregarEstado()); }, [showCheckout]);

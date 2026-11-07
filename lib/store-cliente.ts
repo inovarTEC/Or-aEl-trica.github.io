@@ -1,6 +1,8 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando } from './types';
+import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal } from './types';
+import { entradaPadrao } from './entrada-calc';
+import { STEP_ENTRADA, STEP_PREVIA } from './navegacao';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 
 function defaultState(): AppState {
@@ -12,6 +14,7 @@ function defaultState(): AppState {
     rede: '',
     rooms: [],
     equips: [],
+    entrada: entradaPadrao(),
     step: 0,
     activeRoomId: '',
     activeEquipId: '',
@@ -37,6 +40,7 @@ interface StoreActions {
   addEquip: (equip: Equip) => void;
   updateEquip: (id: string, patch: Partial<Equip>) => void;
   removeEquip: (id: string) => void;
+  updateEntrada: (patch: Partial<EntradaPrincipal>) => void;
   // Points helpers
   addPonto: (roomId: string, ponto: Ponto) => void;
   updatePonto: (roomId: string, pontoId: string, patch: Partial<Ponto>) => void;
@@ -99,6 +103,7 @@ export const useStore = create<Store>((set) => {
     removeEquip: (id) => update((s) => ({
       equips: (s?.equips ?? []).filter((e: Equip) => e?.id !== id),
     })),
+    updateEntrada: (patch) => update((s) => ({ entrada: { ...entradaPadrao(), ...(s?.entrada ?? {}), ...patch } })),
     addPonto: (roomId, ponto) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({ ...r, pontos: [...(r?.pontos ?? []), ponto] })),
     })),
@@ -216,7 +221,11 @@ export const useStore = create<Store>((set) => {
     },
     hydrateFromStorage: () => {
       const dados = carregarEstado()?.dados;
-      if (dados) set({ ...defaultState(), ...dados });
+      if (!dados) return;
+      // Orçamentos salvos antes da Etapa 7 não têm `entrada`, e o passo 4 deles era a Prévia (hoje é a Entrada).
+      const antigo = !(dados as Partial<AppState>).entrada;
+      const step = antigo && (dados.step ?? 0) >= STEP_ENTRADA ? STEP_PREVIA : dados.step;
+      set({ ...defaultState(), ...dados, step, entrada: { ...entradaPadrao(), ...((dados as Partial<AppState>).entrada ?? {}) } });
     },
   };
 });

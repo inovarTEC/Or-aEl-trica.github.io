@@ -1,0 +1,179 @@
+'use client';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { AlertTriangle, Lock, PlugZap, Package } from 'lucide-react';
+import { useStore } from '@/lib/store-cliente';
+import { semNegativo } from '@/lib/validacao';
+import {
+  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirBitola, sugerirDiametro, sugerirSistema,
+  tensaoDoSistema, tipoEletrodutoPadrao,
+} from '@/lib/entrada-calc';
+import type {
+  BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste,
+} from '@/lib/types';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+const selCls = 'mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm';
+const sug = (manual: boolean) => (manual ? '' : ' (sugerido)');
+
+export default function StepEntrada() {
+  const store = useStore();
+  const e: EntradaPrincipal = { ...entradaPadrao(), ...(store?.entrada ?? {}) };
+  const up = (patch: Partial<EntradaPrincipal>) => store.updateEntrada(patch);
+
+  const potKw = parseFloat(e.potenciaDemandada) || 0;
+  const percurso = parseFloat(e.percurso) || 0;
+
+  // Sugestões automáticas: só mexem nos campos que o usuário não sobrescreveu.
+  useEffect(() => {
+    const patch: Partial<EntradaPrincipal> = {};
+    const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerirSistema(potKw);
+    if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema); }
+    if (!e.bitolaManual) { const b = sugerirBitola(percurso, sistema); if (b !== e.bitola) patch.bitola = b; }
+    if (!e.diametroManual) { const d = sugerirDiametro(sistema); if (d !== e.diametroEletroduto) patch.diametroEletroduto = d; }
+    if (Object.keys(patch).length) up(patch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [potKw, percurso, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
+
+  const materiais = materiaisEntrada(e).filter((m) => m.mostrarNaPrevia);
+  const avisos = avisosEntrada(e);
+  const aerea = e.tipoEntrada === 'aerea';
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-2xl mx-auto">
+      <div className="text-center mb-4">
+        <h2 className="text-2xl font-bold tracking-tight">Entrada de energia</h2>
+        <p className="text-muted-foreground mt-1">Alimentador principal: do padrão da concessionária até o quadro</p>
+      </div>
+
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4 space-y-4">
+          <div className="flex items-center gap-2">
+            <PlugZap className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold">Dados da entrada</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Tipo de entrada</Label>
+              <select value={e.tipoEntrada} className={selCls}
+                onChange={(ev) => { const t = ev.target.value as TipoEntrada; up({ tipoEntrada: t, tipoEletroduto: tipoEletrodutoPadrao(t) }); }}>
+                <option value="aerea">Aérea</option>
+                <option value="subterranea">Subterrânea</option>
+                <option value="parede">Pela parede</option>
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs">Poste</Label>
+              <select value={e.poste} className={selCls} onChange={(ev) => up({ poste: ev.target.value as TipoPoste })}>
+                <option value="nao-tem">Sem poste</option>
+                <option value="6m">6 m</option>
+                <option value="7m">7 m</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Percurso total (m)</Label>
+              <Input type="number" step="0.1" min="0" value={e.percurso} placeholder="Ex: 15" className="mt-1"
+                onChange={(ev) => up({ percurso: semNegativo(ev.target.value) })} />
+              <p className="mt-1 text-[11px] text-muted-foreground">Inclua descidas, curvas e percurso horizontal</p>
+            </div>
+            <div>
+              <Label className="text-xs">Potência estimada (kW)</Label>
+              <Input type="number" step="0.1" min="0" value={e.potenciaDemandada} placeholder="Ex: 8" className="mt-1"
+                onChange={(ev) => up({ potenciaDemandada: semNegativo(ev.target.value) })} />
+              <p className="mt-1 text-[11px] text-muted-foreground">Soma das cargas principais; fator de demanda NBR 5410:2025 em breve</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Sistema{sug(e.sistemaManual)}</Label>
+              <select value={e.sistema} className={selCls}
+                onChange={(ev) => { const s = ev.target.value as SistemaAlimentacao; up({ sistema: s, tensao: tensaoDoSistema(s), sistemaManual: true }); }}>
+                <option value="monofasico">Monofásico 220V</option>
+                <option value="bifasico">Bifásico 220V</option>
+                <option value="trifasico">Trifásico 380V</option>
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs">Bitola do cabo{sug(e.bitolaManual)}</Label>
+              <select value={e.bitola} className={selCls} onChange={(ev) => up({ bitola: ev.target.value as BitolaCabo, bitolaManual: true })}>
+                <option value="6">6 mm²</option>
+                <option value="10">10 mm²</option>
+                <option value="16">16 mm²</option>
+              </select>
+            </div>
+          </div>
+
+          {!aerea && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Diâmetro do eletroduto{sug(e.diametroManual)}</Label>
+                <select value={e.diametroEletroduto} className={selCls}
+                  onChange={(ev) => up({ diametroEletroduto: ev.target.value as DiametroEletroduto, diametroManual: true })}>
+                  <option value="3/4">¾"</option>
+                  <option value="1">1"</option>
+                  <option value="1-1/4">1¼"</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-xs">Tipo de eletroduto</Label>
+                <select value={e.tipoEletroduto} className={selCls} onChange={(ev) => up({ tipoEletroduto: ev.target.value as TipoEletroduto })}>
+                  <option value="rigido">Rígido</option>
+                  <option value="flexivel">Flexível corrugado</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <Label className="text-xs">Observações</Label>
+            <textarea value={e.obs} maxLength={500} rows={3} className={selCls} placeholder="Ex: padrão já existente, trocar só o cabo"
+              onChange={(ev) => up({ obs: ev.target.value })} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {avisos.length > 0 && (
+        <Card className="shadow-sm">
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-500" /> Avisos ({avisos.length})
+            </p>
+            <ul className="space-y-1">
+              {avisos.map((a, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs">
+                  <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 mt-0.5 shrink-0" /> {a.msg}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4">
+          <p className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <Package className="w-4 h-4 text-primary" /> Prévia dos materiais
+          </p>
+          <div className="space-y-1">
+            {materiais.map((m, i) => (
+              <div key={i} className="flex items-center justify-between py-1 border-b border-border/50 last:border-0 text-sm">
+                <span>{m.descricao}</span>
+                <span className="text-xs text-muted-foreground whitespace-nowrap ml-3">{m.qtd} {m.unidade}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-dashed flex items-center gap-2 text-xs text-muted-foreground">
+            <Lock className="w-3.5 h-3.5" /> Bitola, disjuntor e detalhamento completo inclusos no PDF
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
