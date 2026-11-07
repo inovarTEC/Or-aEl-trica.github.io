@@ -40,9 +40,11 @@ export default function StepComodos() {
   };
 
   const handleRemove = (r: Room) => {
-    const hasData = (r?.pontos?.length ?? 0) > 0 || (r?.luzes?.length ?? 0) > 0;
+    const nEquips = (store?.equips ?? []).filter((e) => e?.room === r?.id).length;
+    const hasData = (r?.pontos?.length ?? 0) > 0 || (r?.luzes?.length ?? 0) > 0 || nEquips > 0;
     if (hasData) {
-      if (!confirm(`Remover "${r?.nome || r?.base}"? Os pontos e luzes deste cômodo serão perdidos.`)) return;
+      const extra = nEquips > 0 ? ` e ${nEquips === 1 ? '1 equipamento' : `${nEquips} equipamentos`}` : '';
+      if (!confirm(`Remover "${r?.nome || r?.base}"? Os pontos, luzes${extra} deste cômodo serão perdidos.`)) return;
     }
     store.removeRoom(r?.id ?? '');
     toast.success('Cômodo removido');

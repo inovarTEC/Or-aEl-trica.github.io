@@ -95,9 +95,14 @@ export const useStore = create<Store>((set) => {
     updateRoom: (id, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], id, (r) => ({ ...r, ...patch })),
     })),
+    // Remove o cômodo (com seus pontos, luzes, comandos e caixas), os equipamentos dele
+    // e qualquer rota de outro cômodo que passava por ele.
     removeRoom: (id) => update((s) => ({
-      rooms: (s?.rooms ?? []).filter((r: Room) => r?.id !== id),
-      equips: (s?.equips ?? []).map((e: Equip) => e?.room === id ? { ...e, room: '' } : e),
+      rooms: (s?.rooms ?? [])
+        .filter((r: Room) => r?.id !== id)
+        .map((r: Room) => r?.via === id ? { ...r, via: '' } : r),
+      equips: (s?.equips ?? []).filter((e: Equip) => e?.room !== id),
+      activeRoomId: s?.activeRoomId === id ? '' : s?.activeRoomId,
     })),
     addEquip: (equip) => update((s) => ({ equips: [...(s?.equips ?? []), equip] })),
     updateEquip: (id, patch) => update((s) => ({
