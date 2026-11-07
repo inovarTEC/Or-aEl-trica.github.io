@@ -9,7 +9,7 @@ import {
   tensaoDoSistema, tipoEletrodutoPadrao,
 } from '@/lib/entrada-calc';
 import type {
-  BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste,
+  BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste, UnidadeEletroduto,
 } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -126,6 +126,13 @@ export default function StepEntrada() {
                 <select value={e.tipoEletroduto} className={selCls} onChange={(ev) => up({ tipoEletroduto: ev.target.value as TipoEletroduto })}>
                   <option value="rigido">Rígido</option>
                   <option value="flexivel">Flexível corrugado</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-xs">Eletroduto em:</Label>
+                <select value={e.unidadeEletroduto ?? 'metro'} className={selCls} onChange={(ev) => up({ unidadeEletroduto: ev.target.value as UnidadeEletroduto })}>
+                  <option value="metro">Metros</option>
+                  <option value="peca3m">Peças de 3 m</option>
                 </select>
               </div>
             </div>
