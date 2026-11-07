@@ -133,7 +133,7 @@ export function problemaEstrutura(d: any): string | null {
     }
     for (const l of r.luzes ?? []) if (!l || !medida(l.d, LIM.metros)) return 'luz inválida';
     for (const c of r.comandos ?? []) {
-      if (!c || !lista(c.luzes, LIM.itens) || !lista(c.sws, 20)) return 'interruptor inválido';
+      if (!c || !lista(c.luzes, LIM.itens) || !lista(c.sws, 20) || !bool(c.comTomada)) return 'interruptor inválido';
       for (const sw of c.sws ?? []) if (!sw || !medida(sw.d, LIM.metros) || !(sw.tom === '' || sw.tom === undefined || MODULO.includes(sw.tom))) return 'interruptor inválido';
     }
   }
@@ -149,7 +149,7 @@ export function problemaEstrutura(d: any): string | null {
       || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
       || !opcional(en.unidadeEletroduto, ENT_UNIDADE)
       || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
-      || !texto(en.obs, LIM.obs)) return 'entrada inválida';
+      || !texto(en.obs, LIM.obs) || !bool(en.incluirNoPdf)) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
   }
   const at = d.aterramento;
@@ -157,7 +157,7 @@ export function problemaEstrutura(d: any): string | null {
     if (!at || typeof at !== 'object' || Array.isArray(at)) return 'aterramento inválido';
     const inteiro = (v: unknown, max: number) => v === undefined || (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= max);
     if (!inteiro(at.nHastes, 50) || !inteiro(at.nCaixasInspecao, 50) || !opcional(at.comprimentoHaste, ['2.4'])
-      || !opcional(at.bitolaCabo, ['6', '10']) || !texto(at.obs, LIM.obs)) return 'aterramento inválido';
+      || !opcional(at.bitolaCabo, ['6', '10']) || !texto(at.obs, LIM.obs) || !bool(at.incluirNoPdf)) return 'aterramento inválido';
     if (!medida(at.distancia, LIM.metros)) return 'medida do aterramento inválida';
   }
   return null;

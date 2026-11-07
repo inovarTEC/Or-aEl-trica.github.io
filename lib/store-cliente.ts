@@ -49,6 +49,11 @@ interface StoreActions {
   updatePonto: (roomId: string, pontoId: string, patch: Partial<Ponto>) => void;
   removePonto: (roomId: string, pontoId: string) => void;
   addLuz: (roomId: string, luz: Luz) => void;
+  /**
+   * Adiciona a luz já ligada a um interruptor: sem comandos cria um novo (novoComando);
+   * com 1 ou mais, liga ao último adicionado (pode ser trocado depois).
+   */
+  addLuzVinculada: (roomId: string, luz: Luz, novoComando: () => Comando) => void;
   updateLuz: (roomId: string, luzId: string, patch: Partial<Luz>) => void;
   removeLuz: (roomId: string, luzId: string) => void;
   addComando: (roomId: string, cmd: Comando) => void;
@@ -95,9 +100,14 @@ export const useStore = create<Store>((set) => {
     updateRoom: (id, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], id, (r) => ({ ...r, ...patch })),
     })),
+    // Remove o cômodo (com seus pontos, luzes, comandos e caixas), os equipamentos dele
+    // e qualquer rota de outro cômodo que passava por ele.
     removeRoom: (id) => update((s) => ({
-      rooms: (s?.rooms ?? []).filter((r: Room) => r?.id !== id),
-      equips: (s?.equips ?? []).map((e: Equip) => e?.room === id ? { ...e, room: '' } : e),
+      rooms: (s?.rooms ?? [])
+        .filter((r: Room) => r?.id !== id)
+        .map((r: Room) => r?.via === id ? { ...r, via: '' } : r),
+      equips: (s?.equips ?? []).filter((e: Equip) => e?.room !== id),
+      activeRoomId: s?.activeRoomId === id ? '' : s?.activeRoomId,
     })),
     addEquip: (equip) => update((s) => ({ equips: [...(s?.equips ?? []), equip] })),
     updateEquip: (id, patch) => update((s) => ({
@@ -125,6 +135,15 @@ export const useStore = create<Store>((set) => {
     })),
     addLuz: (roomId, luz) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({ ...r, luzes: [...(r?.luzes ?? []), luz] })),
+    })),
+    addLuzVinculada: (roomId, luz, novoComando) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => {
+        const cmds = r?.comandos ?? [];
+        const comandos = cmds.length === 0
+          ? [{ ...novoComando(), luzes: [luz.id] }]
+          : cmds.map((c: Comando, i: number) => i === cmds.length - 1 ? { ...c, luzes: [...(c?.luzes ?? []), luz.id] } : c);
+        return { ...r, luzes: [...(r?.luzes ?? []), luz], comandos };
+      }),
     })),
     updateLuz: (roomId, luzId, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({

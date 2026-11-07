@@ -1,10 +1,11 @@
 'use client';
 import { useStore } from '@/lib/store-cliente';
-import { uid } from '@/lib/templates';
+import { uid, tomadaPadrao } from '@/lib/templates';
 import { luzCount } from '@/lib/luz';
 import { Room, Ponto, Luz, Comando, Sw, TipoComando, TipoModulo } from '@/lib/types';
 import { resumoComodo, modulosDe, modulosSw, caixaPorModulos } from '@/lib/resumo-comodo';
 import { tomadasNbr, semNegativo } from '@/lib/validacao';
+import { gruposTeclas } from '@/lib/nbr5410-regras';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,12 +40,36 @@ export default function StepPontos() {
 
   const addTomada = () => {
     if (!r) return;
-    store.addPonto(r.id, { id: uid(), h: 'baixa', d: '', cx: '4x2', mods: [{ id: uid(), t: 'T10' }] });
+    const t = tomadaPadrao(`${r.base ?? ''} ${r.nome ?? ''}`);
+    store.addPonto(r.id, { id: uid(), h: 'baixa', d: '', cx: caixaPorModulos(modulosDe(t)), mods: [{ id: uid(), t }] });
     toast.success('Tomada adicionada');
   };
+  const novoComandoIS = (): Comando => ({ id: uid(), t: 'IS', luzes: [], sws: [novoSw()] });
+  /** Nova luz já vinculada: sem interruptor cria um simples; com 1 ou mais, liga ao último. */
   const addLuz = () => {
     if (!r) return;
-    store.addLuz(r.id, { id: uid(), d: '', cx: 'Redonda' });
+    store.addLuzVinculada(r.id, { id: uid(), d: '', cx: 'Redonda' }, novoComandoIS);
+  };
+  /** Select "Interruptor:" da luz — '__novo__' cria um interruptor simples e liga a luz a ele. */
+  const trocarInterruptorDaLuz = (luzId: string, valor: string) => {
+    if (!r) return;
+    if (valor === '__novo__') {
+      const cmd = novoComandoIS();
+      store.addComando(r.id, cmd);
+      store.vincularLuzComando(r.id, luzId, cmd.id);
+      toast.success('Interruptor adicionado');
+      return;
+    }
+    store.vincularLuzComando(r.id, luzId, valor);
+  };
+  /** Checkbox "Com tomada na mesma placa": grava comTomada e põe/tira a tomada 10A na 1ª caixa. */
+  const setComTomada = (cmd: Comando, marcado: boolean) => {
+    if (!r) return;
+    store.updateComando(r.id, cmd.id, { comTomada: marcado });
+    const sw = cmd.sws?.[0];
+    if (!sw) return;
+    if (marcado && !sw.tom) store.updateSw(r.id, cmd.id, sw.id, { tom: 'T10', cx: caixaPorModulos(modulosSw('T10')) });
+    if (!marcado && sw.tom) store.updateSw(r.id, cmd.id, sw.id, { tom: '', cx: caixaPorModulos(modulosSw('')) });
   };
   const addInterruptor = () => {
     if (!r) return;
@@ -183,13 +208,14 @@ export default function StepPontos() {
                         <option value="4x4">Caixa 4×4</option>
                         <option value="4x2">Caixa 4×2</option>
                       </select>
-                      <span className="text-xs text-muted-foreground">Comandado por:</span>
-                      <select value={cmd?.id ?? ''} onChange={(e: any) => store.vincularLuzComando(r.id, luz?.id ?? '', e?.target?.value ?? '')}
+                      <span className="text-xs text-muted-foreground">Interruptor:</span>
+                      <select value={cmd?.id ?? ''} onChange={(e: any) => trocarInterruptorDaLuz(luz?.id ?? '', e?.target?.value ?? '')}
                         className={selCls}>
-                        <option value="">Nenhum</option>
+                        {!cmd && <option value="">Nenhum</option>}
                         {(r?.comandos ?? []).map((c: Comando, i: number) => (
                           <option key={c?.id} value={c?.id}>Interruptor {i + 1} ({NOME_CMD[c?.t ?? 'IS']})</option>
                         ))}
+                        <option value="__novo__">Novo interruptor</option>
                       </select>
                       <button type="button" onClick={() => {
                         if (luz?.id) { store.removeLuz(r.id, luz.id); toast.success('Luz removida'); }
@@ -227,6 +253,14 @@ export default function StepPontos() {
                       <option value="II">Intermediário (liga de 3+ pontos)</option>
                     </select>
                     <span className="text-xs text-muted-foreground">→ {plural(cmd?.luzes?.length ?? 0, 'luz', 'luzes')}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      · placa {gruposTeclas(cmd?.luzes?.length ?? 0).map((n) => `${n} ${n === 1 ? 'tecla' : 'teclas'}`).join(' + ')}
+                    </span>
+                    <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                      <input type="checkbox" className="accent-primary" checked={!!cmd?.comTomada || !!cmd?.sws?.[0]?.tom}
+                        onChange={(e: any) => setComTomada(cmd, !!e?.target?.checked)} />
+                      Com tomada na mesma placa
+                    </label>
                     <button type="button" onClick={() => { store.removeComando(r.id, cmd?.id ?? ''); toast.success('Interruptor removido'); }}
                       className="text-destructive hover:text-destructive/80 ml-auto"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>

@@ -75,6 +75,11 @@ export default function StepAterramento() {
             <textarea value={a.obs} maxLength={500} rows={3} className={selCls}
               onChange={(ev) => up({ obs: ev.target.value })} />
           </div>
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="checkbox" className="accent-primary" checked={a.incluirNoPdf !== false}
+              onChange={(ev) => up({ incluirNoPdf: ev.target.checked })} />
+            Incluir materiais do aterramento no orçamento (PDF)
+          </label>
         </CardContent>
       </Card>
 

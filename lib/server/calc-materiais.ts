@@ -1,7 +1,8 @@
 /* ===== Motor de cálculo de materiais (NBR 5410) ===== */
-import { AppState, Room } from '../types';
+import { AppState, Comando, Room } from '../types';
 import { countMods } from './calculator';
-import { tomadasFisicas } from '../nbr5410-regras';
+import { tomadasFisicas, gruposTeclas } from '../nbr5410-regras';
+export { gruposTeclas };
 import { materiaisEntrada } from '../entrada-calc';
 import { materiaisAterramento } from '../aterramento-calc';
 import {
@@ -16,6 +17,7 @@ import {
 } from './nbr5410';
 
 /* ---------- Helpers ---------- */
+
 function num(v: string | number | undefined | null): number {
   if (typeof v === 'number') return v;
   const n = parseFloat(v ?? '');
@@ -314,7 +316,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
 
   // Disjuntor geral: um só. Se a etapa Entrada foi preenchida, vale o da entrada (lançado abaixo).
   const polosGeral = rede === 'Trifásico' ? 'tripolar' : rede === 'Bifásico' ? 'bipolar' : 'monopolar';
-  const temEntrada = !!state.entrada?.tipoEntrada;
+  const temEntrada = !!state.entrada?.tipoEntrada && state.entrada?.incluirNoPdf !== false;
   if (!temEntrada) {
     materiais.push({
       item: `Disjuntor geral ${djGeral}A`,
@@ -338,7 +340,15 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   // aparente (sobrepor): condulete + tampa, com tomadas e interruptores de sobrepor.
   let cx4x2 = 0, cx4x4 = 0, cxRedonda = 0;
   let sob4x2 = 0, sob4x4 = 0, sobLuz = 0, sobCega = 0, tampa4x2 = 0, tampa4x4 = 0;
-  let tomSob10 = 0, tomSob20 = 0, tomSobUsb = 0, intSob = 0;
+  let tomSob10 = 0, tomSob20 = 0, tomSobUsb = 0;
+  // Interruptores: placas por nº de teclas (= luzes do comando, em grupos de até 3).
+  const placasTeclas: Record<string, number> = {};
+  const intSobTeclas: Record<number, number> = {};
+  const tomJunto: Record<string, number> = {};
+  let swCx4x2 = 0, swCx4x4 = 0, cxExtraTeclas = 0;
+  const somar = (m: Record<string | number, number>, k: string | number, n = 1) => { m[k] = (m[k] ?? 0) + n; };
+  /** Tomada que vai na placa do interruptor: a escolhida no Sw ou, pelo checkbox, uma simples 10A. */
+  const tomadaDoSw = (cmd: Comando, si: number): string => (cmd.sws?.[si]?.tom || (si === 0 && cmd.comTomada ? 'T10' : ''));
   const somarTomadasSobrepor = (t: string | undefined) => {
     const n = tomadasFisicas(t);
     if (!n) return;
@@ -354,11 +364,15 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       }
       sobLuz += (r.luzes ?? []).length;
       for (const cmd of r.comandos ?? []) {
-        for (const sw of cmd.sws ?? []) {
+        const grupos = gruposTeclas((cmd.luzes ?? []).length);
+        (cmd.sws ?? []).forEach((sw, si) => {
           if (sw.cx === '4x4') { sob4x4++; tampa4x4++; } else { sob4x2++; tampa4x2++; }
-          intSob++;
-          somarTomadasSobrepor(sw.tom || undefined);
-        }
+          grupos.forEach((teclas, gi) => {
+            somar(intSobTeclas, teclas);
+            if (gi > 0) { sob4x2++; tampa4x2++; } // placa extra = condulete extra
+          });
+          somarTomadasSobrepor(tomadaDoSw(cmd, si) || undefined);
+        });
       }
       for (const cx of r.caixas ?? []) {
         if (cx.tipo === '4x4') sob4x4++;
@@ -377,9 +391,18 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       else cx4x2++;
     }
     for (const cmd of r.comandos ?? []) {
-      for (const sw of cmd.sws ?? []) {
-        if (sw.cx === '4x4') cx4x4++; else cx4x2++;
-      }
+      const grupos = gruposTeclas((cmd.luzes ?? []).length);
+      (cmd.sws ?? []).forEach((sw, si) => {
+        if (sw.cx === '4x4') { cx4x4++; swCx4x4++; } else { cx4x2++; swCx4x2++; }
+        const tom = tomadaDoSw(cmd, si);
+        grupos.forEach((teclas, gi) => {
+          const tam = gi === 0 ? (sw.cx === '4x4' ? '4x4' : '4x2') : '4x2';
+          const comTom = gi === 0 && !!tom;
+          somar(placasTeclas, `${tam}|${teclas}|${comTom ? 1 : 0}`);
+          if (gi > 0) cxExtraTeclas++; // mais de 3 luzes: segunda placa em outra caixa 4x2
+        });
+        if (tom) somar(tomJunto, tom, tomadasFisicas(tom));
+      });
     }
     for (const cx of r.caixas ?? []) {
       if (cx.tipo === '4x4') cx4x4++;
@@ -387,13 +410,32 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       else cx4x2++;
     }
   }
+  cx4x2 += cxExtraTeclas;
   if (cx4x2 > 0) materiais.push({ item: 'Caixa de embutir 4x2', qtd: cx4x2, unidade: 'un' });
   if (cx4x4 > 0) materiais.push({ item: 'Caixa de embutir 4x4', qtd: cx4x4, unidade: 'un' });
   if (cxRedonda > 0) materiais.push({ item: 'Caixa redonda (fundo)', qtd: cxRedonda, unidade: 'un', detalhe: 'Embutir na laje/forro' });
 
-  // Placas (embutido)
-  if (cx4x2 > 0) materiais.push({ item: 'Placa 4x2', qtd: cx4x2, unidade: 'un', detalhe: 'Com espelho' });
-  if (cx4x4 > 0) materiais.push({ item: 'Placa 4x4', qtd: cx4x4, unidade: 'un', detalhe: 'Com espelho' });
+  // Placas (embutido): tomadas, luzes e passagens levam placa comum; interruptores, placa por nº de teclas.
+  const placa4x2 = cx4x2 - swCx4x2 - cxExtraTeclas;
+  const placa4x4 = cx4x4 - swCx4x4;
+  if (placa4x2 > 0) materiais.push({ item: 'Placa 4x2', qtd: placa4x2, unidade: 'un', detalhe: 'Com espelho' });
+  if (placa4x4 > 0) materiais.push({ item: 'Placa 4x4', qtd: placa4x4, unidade: 'un', detalhe: 'Com espelho' });
+  const NOME_TECLAS: Record<number, string> = { 1: 'simples', 2: 'duplo', 3: 'triplo' };
+  for (const chave of Object.keys(placasTeclas).sort()) {
+    const [tam, teclas, comTom] = chave.split('|');
+    const n = Number(teclas);
+    materiais.push({
+      item: `Placa ${tam} ${n} ${n === 1 ? 'tecla' : 'teclas'}${comTom === '1' ? ' + tomada' : ''}`,
+      qtd: placasTeclas[chave],
+      unidade: 'un',
+      detalhe: `Interruptor ${NOME_TECLAS[n]} — ${n} ${n === 1 ? 'luz' : 'luzes'} no conjunto`,
+    });
+  }
+  const ROTULO_TOM: Record<string, string> = { T10: '10A', T20: '20A', USB: 'USB' };
+  for (const [t, q] of Object.entries(tomJunto)) {
+    const base = t === 'USB' ? 'USB' : t.startsWith('T20') ? 'T20' : 'T10';
+    materiais.push({ item: `Tomada ${ROTULO_TOM[base]} na placa do interruptor`, qtd: q, unidade: 'un', detalhe: 'Mesma placa do interruptor' });
+  }
 
   // Aparente (sobrepor)
   const DET_SOB = 'Instalação aparente (sobrepor)';
@@ -406,7 +448,9 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   if (tomSob10 > 0) materiais.push({ item: 'Tomada de sobrepor 2P+T 10A', qtd: tomSob10, unidade: 'un', detalhe: DET_SOB });
   if (tomSob20 > 0) materiais.push({ item: 'Tomada de sobrepor 2P+T 20A', qtd: tomSob20, unidade: 'un', detalhe: DET_SOB });
   if (tomSobUsb > 0) materiais.push({ item: 'Tomada USB de sobrepor', qtd: tomSobUsb, unidade: 'un', detalhe: DET_SOB });
-  if (intSob > 0) materiais.push({ item: 'Interruptor de sobrepor', qtd: intSob, unidade: 'un', detalhe: DET_SOB });
+  for (const teclas of Object.keys(intSobTeclas).map(Number).sort((a, b) => a - b)) {
+    materiais.push({ item: `Interruptor de sobrepor ${teclas} ${teclas === 1 ? 'tecla' : 'teclas'}`, qtd: intSobTeclas[teclas], unidade: 'un', detalhe: DET_SOB });
+  }
 
   // Conectores / emendas
   const totalConexoes = circuitos.length * 4; // estimativa
@@ -424,7 +468,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   }
 
   // Materiais da entrada / alimentador principal
-  if (temEntrada && state.entrada) {
+  if (temEntrada && state.entrada && state.entrada.incluirNoPdf !== false) {
     for (const m of materiaisEntrada(state.entrada)) {
       const ehGeral = m.descricao.startsWith('Disjuntor geral');
       materiais.push({
@@ -439,7 +483,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   }
 
   // Materiais do aterramento principal
-  if (state.aterramento && state.aterramento.nHastes > 0) {
+  if (state.aterramento && state.aterramento.nHastes > 0 && state.aterramento.incluirNoPdf !== false) {
     for (const m of materiaisAterramento(state.aterramento)) {
       materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Sistema de aterramento' });
     }

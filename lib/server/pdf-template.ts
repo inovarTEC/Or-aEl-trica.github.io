@@ -1,6 +1,6 @@
 /* ===== Template HTML do PDF do Orçamento Elétrico ===== */
 import { AppState, Room } from '../types';
-import { calcTotais, calcPendencias } from './calculator';
+import { calcTotais } from './calculator';
 import { calcularMateriais, CircuitoCalc, ResultadoCalculo } from './calc-materiais';
 
 function num(v: string | number | undefined | null): number {
@@ -84,7 +84,6 @@ function redeComTensao(rede: string | undefined): string {
 
 export function gerarHtmlPdf(dados: AppState): string {
   const totais = calcTotais(dados);
-  const pendencias = calcPendencias(dados);
   const resultado: ResultadoCalculo = calcularMateriais(dados);
   const dataAtual = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' });
   const cliente = nomeCliente(dados as AppState & Record<string, any>);
@@ -202,7 +201,7 @@ export function gerarHtmlPdf(dados: AppState): string {
 
   /* ---------- Entrada / alimentador ---------- */
   const ent = dados.entrada;
-  const entradaHtml = `
+  const entradaHtml = dados.entrada?.incluirNoPdf === false ? '' : `
     <div class="section">
       <h2>Entrada / Alimentador Principal</h2>
       ${ent && ent.tipoEntrada ? `
@@ -221,7 +220,7 @@ export function gerarHtmlPdf(dados: AppState): string {
 
   /* ---------- Aterramento ---------- */
   const at = dados.aterramento;
-  const aterramentoHtml = `
+  const aterramentoHtml = dados.aterramento?.incluirNoPdf === false ? '' : `
     <div class="section">
       <h2>Sistema de Aterramento</h2>
       ${at && num(at.nHastes) > 0 ? `
@@ -235,21 +234,6 @@ export function gerarHtmlPdf(dados: AppState): string {
     </div>
   `;
 
-  /* ---------- Pendências ---------- */
-  const pendHtml = pendencias.length > 0 ? `
-    <div class="section">
-      <h2>Pendências</h2>
-      <p class="note">Os itens abaixo precisam ser revisados para um orçamento mais preciso.</p>
-      <ul class="pend">
-        ${pendencias.map(p => `<li class="${esc(p.tipo)}">${esc(p.msg)}</li>`).join('')}
-      </ul>
-    </div>
-  ` : `
-    <div class="section">
-      <h2>Pendências</h2>
-      <p class="ok">✓ Nenhuma pendência encontrada. Todos os dados foram preenchidos.</p>
-    </div>
-  `;
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -436,7 +420,6 @@ ${aterramentoHtml}
   </table>
 </div>
 
-${pendHtml}
 </div>
 
 <!-- Afiliados -->

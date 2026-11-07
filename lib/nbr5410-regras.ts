@@ -11,6 +11,14 @@ export function tomadasFisicas(t: string | undefined | null): number {
   return s ? 1 : 0;
 }
 
+/** Teclas por placa de interruptor: 1 a 3 luzes numa placa; acima disso, novas placas em grupos de 3 (0 luzes = 1 tecla). */
+export function gruposTeclas(nLuzes: number): number[] {
+  const n = Math.max(1, Math.floor(nLuzes || 0));
+  const g: number[] = [];
+  for (let r = n; r > 0; r -= 3) g.push(Math.min(3, r));
+  return g;
+}
+
 export const perimetro = (c: number, l: number): number => 2 * (c + l);
 
 /**
@@ -48,3 +56,12 @@ export const POTENCIAS_TIPICAS: Record<string, { pot: number; tens: number }> = 
   'Bomba': { pot: 750, tens: 220 },
   'Carregador de veículo elétrico': { pot: 7400, tens: 220 },
 };
+
+/** Ar-condicionado: capacidades comerciais (BTU/h) e potência elétrica estimada (W). */
+export const AC_BTU_OPTIONS = [7000, 9000, 12000, 18000, 24000, 30000];
+/** Bomba: potências comerciais (CV). */
+export const BOMBA_CV_OPTIONS = [0.5, 1, 1.5, 2];
+/** Potência elétrica estimada do ar-condicionado: BTU/h ÷ 3,517 (W térmicos) ÷ COP ≈ 3,2. */
+export function btuParaWatts(btu: number): number { return Math.round(btu / 3.517 / 3.2); }
+/** 1 CV = 736 W. */
+export function cvParaWatts(cv: number): number { return Math.round(cv * 736); }
