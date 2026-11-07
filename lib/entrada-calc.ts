@@ -75,7 +75,7 @@ export function materiaisEntrada(e: EntradaPrincipal): MaterialEntrada[] {
     const diam = e.diametroEletroduto;
     if (e.unidadeEletroduto === 'peca3m') {
       const barras = Math.ceil(percurso * 1.1 / 3);
-      items.push({ descricao: `${descTipo} ${diam}" (barra 3 m) para alimentador`, qtd: barras, unidade: 'barra', mostrarNaPrevia: true });
+      items.push({ descricao: `${descTipo} ${diam}" (barra 3 m) para alimentador`, qtd: barras, unidade: barras === 1 ? 'barra' : 'barras', mostrarNaPrevia: true });
       items.push({ descricao: `Luva ${diam}"`, qtd: Math.max(0, barras - 1), unidade: 'un', mostrarNaPrevia: true });
       items.push({ descricao: `Curva 90° ${diam}"`, qtd: 2, unidade: 'un', mostrarNaPrevia: true });
     } else {

@@ -272,7 +272,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     metrosCanaleta += metros;
     const barras = Math.ceil(metrosFolga / 2);
     const curvas = nCirc * 2; // saída do quadro + chegada no cômodo (estimativa)
-    materiais.push({ item: `Canaleta PVC com tampa (equiv. eletroduto ${dn}mm)`, qtd: barras, unidade: 'barra', detalhe: `Barras de 2 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente` });
+    materiais.push({ item: `Canaleta PVC com tampa (equiv. eletroduto ${dn}mm)`, qtd: barras, unidade: barras === 1 ? 'barra' : 'barras', detalhe: `Barras de 2 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente` });
     materiais.push({ item: `Emenda para canaleta (equiv. ${dn}mm)`, qtd: Math.max(0, barras - 1), unidade: 'un', detalhe: 'Uma entre cada par de barras' });
     materiais.push({ item: `Curva 90° para canaleta (equiv. ${dn}mm)`, qtd: curvas, unidade: 'un', detalhe: 'Estimativa: 2 por circuito' });
   }
@@ -292,7 +292,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     const barras = Math.ceil(metrosFolga / 3);
     const nAbr = Math.ceil(metrosFolga);
     abracadeiras += nAbr;
-    materiais.push({ item: `Eletroduto rígido PVC aparente ${dn}mm (barra 3 m)`, qtd: barras, unidade: 'barra', detalhe: `Barras de 3 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente (sobrepor)` });
+    materiais.push({ item: `Eletroduto rígido PVC aparente ${dn}mm (barra 3 m)`, qtd: barras, unidade: barras === 1 ? 'barra' : 'barras', detalhe: `Barras de 3 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente (sobrepor)` });
     materiais.push({ item: `Luva de emenda ${dn}mm`, qtd: Math.max(0, barras - 1), unidade: 'un', detalhe: 'Eletroduto aparente — uma entre cada par de barras' });
     materiais.push({ item: `Curva 90° ${dn}mm`, qtd: nCirc * 2, unidade: 'un', detalhe: 'Eletroduto aparente — estimativa: 2 por circuito' });
     materiais.push({ item: `Abraçadeira tipo D para eletroduto ${dn}mm`, qtd: nAbr, unidade: 'un', detalhe: 'Uma a cada 1 m' });

@@ -97,7 +97,7 @@ t('aparente eletroduto em barras de 3 m: barras, luvas (barras−1) e curvas por
   const barras = g.reduce((a, x) => a + Math.ceil(x.metros * 1.1 / 3), 0);
   const luvas = g.reduce((a, x) => a + Math.max(0, Math.ceil(x.metros * 1.1 / 3) - 1), 0);
   assert.equal(soma(r.materiais, /^Eletroduto rígido PVC aparente \d+mm \(barra 3 m\)$/), barras);
-  assert.ok(r.materiais.filter((m) => /barra 3 m/.test(m.item)).every((m) => m.unidade === 'barra'));
+  assert.ok(r.materiais.filter((m) => /barra 3 m/.test(m.item)).every((m) => /^barras?$/.test(m.unidade)));
   assert.equal(soma(r.materiais, /^Luva de emenda \d+mm$/), luvas);
   assert.equal(soma(r.materiais, /^Curva 90° \d+mm$/), r.circuitos.length * 2);
   assert.ok(soma(r.materiais, /^Abraçadeira tipo D/) > 0);
