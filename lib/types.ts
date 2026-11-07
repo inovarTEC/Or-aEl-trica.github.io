@@ -9,6 +9,8 @@ export type TipoCaixa = '4x2' | '4x4' | 'Redonda';
 /** D = dupla (2 tomadas físicas), T = tripla (3 tomadas físicas). */
 export type TipoModulo = 'T10' | 'T10D' | 'T10T' | 'T20' | 'T20D' | 'T20T' | 'USB';
 export type TipoInstalacao = 'Embutida na parede' | 'Aparente' | 'Pela laje' | '';
+/** Material usado quando a instalação do cômodo é aparente (sobrepor). */
+export type MaterialAparente = 'canaleta' | 'eletroduto_metro' | 'eletroduto_peca3m';
 export type TipoComando = 'IS' | 'IP' | 'II';
 export type TipoCaixaPass = 'Redonda' | '4x4' | '4x2';
 export type TipoEquip = 
@@ -80,6 +82,8 @@ export interface Room {
   caixas: CaixaPassagem[];
   luzAuto: boolean;
   inst: TipoInstalacao;
+  /** Só vale quando inst === 'Aparente'. Ausente = canaleta (orçamentos antigos). */
+  materialAparente?: MaterialAparente;
   pe: string; // pé-direito
   obs: string;
 }
@@ -105,6 +109,8 @@ export type BitolaCabo = '6' | '10' | '16';
 export type DiametroEletroduto = '3/4' | '1' | '1-1/4';
 export type TipoEletroduto = 'rigido' | 'flexivel';
 export type TipoPoste = '6m' | '7m' | 'nao-tem';
+/** Como o eletroduto do alimentador é comprado: em metros ou em barras de 3 m. */
+export type UnidadeEletroduto = 'metro' | 'peca3m';
 
 /** Entrada / alimentador principal (Etapa 7). Campos numéricos ficam como string, como no resto do wizard. */
 export interface EntradaPrincipal {
@@ -117,6 +123,8 @@ export interface EntradaPrincipal {
   diametroEletroduto: DiametroEletroduto;
   diametroManual: boolean;
   tipoEletroduto: TipoEletroduto;
+  /** Opcional (orçamentos antigos não têm). Ausente = metro. */
+  unidadeEletroduto?: UnidadeEletroduto;
   percurso: string;
   tensao: string;
   potenciaDemandada: string;

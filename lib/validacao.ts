@@ -92,6 +92,8 @@ const ENT_SISTEMA = ['monofasico', 'bifasico', 'trifasico'];
 const ENT_BITOLA = ['6', '10', '16'];
 const ENT_DIAM = ['3/4', '1', '1-1/4'];
 const ENT_ELETRODUTO = ['rigido', 'flexivel'];
+const ENT_UNIDADE = ['metro', 'peca3m'];
+const MATERIAL_APARENTE = ['canaleta', 'eletroduto_metro', 'eletroduto_peca3m'];
 const ENT_TENSAO = ['', '127', '220', '380'];
 const bool = (v: unknown) => v === undefined || typeof v === 'boolean';
 
@@ -122,6 +124,7 @@ export function problemaEstrutura(d: any): string | null {
   for (const r of d.rooms) {
     if (!r || typeof r !== 'object' || typeof r.id !== 'string' || r.id.length > 64) return 'cômodo inválido';
     if (!texto(r.nome, LIM.texto) || !texto(r.base, LIM.texto) || !texto(r.via, 64) || !texto(r.obs, LIM.obs)) return 'texto do cômodo inválido';
+    if (!opcional(r.materialAparente, MATERIAL_APARENTE)) return 'material aparente inválido';
     for (const k of ['c', 'l', 'dq', 'dd', 'dr', 'dpad', 'pe']) if (!medida(r[k], LIM.metros)) return `medida "${k}" inválida`;
     for (const k of ['pontos', 'luzes', 'comandos', 'caixas']) if (!lista(r[k], LIM.itens)) return `${k} inválido`;
     for (const p of r.pontos ?? []) {
@@ -144,6 +147,7 @@ export function problemaEstrutura(d: any): string | null {
     if (!en || typeof en !== 'object' || Array.isArray(en)) return 'entrada inválida';
     if (!opcional(en.tipoEntrada, ENT_TIPO) || !opcional(en.poste, ENT_POSTE) || !opcional(en.sistema, ENT_SISTEMA)
       || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
+      || !opcional(en.unidadeEletroduto, ENT_UNIDADE)
       || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
       || !texto(en.obs, LIM.obs)) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
