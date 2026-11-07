@@ -134,7 +134,7 @@ export function bitolaCircuito(
 /* ---------- DISJUNTOR ---------- */
 
 /** Correntes nominais comerciais de disjuntores (A) */
-const DISJUNTORES = [6, 10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100];
+const DISJUNTORES = [10, 16, 20, 25, 32, 40, 50, 63, 70, 80, 100];
 
 /** Capacidade de condução do condutor pela seção (2 cond carregados, B1) */
 function capCondutor(secao: number, cond: 2 | 3 = 2): number {
