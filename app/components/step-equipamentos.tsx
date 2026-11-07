@@ -2,7 +2,7 @@
 import { useStore } from '@/lib/store-cliente';
 import { uid } from '@/lib/templates';
 import { semNegativo } from '@/lib/validacao';
-import { POTENCIAS_TIPICAS } from '@/lib/nbr5410-regras';
+import { POTENCIAS_TIPICAS, AC_BTU_OPTIONS, BOMBA_CV_OPTIONS, btuParaWatts, cvParaWatts } from '@/lib/nbr5410-regras';
 import { Equip, Room, TipoEquip, Tensao } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -110,6 +110,27 @@ export default function StepEquipamentos() {
                     {!e?.room && <p className="mt-1 text-[11px] text-destructive">Informe o cômodo do equipamento</p>}
                   </div>
                 </div>
+
+                {(e?.tipo === 'Ar-condicionado' || e?.tipo === 'Bomba') && (
+                  <div>
+                    <Label className="text-xs">{e?.tipo === 'Bomba' ? 'Potência da bomba (CV)' : 'Capacidade (BTU/h)'}</Label>
+                    <select defaultValue="" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
+                      onChange={(ev: any) => {
+                        const v = parseFloat(ev?.target?.value);
+                        if (!v) return;
+                        const w = e?.tipo === 'Bomba' ? cvParaWatts(v) : btuParaWatts(v);
+                        store.updateEquip(e?.id ?? '', { pot: String(w) });
+                      }}>
+                      <option value="">Selecione para preencher a potência…</option>
+                      {(e?.tipo === 'Bomba' ? BOMBA_CV_OPTIONS : AC_BTU_OPTIONS).map((v) => (
+                        <option key={v} value={v}>
+                          {e?.tipo === 'Bomba' ? `${String(v).replace('.', ',')} CV (≈ ${cvParaWatts(v)} W)` : `${v.toLocaleString('pt-BR')} BTU/h (≈ ${btuParaWatts(v)} W)`}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Preenche a potência em watts; você pode ajustar o valor abaixo.</p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
