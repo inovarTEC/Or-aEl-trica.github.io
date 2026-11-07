@@ -1,6 +1,8 @@
 /* ===== Motor de cálculo de materiais (NBR 5410) ===== */
 import { AppState, Room } from '../types';
 import { countMods } from './calculator';
+import { materiaisEntrada } from '../entrada-calc';
+import { materiaisAterramento } from '../aterramento-calc';
 import {
   potenciaIluminacao,
   potenciaTUG,
@@ -301,6 +303,20 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   // Abraçadeiras
   const totalEletroduto = Object.values(eletroPorDN).reduce((a, b) => a + Number(b), 0);
   materiais.push({ item: 'Abraçadeira para eletroduto', qtd: Math.ceil(totalEletroduto / 0.6), unidade: 'un', detalhe: 'A cada 60 cm' });
+
+  // Materiais da entrada / alimentador principal
+  if (state.entrada?.tipoEntrada) {
+    for (const m of materiaisEntrada(state.entrada)) {
+      materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Entrada / alimentador principal' });
+    }
+  }
+
+  // Materiais do aterramento principal
+  if (state.aterramento && state.aterramento.nHastes > 0) {
+    for (const m of materiaisAterramento(state.aterramento)) {
+      materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Sistema de aterramento' });
+    }
+  }
 
   return { circuitos, quadro, materiais };
 }
