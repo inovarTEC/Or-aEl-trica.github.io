@@ -63,6 +63,48 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
       return r;
     },
   },
+  // Suítes: só o quarto; o banheiro da suíte é adicionado como cômodo separado.
+  {
+    label: 'Suíte 1 (básica)',
+    desc: '2 tomadas duplas, 1 luz, 1 interruptor',
+    icon: 'Bed',
+    create: () => {
+      const r = emptyRoom('Quarto', 'Suíte 1');
+      r.pontos = [mkPonto('baixa', [{ t: 'T10D' }]), mkPonto('baixa', [{ t: 'T10D' }])];
+      const luz = mkLuz();
+      r.luzes = [luz];
+      r.comandos = [mkComandoSimples([luz.id])];
+      return r;
+    },
+  },
+  {
+    label: 'Suíte 2 (padrão)',
+    desc: '3 tomadas duplas, 1 luz, 1 interruptor',
+    icon: 'Bed',
+    create: () => {
+      const r = emptyRoom('Quarto', 'Suíte 2');
+      r.dpad = '1.5';
+      r.pontos = Array.from({ length: 3 }, () => mkPonto('baixa', [{ t: 'T10D' }]));
+      const luz = mkLuz();
+      r.luzes = [luz];
+      r.comandos = [mkComandoSimples([luz.id])];
+      return r;
+    },
+  },
+  {
+    label: 'Suíte 3 (luxo)',
+    desc: '4 tomadas duplas, 2 luzes, 1 interruptor',
+    icon: 'Bed',
+    create: () => {
+      const r = emptyRoom('Quarto', 'Suíte 3');
+      r.dpad = '1.5';
+      r.pontos = Array.from({ length: 4 }, () => mkPonto('baixa', [{ t: 'T10D' }]));
+      const l1 = mkLuz(); const l2 = mkLuz();
+      r.luzes = [l1, l2];
+      r.comandos = [mkComandoSimples([l1.id, l2.id])]; // as duas luzes no mesmo interruptor
+      return r;
+    },
+  },
   {
     label: 'Sala típica',
     desc: '5 tomadas, 2 luzes, 1 interruptor',
