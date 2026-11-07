@@ -242,6 +242,13 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
                   <h3 className="text-lg font-bold">Pague com Pix</h3>
                   <p className="text-sm text-muted-foreground">Escaneie o QR Code ou copie o código</p>
                 </div>
+                <div className="flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-800">
+                  <span className="mt-0.5 text-base leading-none">🔒</span>
+                  <span>
+                    <strong>Pagamento 100% seguro via Mercado Pago</strong> — líder em pagamentos na América Latina.
+                    Após a confirmação do Pix, seu PDF detalhado é liberado automaticamente.
+                  </span>
+                </div>
                 <div className="flex justify-center">
                   <div className="w-52 h-52 bg-white rounded-xl flex items-center justify-center p-2">
                     {pedido.qrBase64

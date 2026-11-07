@@ -13,6 +13,8 @@ import {
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
+import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
+import { AFILIADOS, LINK_NOSSOS_APPS } from '@/lib/afiliados';
 
 interface Previa {
   valor: number;
@@ -32,8 +34,10 @@ export default function StepPrevia() {
   const [falha, setFalha] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [local, setLocal] = useState<EstadoLocal | null>(null);
+  const [cep, setCep] = useState('');
 
-  const dados = JSON.stringify(dadosDoOrcamento(store));
+  // A entrada vai só para a prévia (/api/calcular); dadosDoOrcamento segue igual para não mudar a assinatura do checkout.
+  const dados = JSON.stringify({ ...dadosDoOrcamento(store), entrada: store.entrada, aterramento: store.aterramento });
 
   // Releitura do estado salvo a cada abertura/fechamento do modal (o modal altera pagamento/entrega).
   useEffect(() => { setLocal(carregarEstado()); }, [showCheckout]);
@@ -128,12 +132,16 @@ export default function StepPrevia() {
             <div className="space-y-2">
               {(totais?.porComodo ?? []).map((c: any) => (
                 <div key={c?.roomId} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                  <span className="text-sm font-medium">{c?.nome}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-medium mr-1">{c?.nome}</span>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => abrirPendencia({ step: STEP_COMODOS, roomId: c?.roomId }, store)}>Cômodo</Button>
+                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={() => abrirPendencia({ step: STEP_PONTOS, roomId: c?.roomId }, store)}>Pontos</Button>
+                  </div>
                   <div className="flex gap-3 text-xs text-muted-foreground">
                     <span>{c?.caixas} cx</span>
                     <span>{c?.tomadas} tom</span>
                     <span>{c?.luzes} luz</span>
-                    <span>{c?.distInterna}m</span>
+                    <span>{(c?.distTrajeto ?? 0) > 0 ? `${c?.distInterna} m internos + ${c?.distTrajeto} m trajeto` : `${c?.distInterna} m`}</span>
                   </div>
                 </div>
               ))}
@@ -155,7 +163,7 @@ export default function StepPrevia() {
                   {p?.tipo === 'erro' ? <XCircle className="w-3.5 h-3.5 text-destructive mt-0.5 shrink-0" /> :
                    p?.tipo === 'aviso' ? <AlertTriangle className="w-3.5 h-3.5 text-yellow-500 mt-0.5 shrink-0" /> :
                    <Info className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />}
-                  <span className="text-xs">{p?.msg}</span>
+                  <span className="text-xs underline cursor-pointer hover:text-primary" onClick={() => abrirPendencia(p, store)}>{p?.msg}</span>
                 </div>
               ))}
             </div>
@@ -184,6 +192,57 @@ export default function StepPrevia() {
           </CardContent>
         </Card>
       )}
+
+      {/* Links de afiliados: discretos, antes do botão de pagamento */}
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4 space-y-2">
+          <p className="text-xs text-muted-foreground mb-1">Encontre os materiais online 🛒</p>
+          {AFILIADOS.map((a) => (
+            <div key={a.categoria} className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs">{a.emoji} {a.categoria}</span>
+              <div className="flex gap-2">
+                <Button asChild size="sm" variant="outline" className="h-7 px-3 text-xs"
+                  style={{ background: '#fff3e8', color: '#c2410c', borderColor: '#fed7aa' }}>
+                  <a href={a.shopee} target="_blank" rel="noopener noreferrer">Shopee</a>
+                </Button>
+                <Button asChild size="sm" variant="outline" className="h-7 px-3 text-xs"
+                  style={{ background: '#fffbe6', color: '#78600a', borderColor: '#fde68a' }}>
+                  <a href={a.ml} target="_blank" rel="noopener noreferrer">Mercado Livre</a>
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="border-t border-border/60 pt-3 mt-2">
+            <Button asChild size="sm" variant="outline" className="w-full text-xs"
+              style={{ background: '#e8f4f8', color: '#0c4a6e', borderColor: '#bae6fd' }}>
+              <a href={LINK_NOSSOS_APPS} target="_blank" rel="noopener noreferrer">Nossos Apps para Eletricista 📱</a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Busca de eletricista por CEP: link externo do Google Maps, sem API key */}
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4 space-y-2">
+          <p className="text-sm font-semibold">🔍 Encontrar eletricista na sua região</p>
+          <p className="text-xs text-muted-foreground">Digite seu CEP e encontre eletricistas próximos no Google Maps</p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input type="text" inputMode="numeric" placeholder="00000-000" maxLength={9} value={cep}
+              onChange={(ev) => {
+                const d = ev.target.value.replace(/\D/g, '').slice(0, 8);
+                setCep(d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d);
+              }}
+              className="w-full sm:w-40 rounded-lg border border-input bg-card px-3 py-2 text-sm" />
+            <Button size="sm" variant="outline" className="h-9 text-xs" disabled={cep.replace(/\D/g, '').length !== 8}
+              onClick={() => {
+                const cepLimpo = cep.replace(/\D/g, '');
+                window.open(`https://www.google.com/maps/search/eletricista+${cepLimpo}`, '_blank', 'noopener');
+              }}>
+              Buscar no Google Maps 📍
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {local && podeEditar(local) ? (
         <Card className="shadow-md border-green-300 bg-gradient-to-r from-green-50 to-green-100/60">

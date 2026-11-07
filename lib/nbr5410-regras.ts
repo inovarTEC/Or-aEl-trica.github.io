@@ -1,5 +1,16 @@
 /* ===== NBR 5410 — regras simples usadas no navegador E no servidor (sem cálculo pago) ===== */
 
+/**
+ * Quantas tomadas físicas um módulo representa: simples/USB = 1, dupla (…D) = 2, tripla (…T) = 3.
+ * Fonte única usada na prévia (countMods) e na conferência da NBR 5410 (tomadasNbr).
+ */
+export function tomadasFisicas(t: string | undefined | null): number {
+  const s = String(t ?? '');
+  if (/^T\d+T$/.test(s)) return 3;
+  if (/^T\d+D$/.test(s)) return 2;
+  return s ? 1 : 0;
+}
+
 export const perimetro = (c: number, l: number): number => 2 * (c + l);
 
 /**

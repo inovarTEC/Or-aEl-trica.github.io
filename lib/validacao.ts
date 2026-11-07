@@ -1,6 +1,6 @@
 /* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
 import type { DadosOrcamento, Room } from './types';
-import { minTomadas, perimetro } from './nbr5410-regras';
+import { minTomadas, perimetro, tomadasFisicas } from './nbr5410-regras';
 
 const num = (v: unknown): number => {
   const n = typeof v === 'number' ? v : parseFloat(String(v ?? ''));
@@ -49,10 +49,10 @@ export function errosEtapa(s: DadosOrcamento, step: number): string[] {
   return e;
 }
 
-/** Índice da primeira etapa com erro (4 = todas as etapas de dados estão OK). */
+/** Índice da primeira etapa com erro (6 = todas OK; Entrada e Aterramento, passos 4 e 5, só geram avisos). */
 export function primeiraEtapaInvalida(s: DadosOrcamento): number {
-  for (let i = 0; i < 4; i++) if (errosEtapa(s, i).length > 0) return i;
-  return 4;
+  for (let i = 0; i < 6; i++) if (errosEtapa(s, i).length > 0) return i;
+  return 6;
 }
 
 /** Todos os erros obrigatórios (usado antes de cobrar ou gerar o PDF). */
@@ -67,7 +67,10 @@ export function tomadasNbr(r: Room): { minimo: number; atual: number } | null {
   const c = num(r?.c), l = num(r?.l);
   if (c <= 0 || l <= 0) return null;
   const minimo = minTomadas(c * l, perimetro(c, l), `${r?.base ?? ''} ${r?.nome ?? ''}`);
-  const atual = (r?.pontos ?? []).filter((p) => (p?.mods ?? []).some((m) => String(m?.t ?? '').startsWith('T'))).length;
+  // Tomadas físicas (dupla = 2, tripla = 3), mesma regra de countMods — inclui as montadas no interruptor.
+  let atual = 0;
+  for (const p of r?.pontos ?? []) for (const m of p?.mods ?? []) if (String(m?.t ?? '').startsWith('T')) atual += tomadasFisicas(m.t);
+  for (const c of r?.comandos ?? []) for (const sw of c?.sws ?? []) if (String(sw?.tom ?? '').startsWith('T')) atual += tomadasFisicas(sw.tom);
   return { minimo, atual };
 }
 
@@ -77,10 +80,22 @@ const IMOVEL = ['', 'Casa', 'Apartamento', 'Comércio pequeno'];
 const OBRA = ['', 'Construção nova', 'Reforma', 'Ampliação'];
 const COBERTURA = ['', 'Laje', 'Forro de gesso', 'Telhado aparente', 'Não sei'];
 const REDE = ['', 'Monofásico', 'Bifásico', 'Trifásico', 'Não sei'];
-const MODULO = ['T10', 'T10D', 'T20', 'T20D', 'USB'];
+const MODULO = ['T10', 'T10D', 'T10T', 'T20', 'T20D', 'T20T', 'USB'];
+const EQUIP_CX = ['4x2', '4x4'];
+const EQUIP_PONTO = ['T20', 'T20D', 'borne', 'tampa', 'emenda'];
 const EQUIP = ['', 'Chuveiro elétrico', 'Torneira elétrica', 'Ar-condicionado', 'Forno elétrico', 'Cooktop elétrico',
   'Máquina de lavar', 'Secadora', 'Aquecedor', 'Bomba', 'Carregador de veículo elétrico', 'Outro'];
 const TENSAO = ['', '127V', '220V'];
+const ENT_TIPO = ['aerea', 'subterranea', 'parede'];
+const ENT_POSTE = ['6m', '7m', 'nao-tem'];
+const ENT_SISTEMA = ['monofasico', 'bifasico', 'trifasico'];
+const ENT_BITOLA = ['6', '10', '16'];
+const ENT_DIAM = ['3/4', '1', '1-1/4'];
+const ENT_ELETRODUTO = ['rigido', 'flexivel'];
+const ENT_UNIDADE = ['metro', 'peca3m'];
+const MATERIAL_APARENTE = ['canaleta', 'eletroduto_metro', 'eletroduto_peca3m'];
+const ENT_TENSAO = ['', '127', '220', '380'];
+const bool = (v: unknown) => v === undefined || typeof v === 'boolean';
 
 const LIM = { comodos: 60, itens: 200, equips: 60, texto: 120, obs: 500, metros: 1000, watts: 100_000 };
 
@@ -109,6 +124,7 @@ export function problemaEstrutura(d: any): string | null {
   for (const r of d.rooms) {
     if (!r || typeof r !== 'object' || typeof r.id !== 'string' || r.id.length > 64) return 'cômodo inválido';
     if (!texto(r.nome, LIM.texto) || !texto(r.base, LIM.texto) || !texto(r.via, 64) || !texto(r.obs, LIM.obs)) return 'texto do cômodo inválido';
+    if (!opcional(r.materialAparente, MATERIAL_APARENTE)) return 'material aparente inválido';
     for (const k of ['c', 'l', 'dq', 'dd', 'dr', 'dpad', 'pe']) if (!medida(r[k], LIM.metros)) return `medida "${k}" inválida`;
     for (const k of ['pontos', 'luzes', 'comandos', 'caixas']) if (!lista(r[k], LIM.itens)) return `${k} inválido`;
     for (const p of r.pontos ?? []) {
@@ -122,8 +138,27 @@ export function problemaEstrutura(d: any): string | null {
     }
   }
   for (const q of d.equips ?? []) {
-    if (!q || typeof q !== 'object' || !opcional(q.tipo, EQUIP) || !opcional(q.tens, TENSAO) || !texto(q.room, 64)) return 'equipamento inválido';
+    if (!q || typeof q !== 'object' || !opcional(q.tipo, EQUIP) || !opcional(q.tens, TENSAO) || !texto(q.room, 64)
+      || !opcional(q.cx, EQUIP_CX) || !opcional(q.ponto, EQUIP_PONTO)) return 'equipamento inválido';
     if (!medida(q.pot, LIM.watts) || !medida(q.dist, LIM.metros) || !medida(q.dint, LIM.metros)) return 'medida do equipamento inválida';
+  }
+  const en = d.entrada;
+  if (en !== undefined) {
+    if (!en || typeof en !== 'object' || Array.isArray(en)) return 'entrada inválida';
+    if (!opcional(en.tipoEntrada, ENT_TIPO) || !opcional(en.poste, ENT_POSTE) || !opcional(en.sistema, ENT_SISTEMA)
+      || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
+      || !opcional(en.unidadeEletroduto, ENT_UNIDADE)
+      || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
+      || !texto(en.obs, LIM.obs)) return 'entrada inválida';
+    if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
+  }
+  const at = d.aterramento;
+  if (at !== undefined) {
+    if (!at || typeof at !== 'object' || Array.isArray(at)) return 'aterramento inválido';
+    const inteiro = (v: unknown, max: number) => v === undefined || (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= max);
+    if (!inteiro(at.nHastes, 50) || !inteiro(at.nCaixasInspecao, 50) || !opcional(at.comprimentoHaste, ['2.4'])
+      || !opcional(at.bitolaCabo, ['6', '10']) || !texto(at.obs, LIM.obs)) return 'aterramento inválido';
+    if (!medida(at.distancia, LIM.metros)) return 'medida do aterramento inválida';
   }
   return null;
 }
@@ -133,5 +168,7 @@ export function somenteDados(d: any): DadosOrcamento {
   return {
     imovel: d.imovel ?? '', obra: d.obra ?? '', cobertura: d.cobertura ?? '', rede: d.rede ?? '',
     rooms: d.rooms ?? [], equips: d.equips ?? [],
+    ...(d.entrada ? { entrada: d.entrada } : {}),
+    ...(d.aterramento ? { aterramento: d.aterramento } : {}),
   };
 }

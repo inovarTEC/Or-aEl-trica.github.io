@@ -8,7 +8,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Zap, Cpu } from 'lucide-react';
+import { Plus, Trash2, Zap, Cpu, AlertTriangle, ClipboardList } from 'lucide-react';
+import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto, correnteEquip, avisoCorrente } from '@/lib/ponto-equip';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -33,10 +35,31 @@ export default function StepEquipamentos() {
 
   const addEquip = () => {
     store.addEquip({
-      id: uid(), tipo: '', room: '', pot: '', tens: '', dint: '', dist: '', alim: '',
+      id: uid(), tipo: '', room: '', pot: '', tens: '', dint: '', dist: '', alim: '', cx: '4x2',
     });
     toast.success('Equipamento adicionado');
   };
+
+  // Orçamentos antigos: equipamento sem caixa recebe 4x2 (padrão), para a tela e a prévia contarem igual.
+  useEffect(() => {
+    for (const e of equips) if (!e?.cx) store.updateEquip(e.id, { cx: '4x2' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [equips.length]);
+
+  // Vindo de uma pendência da prévia: rola até o equipamento indicado e limpa a marcação.
+  const refs = useRef<Record<string, HTMLDivElement | null>>({});
+  useEffect(() => {
+    const id = store.activeEquipId;
+    if (!id) return;
+    const t = setTimeout(() => {
+      refs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      store.setActiveEquipId('');
+    }, 150);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const selCls = 'mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm';
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-2xl mx-auto">
@@ -47,7 +70,7 @@ export default function StepEquipamentos() {
 
       <AnimatePresence mode="popLayout">
         {equips.map((e: Equip, idx: number) => (
-          <motion.div key={e?.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+          <motion.div key={e?.id} ref={(el: HTMLDivElement | null) => { refs.current[e?.id] = el; }} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
             <Card className="shadow-sm">
               <CardContent className="pt-4 pb-4 space-y-3">
                 <div className="flex items-center justify-between">
@@ -78,12 +101,13 @@ export default function StepEquipamentos() {
                     </select>
                   </div>
                   <div>
-                    <Label className="text-xs">Cômodo</Label>
+                    <Label className="text-xs">Cômodo <span className="text-destructive">*</span></Label>
                     <select value={e?.room ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { room: ev?.target?.value ?? '' })}
-                      className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm">
-                      <option value="">Selecione...</option>
+                      className={`${selCls} ${!e?.room ? 'border-destructive' : ''}`}>
+                      <option value="">Selecione o cômodo</option>
                       {rooms.map((rm: Room) => <option key={rm?.id} value={rm?.id ?? ''}>{rm?.nome || rm?.base || 'Cômodo'}</option>)}
                     </select>
+                    {!e?.room && <p className="mt-1 text-[11px] text-destructive">Informe o cômodo do equipamento</p>}
                   </div>
                 </div>
 
@@ -106,6 +130,73 @@ export default function StepEquipamentos() {
                     <Input type="number" step="0.1" min="0" value={e?.dist ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { dist: semNegativo(ev?.target?.value) })} placeholder="0.0" className="mt-1" />
                   </div>
                 </div>
+                {(() => {
+                  const I = correnteEquip(e?.pot, e?.tens);
+                  if (I === null) return null;
+                  const av = avisoCorrente(I);
+                  return (
+                    <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                      <span className="text-muted-foreground">Corrente estimada: {I.toFixed(1).replace('.', ',')} A</span>
+                      {av === 'prefira20A' && (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">Prefira tomada 20A ou ligação direta</span>
+                      )}
+                      {av === 'ligacaoDireta' && (
+                        <>
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 font-medium text-red-700">Recomendado: ligação direta (Wago/emenda)</span>
+                          {e?.ponto !== 'emenda' && e?.ponto !== 'borne' && (
+                            <button type="button" onClick={() => store.updateEquip(e?.id ?? '', { ponto: 'emenda', cx: '4x2' })}
+                              className="text-primary hover:underline">usar sugestão</button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-1">
+                    <Label className="text-xs" title="Percurso do ponto de chegada no cômodo até onde o equipamento está instalado">Distância dentro do cômodo (m)</Label>
+                    <Input type="number" step="0.1" min="0" value={e?.dint ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { dint: semNegativo(ev?.target?.value) })} placeholder="0" className="mt-1" />
+                  </div>
+                  <p className="col-span-2 self-end pb-2 text-[11px] text-muted-foreground">
+                    Percurso do ponto de chegada no cômodo até onde o equipamento está instalado.
+                  </p>
+                </div>
+                {(() => {
+                  const dst = distanciaEquip(e, rooms);
+                  return dst.origem === 'nenhuma' ? (
+                    <p className="flex items-center gap-1 text-[11px] text-amber-700"><AlertTriangle className="w-3 h-3" /> Informe o cômodo ou a distância ao quadro</p>
+                  ) : dst.origem === 'comodo' ? (
+                    <p className="text-[11px] text-muted-foreground">Distância considerada: {dst.metros} m (trajeto do cômodo + distância dentro do cômodo)</p>
+                  ) : null;
+                })()}
+
+                <div>
+                  <p className="text-xs font-semibold mb-1">Configuração do ponto</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Caixa</Label>
+                      <select value={e?.cx ?? '4x2'} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { cx: ev?.target?.value as '4x2' | '4x4' })} className={selCls}>
+                        <option value="4x2">4x2</option>
+                        <option value="4x4">4x4</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Ponto</Label>
+                      <select value={e?.ponto ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { ponto: (ev?.target?.value || undefined) as PontoEquip | undefined })} className={selCls}>
+                        <option value="">Selecione</option>
+                        {(Object.keys(PONTO_LABEL) as PontoEquip[]).map((k) => <option key={k} value={k}>{PONTO_LABEL[k]}</option>)}
+                      </select>
+                      {(() => {
+                        const sug = pontoSugerido(e?.tipo ?? '', e?.pot, e?.tens);
+                        return sug && e?.ponto !== sug ? (
+                          <button type="button" onClick={() => store.updateEquip(e?.id ?? '', { ponto: sug })}
+                            className="mt-1 text-[11px] text-primary hover:underline">Sugestão: {PONTO_LABEL[sug]} (usar)</button>
+                        ) : null;
+                      })()}
+                    </div>
+                  </div>
+                </div>
 
                 {e?.tipo === 'Ar-condicionado' && (
                   <div>
@@ -120,6 +211,20 @@ export default function StepEquipamentos() {
                     </div>
                   </div>
                 )}
+
+                {(() => {
+                  const rp = resumoPonto(e);
+                  return (
+                    <div className="rounded-md bg-muted/40 px-3 py-2">
+                      <p className="flex items-center gap-1.5 text-xs font-semibold mb-1"><ClipboardList className="w-3.5 h-3.5 text-primary" /> Resumo do ponto</p>
+                      <ul className="text-[11px] text-muted-foreground space-y-0.5">
+                        <li>Caixa: {rp.caixa}</li>
+                        <li>Ponto: {rp.ponto}</li>
+                        <li>{rp.caixas} caixa</li>
+                      </ul>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </motion.div>

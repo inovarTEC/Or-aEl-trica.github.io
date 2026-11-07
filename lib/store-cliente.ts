@@ -1,6 +1,9 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo } from './types';
+import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal, AterramentoPrincipal } from './types';
+import { aterramentoPadrao } from './aterramento-calc';
+import { entradaPadrao } from './entrada-calc';
+import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_PREVIA } from './navegacao';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 
 function defaultState(): AppState {
@@ -12,7 +15,12 @@ function defaultState(): AppState {
     rede: '',
     rooms: [],
     equips: [],
+    entrada: entradaPadrao(),
+    aterramento: aterramentoPadrao(),
     step: 0,
+    activeRoomId: '',
+    activeEquipId: '',
+    veioDaPrevia: false,
   };
 }
 
@@ -25,12 +33,17 @@ function saveState(dados: AppState) {
 interface StoreActions {
   setField: <K extends keyof AppState>(key: K, value: AppState[K]) => void;
   setStep: (step: number) => void;
+  setActiveRoomId: (id: string) => void;
+  setActiveEquipId: (id: string) => void;
+  setVeioDaPrevia: (v: boolean) => void;
   addRoom: (room: Room) => void;
   updateRoom: (id: string, patch: Partial<Room>) => void;
   removeRoom: (id: string) => void;
   addEquip: (equip: Equip) => void;
   updateEquip: (id: string, patch: Partial<Equip>) => void;
   removeEquip: (id: string) => void;
+  updateEntrada: (patch: Partial<EntradaPrincipal>) => void;
+  updateAterramento: (patch: Partial<AterramentoPrincipal>) => void;
   // Points helpers
   addPonto: (roomId: string, ponto: Ponto) => void;
   updatePonto: (roomId: string, pontoId: string, patch: Partial<Ponto>) => void;
@@ -45,6 +58,11 @@ interface StoreActions {
   removeModulo: (roomId: string, pontoId: string, modId: string) => void;
   addSw: (roomId: string, cmdId: string, sw: Sw) => void;
   removeSw: (roomId: string, cmdId: string, swId: string) => void;
+  updateSw: (roomId: string, cmdId: string, swId: string, patch: Partial<Sw>) => void;
+  /** Liga a luz ao comando indicado (tirando-a de qualquer outro). cmdId '' = desvincula. */
+  vincularLuzComando: (roomId: string, luzId: string, cmdId: string) => void;
+  /** Troca o tipo do comando ajustando a quantidade de caixas (IS=1, IP=2, II>=3). */
+  setTipoComando: (roomId: string, cmdId: string, t: TipoComando, novoSw: () => Sw) => void;
   /** Novo orçamento: apaga tudo do navegador (dados, Pix e PDF) e volta ao início. */
   resetState: () => void;
   hydrateFromStorage: () => void;
@@ -70,6 +88,9 @@ export const useStore = create<Store>((set) => {
     ...defaultState(),
     setField: (key, value) => update(() => ({ [key]: value } as any)),
     setStep: (step) => update(() => ({ step })),
+    setActiveRoomId: (activeRoomId) => update(() => ({ activeRoomId })),
+    setActiveEquipId: (activeEquipId) => update(() => ({ activeEquipId })),
+    setVeioDaPrevia: (veioDaPrevia) => update(() => ({ veioDaPrevia })),
     addRoom: (room) => update((s) => ({ rooms: [...(s?.rooms ?? []), room] })),
     updateRoom: (id, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], id, (r) => ({ ...r, ...patch })),
@@ -85,6 +106,8 @@ export const useStore = create<Store>((set) => {
     removeEquip: (id) => update((s) => ({
       equips: (s?.equips ?? []).filter((e: Equip) => e?.id !== id),
     })),
+    updateEntrada: (patch) => update((s) => ({ entrada: { ...entradaPadrao(), ...(s?.entrada ?? {}), ...patch } })),
+    updateAterramento: (patch) => update((s) => ({ aterramento: { ...aterramentoPadrao(), ...(s?.aterramento ?? {}), ...patch } })),
     addPonto: (roomId, ponto) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({ ...r, pontos: [...(r?.pontos ?? []), ponto] })),
     })),
@@ -166,13 +189,52 @@ export const useStore = create<Store>((set) => {
         ),
       })),
     })),
+    updateSw: (roomId, cmdId, swId, patch) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) =>
+          c?.id === cmdId ? { ...c, sws: (c?.sws ?? []).map((sw: Sw) => sw?.id === swId ? { ...sw, ...patch } : sw) } : c
+        ),
+      })),
+    })),
+    vincularLuzComando: (roomId, luzId, cmdId) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) => {
+          const sem = (c?.luzes ?? []).filter((lid: string) => lid !== luzId);
+          return { ...c, luzes: c?.id === cmdId ? [...sem, luzId] : sem };
+        }),
+      })),
+    })),
+    setTipoComando: (roomId, cmdId, t, novoSw) => update((s) => ({
+      rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
+        ...r,
+        comandos: (r?.comandos ?? []).map((c: Comando) => {
+          if (c?.id !== cmdId) return c;
+          let sws = [...(c?.sws ?? [])];
+          const min = t === 'IS' ? 1 : t === 'IP' ? 2 : 3;
+          while (sws.length < min) sws.push(novoSw());
+          if (t !== 'II') sws = sws.slice(0, min);
+          return { ...c, t, sws };
+        }),
+      })),
+    })),
     resetState: () => {
       limparEstado();
       set(defaultState());
     },
     hydrateFromStorage: () => {
       const dados = carregarEstado()?.dados;
-      if (dados) set({ ...defaultState(), ...dados });
+      if (!dados) return;
+      // Orçamentos antigos: sem `entrada` a Prévia era o passo 4; sem `aterramento` era o passo 5. Levamos à Prévia atual.
+      const d = dados as Partial<AppState>;
+      const passo = dados.step ?? 0;
+      const step = (!d.entrada && passo >= STEP_ENTRADA) || (!d.aterramento && passo >= STEP_ATERRAMENTO) ? STEP_PREVIA : passo;
+      set({
+        ...defaultState(), ...dados, step,
+        entrada: { ...entradaPadrao(), ...(d.entrada ?? {}) },
+        aterramento: { ...aterramentoPadrao(), ...(d.aterramento ?? {}) },
+      });
     },
   };
 });

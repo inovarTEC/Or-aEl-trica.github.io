@@ -1,6 +1,9 @@
 /* ===== Motor de cálculo de materiais (NBR 5410) ===== */
 import { AppState, Room } from '../types';
 import { countMods } from './calculator';
+import { tomadasFisicas } from '../nbr5410-regras';
+import { materiaisEntrada } from '../entrada-calc';
+import { materiaisAterramento } from '../aterramento-calc';
 import {
   potenciaIluminacao,
   potenciaTUG,
@@ -49,6 +52,10 @@ export interface CircuitoCalc {
   eletrodutoDN: number;
   nCondutores: number;
   comodo?: string;
+  /** Tipo de instalação escolhido no cômodo (define eletroduto corrugado x canaleta). */
+  instalacao?: string;
+  /** Material da instalação aparente do cômodo (canaleta / eletroduto em metros / barras de 3 m). */
+  materialAparente?: string;
 }
 
 export interface QuadroGeral {
@@ -96,6 +103,8 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
         eletrodutoDN: eletrodutoDN(calc.secao, nCond),
         nCondutores: nCond,
         comodo: roomName,
+        instalacao: r.inst || '',
+        materialAparente: r.materialAparente,
       });
     }
 
@@ -117,6 +126,8 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
         eletrodutoDN: eletrodutoDN(calc.secao, nCond),
         nCondutores: nCond,
         comodo: roomName,
+        instalacao: r.inst || '',
+        materialAparente: r.materialAparente,
       });
     }
   }
@@ -152,6 +163,8 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       eletrodutoDN: eletrodutoDN(calc.secao, nCond),
       nCondutores: nCond,
       comodo: room ? (room.nome || room.base) : undefined,
+      instalacao: room?.inst || '',
+      materialAparente: room?.materialAparente,
     });
   }
 
@@ -170,33 +183,119 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   /* ----- Lista de materiais consolidada ----- */
   const materiais: MaterialItem[] = [];
 
-  // Agrupar fios por bitola
-  const fiosPorBitola: Record<number, number> = {};
+  // Cabos separados por bitola + cor (NBR 5410): fases, neutro e terra (PE)
+  const CORES_FASE = ['Preto', 'Vermelho', 'Marrom'] as const;
+  const ORDEM_COR = ['Preto', 'Vermelho', 'Marrom', 'Azul claro', 'Verde-amarelo'];
+  const FUNCAO_COR: Record<string, string> = {
+    Preto: 'fase', Vermelho: 'fase', Marrom: 'fase', 'Azul claro': 'neutro', 'Verde-amarelo': 'terra',
+  };
+  const fiosPorBitolaCor: Record<string, { bitola: number; cor: string; metros: number }> = {};
+  const bitolasSemTerra = new Set<number>();
+  const somarFio = (bitola: number, cor: string, metros: number) => {
+    const chave = `${bitola}mm²_${cor}`;
+    const atual = fiosPorBitolaCor[chave] ?? { bitola, cor, metros: 0 };
+    atual.metros += metros;
+    fiosPorBitolaCor[chave] = atual;
+  };
   for (const c of circuitos) {
-    const metragem = c.comprimentoM * c.nCondutores;
-    fiosPorBitola[c.bitolaMM2] = (fiosPorBitola[c.bitolaMM2] ?? 0) + metragem;
+    // 2 = F+N (sem PE separado); 3 = F+N+PE; 4 = 2F+N+PE; 5 = 3F+N+PE
+    const n = Math.max(2, Math.min(5, c.nCondutores));
+    const temTerra = n >= 3;
+    if (!temTerra) bitolasSemTerra.add(c.bitolaMM2);
+    // 220 V em rede bifásica/trifásica é ligado entre duas fases: F + F + PE, sem neutro.
+    const entreFases = c.tensaoV >= 200 && (rede === 'Bifásico' || rede === 'Trifásico');
+    if (entreFases) {
+      somarFio(c.bitolaMM2, 'Preto', c.comprimentoM);
+      somarFio(c.bitolaMM2, 'Vermelho', c.comprimentoM);
+    } else {
+      const fases = temTerra ? n - 2 : 1;
+      for (let f = 0; f < fases; f++) somarFio(c.bitolaMM2, CORES_FASE[f], c.comprimentoM);
+      somarFio(c.bitolaMM2, 'Azul claro', c.comprimentoM);
+    }
+    if (temTerra) somarFio(c.bitolaMM2, 'Verde-amarelo', c.comprimentoM);
   }
-  for (const [bitola, metros] of Object.entries(fiosPorBitola)) {
+  const fmtBitola = (b: number) => String(b).replace('.', ',');
+  const linhasFio = Object.values(fiosPorBitolaCor).sort(
+    (a, b) => a.bitola - b.bitola || ORDEM_COR.indexOf(a.cor) - ORDEM_COR.indexOf(b.cor),
+  );
+  for (const { bitola, cor, metros } of linhasFio) {
+    const obsSemTerra = cor === 'Azul claro' && bitolasSemTerra.has(bitola)
+      ? ' — há circuito(s) sem condutor de terra separado'
+      : '';
     materiais.push({
-      item: `Cabo flexível ${bitola} mm²`,
-      qtd: Math.ceil(Number(metros) * 1.15), // 15% de folga
+      item: `Cabo flexível ${fmtBitola(bitola)} mm² — ${cor} (${FUNCAO_COR[cor]})`,
+      qtd: Math.ceil(metros * 1.15), // 15% de folga
       unidade: 'm',
-      detalhe: `Cobre, isolação PVC 750V`,
+      detalhe: `Cobre, isolação PVC 750V${obsSemTerra}`,
     });
   }
 
-  // Eletroduto por bitola mais comum
-  const eletroPorDN: Record<number, number> = {};
+  // Eletroduto conforme o tipo de instalação escolhido em cada cômodo:
+  // - Embutida na parede / Pela laje ou forro / não informado → eletroduto flexível corrugado (sem luvas de rosca)
+  // - Aparente (sobrepor) → conforme o material escolhido: canaleta (barras de 2 m, padrão),
+  //   eletroduto rígido em metros ou eletroduto rígido em barras de 3 m (com luvas e curvas)
+  const grupoInst = (inst?: string): 'embutida' | 'laje' | 'aparente' | 'nao-informado' =>
+    inst === 'Aparente' ? 'aparente' : inst === 'Pela laje' ? 'laje' : inst === 'Embutida na parede' ? 'embutida' : 'nao-informado';
+  type AcumAparente = { metros: number; circuitos: number };
+  const somarAparente = (mapa: Record<number, AcumAparente>, c: CircuitoCalc) => {
+    const a = mapa[c.eletrodutoDN] ?? { metros: 0, circuitos: 0 };
+    a.metros += c.comprimentoM; a.circuitos += 1;
+    mapa[c.eletrodutoDN] = a;
+  };
+  const corrugPorDN: Record<number, { metros: number; origens: Set<string> }> = {};
+  const canaletaPorDN: Record<number, AcumAparente> = {};
+  const rigidoMetroPorDN: Record<number, AcumAparente> = {};
+  const rigidoBarraPorDN: Record<number, AcumAparente> = {};
   for (const c of circuitos) {
-    eletroPorDN[c.eletrodutoDN] = (eletroPorDN[c.eletrodutoDN] ?? 0) + c.comprimentoM;
+    const g = grupoInst(c.instalacao);
+    if (g === 'aparente') {
+      if (c.materialAparente === 'eletroduto_metro') somarAparente(rigidoMetroPorDN, c);
+      else if (c.materialAparente === 'eletroduto_peca3m') somarAparente(rigidoBarraPorDN, c);
+      else somarAparente(canaletaPorDN, c);
+    } else {
+      const a = corrugPorDN[c.eletrodutoDN] ?? { metros: 0, origens: new Set<string>() };
+      a.metros += c.comprimentoM; a.origens.add(g);
+      corrugPorDN[c.eletrodutoDN] = a;
+    }
   }
-  for (const [dn, metros] of Object.entries(eletroPorDN)) {
-    materiais.push({
-      item: `Eletroduto PVC ${dn} mm`,
-      qtd: Math.ceil(Number(metros) * 1.1), // 10% de folga
-      unidade: 'm',
-      detalhe: 'Rígido ou corrugado, conforme instalação',
-    });
+  const dnsOrdenados = (m: Record<number, unknown>) => Object.keys(m).map(Number).sort((a, b) => a - b);
+  const ROTULO_ORIGEM: Record<string, string> = { embutida: 'embutido na parede', laje: 'pela laje/forro', 'nao-informado': 'instalação não informada (considerado embutido)' };
+  for (const dn of dnsOrdenados(corrugPorDN)) {
+    const { metros, origens } = corrugPorDN[dn];
+    const onde = [...origens].map(o => ROTULO_ORIGEM[o]).join(' · ');
+    materiais.push({ item: `Eletroduto flexível corrugado ${dn}mm`, qtd: Math.ceil(metros * 1.1), unidade: 'm', detalhe: `10% de folga — ${onde}` });
+  }
+  let metrosCanaleta = 0;
+  for (const dn of dnsOrdenados(canaletaPorDN)) {
+    const { metros, circuitos: nCirc } = canaletaPorDN[dn];
+    const metrosFolga = metros * 1.1; // 10% de folga
+    metrosCanaleta += metros;
+    const barras = Math.ceil(metrosFolga / 2);
+    const curvas = nCirc * 2; // saída do quadro + chegada no cômodo (estimativa)
+    materiais.push({ item: `Canaleta PVC com tampa (equiv. eletroduto ${dn}mm)`, qtd: barras, unidade: barras === 1 ? 'barra' : 'barras', detalhe: `Barras de 2 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente` });
+    materiais.push({ item: `Emenda para canaleta (equiv. ${dn}mm)`, qtd: Math.max(0, barras - 1), unidade: 'un', detalhe: 'Uma entre cada par de barras' });
+    materiais.push({ item: `Curva 90° para canaleta (equiv. ${dn}mm)`, qtd: curvas, unidade: 'un', detalhe: 'Estimativa: 2 por circuito' });
+  }
+  // Eletroduto rígido aparente: abraçadeira a cada ~1 m (cada uma com bucha e parafuso)
+  let abracadeiras = 0;
+  for (const dn of dnsOrdenados(rigidoMetroPorDN)) {
+    const { metros, circuitos: nCirc } = rigidoMetroPorDN[dn];
+    const metrosFolga = Math.ceil(metros * 1.1);
+    abracadeiras += metrosFolga;
+    materiais.push({ item: `Eletroduto rígido PVC aparente ${dn}mm`, qtd: metrosFolga, unidade: 'm', detalhe: '10% de folga · instalação aparente (sobrepor)' });
+    materiais.push({ item: `Curva 90° ${dn}mm`, qtd: nCirc * 2, unidade: 'un', detalhe: 'Eletroduto aparente — estimativa: 2 por circuito' });
+    materiais.push({ item: `Abraçadeira tipo D para eletroduto ${dn}mm`, qtd: metrosFolga, unidade: 'un', detalhe: 'Uma a cada 1 m' });
+  }
+  for (const dn of dnsOrdenados(rigidoBarraPorDN)) {
+    const { metros, circuitos: nCirc } = rigidoBarraPorDN[dn];
+    const metrosFolga = metros * 1.1;
+    const barras = Math.ceil(metrosFolga / 3);
+    const nAbr = Math.ceil(metrosFolga);
+    abracadeiras += nAbr;
+    materiais.push({ item: `Eletroduto rígido PVC aparente ${dn}mm (barra 3 m)`, qtd: barras, unidade: barras === 1 ? 'barra' : 'barras', detalhe: `Barras de 3 m — ${Math.ceil(metrosFolga)} m com 10% de folga · instalação aparente (sobrepor)` });
+    materiais.push({ item: `Luva de emenda ${dn}mm`, qtd: Math.max(0, barras - 1), unidade: 'un', detalhe: 'Eletroduto aparente — uma entre cada par de barras' });
+    materiais.push({ item: `Curva 90° ${dn}mm`, qtd: nCirc * 2, unidade: 'un', detalhe: 'Eletroduto aparente — estimativa: 2 por circuito' });
+    materiais.push({ item: `Abraçadeira tipo D para eletroduto ${dn}mm`, qtd: nAbr, unidade: 'un', detalhe: 'Uma a cada 1 m' });
   }
 
   // Disjuntores
@@ -213,14 +312,17 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     });
   }
 
-  // Disjuntor geral
+  // Disjuntor geral: um só. Se a etapa Entrada foi preenchida, vale o da entrada (lançado abaixo).
   const polosGeral = rede === 'Trifásico' ? 'tripolar' : rede === 'Bifásico' ? 'bipolar' : 'monopolar';
-  materiais.push({
-    item: `Disjuntor geral ${djGeral}A`,
-    qtd: 1,
-    unidade: 'un',
-    detalhe: `Curva C, ${polosGeral}`,
-  });
+  const temEntrada = !!state.entrada?.tipoEntrada;
+  if (!temEntrada) {
+    materiais.push({
+      item: `Disjuntor geral ${djGeral}A`,
+      qtd: 1,
+      unidade: 'un',
+      detalhe: `Curva C, ${polosGeral}`,
+    });
+  }
 
   // Quadro de distribuição
   const nDJ = circuitos.length + 1; // +1 para o geral
@@ -232,9 +334,40 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     detalhe: `Embutir ou sobrepor, com barramento e tampa`,
   });
 
-  // Caixas
+  // Caixas, placas e acessórios — embutido/laje: caixa de embutir + placa;
+  // aparente (sobrepor): condulete + tampa, com tomadas e interruptores de sobrepor.
   let cx4x2 = 0, cx4x4 = 0, cxRedonda = 0;
+  let sob4x2 = 0, sob4x4 = 0, sobLuz = 0, sobCega = 0, tampa4x2 = 0, tampa4x4 = 0;
+  let tomSob10 = 0, tomSob20 = 0, tomSobUsb = 0, intSob = 0;
+  const somarTomadasSobrepor = (t: string | undefined) => {
+    const n = tomadasFisicas(t);
+    if (!n) return;
+    if (t === 'USB') tomSobUsb += n;
+    else if (String(t).startsWith('T20')) tomSob20 += n;
+    else tomSob10 += n;
+  };
   for (const r of state.rooms ?? []) {
+    if (r.inst === 'Aparente') {
+      for (const p of r.pontos ?? []) {
+        if (p.cx === '4x4') { sob4x4++; tampa4x4++; } else { sob4x2++; tampa4x2++; }
+        for (const m of p.mods ?? []) somarTomadasSobrepor(m.t);
+      }
+      sobLuz += (r.luzes ?? []).length;
+      for (const cmd of r.comandos ?? []) {
+        for (const sw of cmd.sws ?? []) {
+          if (sw.cx === '4x4') { sob4x4++; tampa4x4++; } else { sob4x2++; tampa4x2++; }
+          intSob++;
+          somarTomadasSobrepor(sw.tom || undefined);
+        }
+      }
+      for (const cx of r.caixas ?? []) {
+        if (cx.tipo === '4x4') sob4x4++;
+        else if (cx.tipo === 'Redonda') sobLuz++;
+        else sob4x2++;
+        sobCega++;
+      }
+      continue;
+    }
     for (const p of r.pontos ?? []) {
       if (p.cx === '4x4') cx4x4++; else cx4x2++;
     }
@@ -254,13 +387,26 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       else cx4x2++;
     }
   }
-  if (cx4x2 > 0) materiais.push({ item: 'Caixa 4x2', qtd: cx4x2, unidade: 'un' });
-  if (cx4x4 > 0) materiais.push({ item: 'Caixa 4x4', qtd: cx4x4, unidade: 'un' });
-  if (cxRedonda > 0) materiais.push({ item: 'Caixa redonda (fundo)', qtd: cxRedonda, unidade: 'un' });
+  if (cx4x2 > 0) materiais.push({ item: 'Caixa de embutir 4x2', qtd: cx4x2, unidade: 'un' });
+  if (cx4x4 > 0) materiais.push({ item: 'Caixa de embutir 4x4', qtd: cx4x4, unidade: 'un' });
+  if (cxRedonda > 0) materiais.push({ item: 'Caixa redonda (fundo)', qtd: cxRedonda, unidade: 'un', detalhe: 'Embutir na laje/forro' });
 
-  // Placas
+  // Placas (embutido)
   if (cx4x2 > 0) materiais.push({ item: 'Placa 4x2', qtd: cx4x2, unidade: 'un', detalhe: 'Com espelho' });
   if (cx4x4 > 0) materiais.push({ item: 'Placa 4x4', qtd: cx4x4, unidade: 'un', detalhe: 'Com espelho' });
+
+  // Aparente (sobrepor)
+  const DET_SOB = 'Instalação aparente (sobrepor)';
+  if (sob4x2 > 0) materiais.push({ item: 'Caixa de sobrepor 4x2 (condulete)', qtd: sob4x2, unidade: 'un', detalhe: DET_SOB });
+  if (sob4x4 > 0) materiais.push({ item: 'Caixa de sobrepor 4x4 (condulete)', qtd: sob4x4, unidade: 'un', detalhe: DET_SOB });
+  if (sobLuz > 0) materiais.push({ item: 'Caixa octogonal de sobrepor (condulete) para luz', qtd: sobLuz, unidade: 'un', detalhe: DET_SOB });
+  if (tampa4x2 > 0) materiais.push({ item: 'Tampa para condulete 4x2', qtd: tampa4x2, unidade: 'un', detalhe: 'Para tomada/interruptor de sobrepor' });
+  if (tampa4x4 > 0) materiais.push({ item: 'Tampa para condulete 4x4', qtd: tampa4x4, unidade: 'un', detalhe: 'Para tomada/interruptor de sobrepor' });
+  if (sobCega > 0) materiais.push({ item: 'Tampa cega para condulete', qtd: sobCega, unidade: 'un', detalhe: 'Caixas de passagem aparentes' });
+  if (tomSob10 > 0) materiais.push({ item: 'Tomada de sobrepor 2P+T 10A', qtd: tomSob10, unidade: 'un', detalhe: DET_SOB });
+  if (tomSob20 > 0) materiais.push({ item: 'Tomada de sobrepor 2P+T 20A', qtd: tomSob20, unidade: 'un', detalhe: DET_SOB });
+  if (tomSobUsb > 0) materiais.push({ item: 'Tomada USB de sobrepor', qtd: tomSobUsb, unidade: 'un', detalhe: DET_SOB });
+  if (intSob > 0) materiais.push({ item: 'Interruptor de sobrepor', qtd: intSob, unidade: 'un', detalhe: DET_SOB });
 
   // Conectores / emendas
   const totalConexoes = circuitos.length * 4; // estimativa
@@ -269,9 +415,35 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   // Fita isolante
   materiais.push({ item: 'Fita isolante', qtd: Math.max(2, Math.ceil(circuitos.length / 3)), unidade: 'rolo' });
 
-  // Abraçadeiras
-  const totalEletroduto = Object.values(eletroPorDN).reduce((a, b) => a + Number(b), 0);
-  materiais.push({ item: 'Abraçadeira para eletroduto', qtd: Math.ceil(totalEletroduto / 0.6), unidade: 'un', detalhe: 'A cada 60 cm' });
+  // Fixação da instalação aparente (embutido não leva abraçadeira)
+  if (metrosCanaleta > 0) {
+    materiais.push({ item: 'Bucha e parafuso para fixação de canaleta', qtd: Math.ceil(metrosCanaleta * 1.1 / 0.6), unidade: 'un', detalhe: 'A cada 60 cm' });
+  }
+  if (abracadeiras > 0) {
+    materiais.push({ item: 'Bucha e parafuso para abraçadeira de eletroduto', qtd: abracadeiras, unidade: 'un', detalhe: 'Uma por abraçadeira (eletroduto aparente)' });
+  }
+
+  // Materiais da entrada / alimentador principal
+  if (temEntrada && state.entrada) {
+    for (const m of materiaisEntrada(state.entrada)) {
+      const ehGeral = m.descricao.startsWith('Disjuntor geral');
+      materiais.push({
+        item: m.descricao,
+        qtd: m.qtd,
+        unidade: m.unidade,
+        detalhe: ehGeral
+          ? `Entrada / alimentador principal — curva C, ${polosGeral}; pela carga instalada o mínimo é ${djGeral}A`
+          : 'Entrada / alimentador principal',
+      });
+    }
+  }
+
+  // Materiais do aterramento principal
+  if (state.aterramento && state.aterramento.nHastes > 0) {
+    for (const m of materiaisAterramento(state.aterramento)) {
+      materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Sistema de aterramento' });
+    }
+  }
 
   return { circuitos, quadro, materiais };
 }

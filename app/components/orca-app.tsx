@@ -2,12 +2,15 @@
 import { useEffect } from 'react';
 import { useStore } from '@/lib/store-cliente';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
+import { STEP_ATERRAMENTO, STEP_COMODOS, STEP_PREVIA } from '@/lib/navegacao';
 import { toast } from 'sonner';
 import ProgressBar from './progress-bar';
 import StepImovel from './step-imovel';
 import StepComodos from './step-comodos';
 import StepPontos from './step-pontos';
 import StepEquipamentos from './step-equipamentos';
+import StepEntrada from './step-entrada';
+import StepAterramento from './step-aterramento';
 import StepPrevia from './step-previa';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react';
@@ -24,11 +27,16 @@ export default function OrcaApp() {
   /** Avança só se a etapa atual estiver completa; mostra o que falta. */
   const avancar = () => {
     const erros = errosEtapa(store, step);
+    // Passo 4: cômodo do equipamento é recomendado (só aviso — não bloqueia; validacao.ts não muda nesta etapa).
+    if (step === 3 && erros.length === 0) {
+      const semComodo = (store.equips ?? []).filter((e) => !e?.room).length;
+      if (semComodo > 0) toast.warning(`${semComodo} equipamento(s) sem cômodo definido`, { description: 'Você pode voltar e informar o cômodo para um orçamento mais preciso.' });
+    }
     if (erros.length > 0) {
       toast.error(erros[0], { description: erros.length > 1 ? `e mais ${erros.length - 1} pendência(s) nesta etapa` : undefined });
       return;
     }
-    store.setStep(Math.min(4, step + 1));
+    store.setStep(Math.min(STEP_PREVIA, step + 1));
   };
 
   /** Pela barra de progresso: voltar é livre; pular para frente só até a primeira etapa incompleta. */
@@ -42,7 +50,7 @@ export default function OrcaApp() {
     store.setStep(s);
   };
 
-  const steps = [StepImovel, StepComodos, StepPontos, StepEquipamentos, StepPrevia];
+  const steps = [StepImovel, StepComodos, StepPontos, StepEquipamentos, StepEntrada, StepAterramento, StepPrevia];
   const CurrentStep = steps[step] ?? StepImovel;
 
   return (
@@ -68,6 +76,14 @@ export default function OrcaApp() {
 
       {/* Content */}
       <main className="flex-1 px-4 pb-4 pt-2">
+        {store.veioDaPrevia && step >= STEP_COMODOS && step <= STEP_ATERRAMENTO && (
+          <div className="max-w-2xl mx-auto mb-2">
+            <button type="button" onClick={() => { store.setVeioDaPrevia(false); store.setStep(STEP_PREVIA); }}
+              className="text-sm text-primary hover:underline">
+              ← Voltar à prévia
+            </button>
+          </div>
+        )}
         <CurrentStep />
       </main>
 
@@ -77,7 +93,7 @@ export default function OrcaApp() {
           <Button variant="outline" onClick={() => store.setStep(Math.max(0, step - 1))} disabled={step === 0}>
             <ChevronLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
-          {step < 4 ? (
+          {step < STEP_PREVIA ? (
             <Button onClick={avancar}>
               Avançar <ChevronRight className="w-4 h-4 ml-1" />
             </Button>

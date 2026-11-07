@@ -182,10 +182,21 @@ export default function StepComodos() {
                             className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm">
                             <option value="">Selecione...</option>
                             <option value="Embutida na parede">Embutida na parede</option>
-                            <option value="Aparente">Aparente (com canaleta)</option>
+                            <option value="Aparente">Aparente (sobrepor)</option>
                             <option value="Pela laje">Pela laje / forro</option>
                           </select>
                         </div>
+                        {r?.inst === 'Aparente' && (
+                          <div>
+                            <Label className="text-xs">Material aparente</Label>
+                            <select value={r?.materialAparente ?? 'canaleta'} onChange={(e: any) => store.updateRoom(r?.id ?? '', { materialAparente: e?.target?.value as any })}
+                              className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm">
+                              <option value="canaleta">Canaleta (peças de 2 m)</option>
+                              <option value="eletroduto_metro">Eletroduto rígido (em metros)</option>
+                              <option value="eletroduto_peca3m">Eletroduto rígido (peças de 3 m)</option>
+                            </select>
+                          </div>
+                        )}
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label className="text-xs">Pé-direito (m)</Label>
