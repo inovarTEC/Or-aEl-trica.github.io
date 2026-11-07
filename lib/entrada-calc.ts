@@ -73,7 +73,14 @@ export function materiaisEntrada(e: EntradaPrincipal): MaterialEntrada[] {
   if (e.tipoEntrada !== 'aerea' && percurso > 0) {
     const descTipo = e.tipoEletroduto === 'rigido' ? 'Eletroduto rígido' : 'Eletroduto flexível corrugado';
     const diam = e.diametroEletroduto;
-    items.push({ descricao: `${descTipo} ${diam}" para alimentador`, qtd: Math.ceil(percurso * 1.1), unidade: 'm', mostrarNaPrevia: true });
+    if (e.unidadeEletroduto === 'peca3m') {
+      const barras = Math.ceil(percurso * 1.1 / 3);
+      items.push({ descricao: `${descTipo} ${diam}" (barra 3 m) para alimentador`, qtd: barras, unidade: 'barra', mostrarNaPrevia: true });
+      items.push({ descricao: `Luva ${diam}"`, qtd: Math.max(0, barras - 1), unidade: 'un', mostrarNaPrevia: true });
+      items.push({ descricao: `Curva 90° ${diam}"`, qtd: 2, unidade: 'un', mostrarNaPrevia: true });
+    } else {
+      items.push({ descricao: `${descTipo} ${diam}" para alimentador`, qtd: Math.ceil(percurso * 1.1), unidade: 'm', mostrarNaPrevia: true });
+    }
     items.push({ descricao: `Kit fita/fixação eletroduto ${diam}"`, qtd: 1, unidade: 'kit', mostrarNaPrevia: true });
   }
 
