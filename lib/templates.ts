@@ -38,7 +38,7 @@ function emptyRoom(base: string, nome: string): Room {
     dqE: false, ddE: false, drE: false,
     dpad: '1.5', dpadE: true,
     pontos: [], luzes: [], comandos: [], caixas: [],
-    luzAuto: true, inst: '', pe: '2.8', obs: '',
+    luzAuto: true, inst: 'Embutida na parede', pe: '2.8', obs: '',
   };
 }
 

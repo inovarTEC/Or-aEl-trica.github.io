@@ -22,6 +22,7 @@ export default function StepComodos() {
   const rooms = store?.rooms ?? [];
   const [showTemplates, setShowTemplates] = useState(rooms.length === 0);
   const [expanded, setExpanded] = useState<string | null>(null);
+  // Detalhes avançados começam abertos em todos os cômodos (o usuário pode recolher).
   const [advancedOpen, setAdvancedOpen] = useState<Record<string, boolean>>({});
 
   const addFromTemplate = (tpl: typeof ROOM_TEMPLATES[0]) => {
@@ -170,11 +171,11 @@ export default function StepComodos() {
                     )}
 
                     {/* Advanced */}
-                    <Collapsible open={advancedOpen[r?.id ?? ''] ?? false} onOpenChange={(o: boolean) => setAdvancedOpen((p) => ({ ...p, [r?.id ?? '']: o }))}>
+                    <Collapsible open={advancedOpen[r?.id ?? ''] ?? true} onOpenChange={(o: boolean) => setAdvancedOpen((p) => ({ ...p, [r?.id ?? '']: o }))}>
                       <CollapsibleTrigger asChild>
-                        <button type="button" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+                        <button type="button" className="flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-800 hover:underline transition-colors">
                           <Settings2 className="w-3 h-3" /> Detalhes avançados
-                          {(advancedOpen[r?.id ?? ''] ?? false) ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                          {(advancedOpen[r?.id ?? ''] ?? true) ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                         </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-3 space-y-3">
