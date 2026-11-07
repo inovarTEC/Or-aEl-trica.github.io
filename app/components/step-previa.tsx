@@ -34,6 +34,7 @@ export default function StepPrevia() {
   const [falha, setFalha] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [local, setLocal] = useState<EstadoLocal | null>(null);
+  const [cep, setCep] = useState('');
 
   // A entrada vai só para a prévia (/api/calcular); dadosDoOrcamento segue igual para não mudar a assinatura do checkout.
   const dados = JSON.stringify({ ...dadosDoOrcamento(store), entrada: store.entrada, aterramento: store.aterramento });
@@ -215,6 +216,29 @@ export default function StepPrevia() {
             <Button asChild size="sm" variant="outline" className="w-full text-xs"
               style={{ background: '#e8f4f8', color: '#0c4a6e', borderColor: '#bae6fd' }}>
               <a href={LINK_NOSSOS_APPS} target="_blank" rel="noopener noreferrer">Nossos Apps para Eletricista 📱</a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Busca de eletricista por CEP: link externo do Google Maps, sem API key */}
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4 space-y-2">
+          <p className="text-sm font-semibold">🔍 Encontrar eletricista na sua região</p>
+          <p className="text-xs text-muted-foreground">Digite seu CEP e encontre eletricistas próximos no Google Maps</p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input type="text" inputMode="numeric" placeholder="00000-000" maxLength={9} value={cep}
+              onChange={(ev) => {
+                const d = ev.target.value.replace(/\D/g, '').slice(0, 8);
+                setCep(d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d);
+              }}
+              className="w-full sm:w-40 rounded-lg border border-input bg-card px-3 py-2 text-sm" />
+            <Button size="sm" variant="outline" className="h-9 text-xs" disabled={cep.replace(/\D/g, '').length !== 8}
+              onClick={() => {
+                const cepLimpo = cep.replace(/\D/g, '');
+                window.open(`https://www.google.com/maps/search/eletricista+${cepLimpo}`, '_blank', 'noopener');
+              }}>
+              Buscar no Google Maps 📍
             </Button>
           </div>
         </CardContent>

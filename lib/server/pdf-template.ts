@@ -331,6 +331,20 @@ ${equipHtml}
   </p>
 </div>
 
+<!-- Busca de eletricista -->
+<div style="margin-top:16px; padding:16px; border:1px solid #e0e0e0; border-radius:8px; background:#f5f9ff; page-break-inside:avoid;">
+  <p style="margin:0 0 6px 0; font-size:13px; font-weight:bold; color:#333;">
+    🔍 Precisa de um eletricista?
+  </p>
+  <p style="margin:0; font-size:12px; color:#555;">
+    Encontre eletricistas próximos de você no Google Maps:
+    <a href="https://www.google.com/maps/search/eletricista" style="color:#0077cc;">
+      maps.google.com → buscar "eletricista"
+    </a>
+    &nbsp;— ou pesquise com seu CEP para resultados mais precisos.
+  </p>
+</div>
+
 ${pendHtml}
 
 <!-- Observações técnicas -->
