@@ -127,6 +127,11 @@ export function gerarHtmlPdf(dados: AppState): string {
 
   /* ---------- Especificações por cômodo ---------- */
   const rooms = dados.rooms ?? [];
+  const ROTULO_MAT_APARENTE: Record<string, string> = {
+    canaleta: 'canaleta (barras de 2 m)',
+    eletroduto_metro: 'eletroduto rígido (metros)',
+    eletroduto_peca3m: 'eletroduto rígido (barras de 3 m)',
+  };
   const especHtml = `
     <div class="section">
       <h2>Especificações por Cômodo</h2>
@@ -149,7 +154,7 @@ export function gerarHtmlPdf(dados: AppState): string {
               <td>${esc(r.nome || r.base || 'Cômodo')}</td>
               <td>${num(r.c) > 0 && num(r.l) > 0 ? `C: ${fmtD(num(r.c))}m × L: ${fmtD(num(r.l))}m` : '—'}</td>
               <td class="r">${num(r.pe) > 0 ? `${fmtD(num(r.pe))} m` : '—'}</td>
-              <td>${ouTraco(r.inst)}</td>
+              <td>${r.inst === 'Aparente' ? `Aparente (sobrepor) — ${esc(ROTULO_MAT_APARENTE[r.materialAparente ?? 'canaleta'] ?? 'canaleta')}` : ouTraco(r.inst)}</td>
               <td class="r">${contarTomadas(r)}</td>
               <td class="r">${(r.luzes ?? []).length}</td>
               <td class="r">${(r.comandos ?? []).length}</td>
@@ -206,7 +211,7 @@ export function gerarHtmlPdf(dados: AppState): string {
         <div><div class="label">Poste</div><div class="value">${esc(ROTULO_POSTE[ent.poste] ?? (ent.poste || '—'))}</div></div>
         <div><div class="label">Sistema elétrico</div><div class="value">${esc(ROTULO_SISTEMA[ent.sistema] ?? (ent.sistema || '—'))}</div></div>
         <div><div class="label">Bitola do cabo</div><div class="value">${ent.bitola ? `${esc(ent.bitola)} mm²` : '—'}</div></div>
-        <div><div class="label">Eletroduto</div><div class="value">${ent.diametroEletroduto ? `${esc(ent.diametroEletroduto)}" — ${esc(ROTULO_ELETRODUTO[ent.tipoEletroduto] ?? ent.tipoEletroduto)}` : '—'}</div></div>
+        <div><div class="label">Eletroduto</div><div class="value">${ent.diametroEletroduto ? `${esc(ent.diametroEletroduto)}" — ${esc(ROTULO_ELETRODUTO[ent.tipoEletroduto] ?? ent.tipoEletroduto)}${ent.tipoEntrada !== 'aerea' ? (ent.unidadeEletroduto === 'peca3m' ? ' (barras de 3 m)' : ' (em metros)') : ''}` : '—'}</div></div>
         <div><div class="label">Percurso total (m)</div><div class="value">${ouTraco(ent.percurso)}</div></div>
         <div><div class="label">Tensão de fornecimento</div><div class="value">${ent.tensao ? `${esc(ent.tensao)} V` : '—'}</div></div>
         <div class="full"><div class="label">Observações</div><div class="value">${ouTraco(ent.obs)}</div></div>
