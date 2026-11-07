@@ -316,7 +316,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
 
   // Disjuntor geral: um só. Se a etapa Entrada foi preenchida, vale o da entrada (lançado abaixo).
   const polosGeral = rede === 'Trifásico' ? 'tripolar' : rede === 'Bifásico' ? 'bipolar' : 'monopolar';
-  const temEntrada = !!state.entrada?.tipoEntrada;
+  const temEntrada = !!state.entrada?.tipoEntrada && state.entrada?.incluirNoPdf !== false;
   if (!temEntrada) {
     materiais.push({
       item: `Disjuntor geral ${djGeral}A`,
@@ -468,7 +468,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   }
 
   // Materiais da entrada / alimentador principal
-  if (temEntrada && state.entrada) {
+  if (temEntrada && state.entrada && state.entrada.incluirNoPdf !== false) {
     for (const m of materiaisEntrada(state.entrada)) {
       const ehGeral = m.descricao.startsWith('Disjuntor geral');
       materiais.push({
@@ -483,7 +483,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   }
 
   // Materiais do aterramento principal
-  if (state.aterramento && state.aterramento.nHastes > 0) {
+  if (state.aterramento && state.aterramento.nHastes > 0 && state.aterramento.incluirNoPdf !== false) {
     for (const m of materiaisAterramento(state.aterramento)) {
       materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Sistema de aterramento' });
     }

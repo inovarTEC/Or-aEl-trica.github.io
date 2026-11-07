@@ -202,7 +202,7 @@ export function gerarHtmlPdf(dados: AppState): string {
 
   /* ---------- Entrada / alimentador ---------- */
   const ent = dados.entrada;
-  const entradaHtml = `
+  const entradaHtml = dados.entrada?.incluirNoPdf === false ? '' : `
     <div class="section">
       <h2>Entrada / Alimentador Principal</h2>
       ${ent && ent.tipoEntrada ? `
@@ -221,7 +221,7 @@ export function gerarHtmlPdf(dados: AppState): string {
 
   /* ---------- Aterramento ---------- */
   const at = dados.aterramento;
-  const aterramentoHtml = `
+  const aterramentoHtml = dados.aterramento?.incluirNoPdf === false ? '' : `
     <div class="section">
       <h2>Sistema de Aterramento</h2>
       ${at && num(at.nHastes) > 0 ? `

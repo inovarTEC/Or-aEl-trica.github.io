@@ -131,6 +131,8 @@ export interface EntradaPrincipal {
   tensao: string;
   potenciaDemandada: string;
   obs: string;
+  /** Incluir a entrada no orçamento/PDF (ausente = true). */
+  incluirNoPdf?: boolean;
 }
 
 /** Aterramento principal da casa (Etapa 8). */
@@ -141,6 +143,8 @@ export interface AterramentoPrincipal {
   bitolaCabo: '6' | '10';
   distancia: string;
   obs: string;
+  /** Incluir o aterramento no orçamento/PDF (ausente = true). */
+  incluirNoPdf?: boolean;
 }
 
 export interface AppState {
