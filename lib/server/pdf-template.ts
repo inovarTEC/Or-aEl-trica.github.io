@@ -301,6 +301,36 @@ ${equipHtml}
   </table>
 </div>
 
+<!-- Afiliados -->
+<div style="margin-top:32px; padding:16px; border:1px solid #e0e0e0; border-radius:8px; background:#fafafa; page-break-inside:avoid;">
+  <p style="margin:0 0 8px 0; font-size:13px; font-weight:bold; color:#333;">
+    ⚡ Encontre os materiais com preço que cabe no seu bolso!
+  </p>
+  <p style="margin:0 0 12px 0; font-size:12px; color:#555;">
+    Conheça os materiais elétricos nas lojas mais conhecidas do mercado:
+  </p>
+  <table style="width:100%; border-collapse:collapse; font-size:12px;">
+    <tr>
+      <td style="padding:4px 8px 4px 0; color:#555;">⚡ Materiais Elétricos</td>
+      <td style="padding:4px 8px;"><a href="https://collshp.com/jose_o_souza271/category/4439164?share_channel_code=1&view=storefront" style="color:#ee4d2d;">Shopee</a></td>
+      <td style="padding:4px 8px;"><a href="https://meli.la/2AepJUo" style="color:#f0a500;">Mercado Livre</a></td>
+    </tr>
+    <tr>
+      <td style="padding:4px 8px 4px 0; color:#555;">🔧 Ferramentas</td>
+      <td style="padding:4px 8px;"><a href="https://collshp.com/jose_o_souza271/category/3503601?share_channel_code=1&view=storefront" style="color:#ee4d2d;">Shopee</a></td>
+      <td style="padding:4px 8px;"><a href="https://meli.la/2ofRVk2" style="color:#f0a500;">Mercado Livre</a></td>
+    </tr>
+    <tr>
+      <td style="padding:4px 8px 4px 0; color:#555;">🏠 Casa Inteligente</td>
+      <td style="padding:4px 8px;"><a href="https://collshp.com/jose_o_souza271/category/3649413?share_channel_code=1&view=storefront" style="color:#ee4d2d;">Shopee</a></td>
+      <td style="padding:4px 8px;"><a href="https://meli.la/2QVebrw" style="color:#f0a500;">Mercado Livre</a></td>
+    </tr>
+  </table>
+  <p style="margin:12px 0 0 0; font-size:11px; color:#888;">
+    📱 Conheça nossos outros apps para eletricista: <a href="https://eletricistapro.com.br/" style="color:#0077aa;">eletricistapro.com.br</a>
+  </p>
+</div>
+
 ${pendHtml}
 
 <!-- Observações técnicas -->

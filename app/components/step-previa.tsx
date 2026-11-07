@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
 import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
+import { AFILIADOS, LINK_NOSSOS_APPS } from '@/lib/afiliados';
 
 interface Previa {
   valor: number;
@@ -190,6 +191,34 @@ export default function StepPrevia() {
           </CardContent>
         </Card>
       )}
+
+      {/* Links de afiliados: discretos, antes do botão de pagamento */}
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4 space-y-2">
+          <p className="text-xs text-muted-foreground mb-1">Encontre os materiais online 🛒</p>
+          {AFILIADOS.map((a) => (
+            <div key={a.categoria} className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs">{a.emoji} {a.categoria}</span>
+              <div className="flex gap-2">
+                <Button asChild size="sm" variant="outline" className="h-7 px-3 text-xs"
+                  style={{ background: '#fff3e8', color: '#c2410c', borderColor: '#fed7aa' }}>
+                  <a href={a.shopee} target="_blank" rel="noopener noreferrer">Shopee</a>
+                </Button>
+                <Button asChild size="sm" variant="outline" className="h-7 px-3 text-xs"
+                  style={{ background: '#fffbe6', color: '#78600a', borderColor: '#fde68a' }}>
+                  <a href={a.ml} target="_blank" rel="noopener noreferrer">Mercado Livre</a>
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="border-t border-border/60 pt-3 mt-2">
+            <Button asChild size="sm" variant="outline" className="w-full text-xs"
+              style={{ background: '#e8f4f8', color: '#0c4a6e', borderColor: '#bae6fd' }}>
+              <a href={LINK_NOSSOS_APPS} target="_blank" rel="noopener noreferrer">Nossos Apps para Eletricista 📱</a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {local && podeEditar(local) ? (
         <Card className="shadow-md border-green-300 bg-gradient-to-r from-green-50 to-green-100/60">
