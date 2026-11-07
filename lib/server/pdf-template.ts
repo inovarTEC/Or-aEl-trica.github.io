@@ -74,6 +74,14 @@ function tituloPdf(dados: Partial<AppState> & Record<string, any>, agora?: Date)
   return ['Orcamento', nome, dataArquivo(agora)].filter(Boolean).join('-');
 }
 
+/** Tipo de ligação com a tensão nominal usual da concessionária. */
+function redeComTensao(rede: string | undefined): string {
+  if (rede === 'Monofásico') return 'Monofásico — 127/220V';
+  if (rede === 'Bifásico') return 'Bifásico — 220V';
+  if (rede === 'Trifásico') return 'Trifásico — 380V';
+  return rede || 'Não informado';
+}
+
 export function gerarHtmlPdf(dados: AppState): string {
   const totais = calcTotais(dados);
   const pendencias = calcPendencias(dados);
@@ -339,7 +347,7 @@ export function gerarHtmlPdf(dados: AppState): string {
     <div><div class="label">Tipo de imóvel</div><div class="value">${esc(dados.imovel || 'Não informado')}</div></div>
     <div><div class="label">Tipo de obra</div><div class="value">${esc(dados.obra || 'Não informado')}</div></div>
     <div><div class="label">Cobertura / Teto</div><div class="value">${esc(dados.cobertura || 'Não informado')}</div></div>
-    <div><div class="label">Ligação da rede</div><div class="value">${esc(dados.rede || 'Não informado')}</div></div>
+    <div><div class="label">Ligação da rede</div><div class="value">${esc(redeComTensao(dados.rede))}</div></div>
   </div>
 </div>
 
@@ -415,6 +423,7 @@ ${aterramentoHtml}
 <div class="grupo">
 <div class="section">
   <h2>Lista de Materiais</h2>
+  <p class="note">⚡ Cabos: cores conforme NBR 5410 — Preto/Vermelho/Marrom = fase · Azul claro = neutro · Verde-amarelo = terra (PE)</p>
   <p class="note">Quantidades incluem folga de segurança (15% para cabos, 10% para eletrodutos). Valores de referência para orçamento.</p>
   <table>
     <thead>

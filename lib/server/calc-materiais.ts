@@ -170,33 +170,62 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   /* ----- Lista de materiais consolidada ----- */
   const materiais: MaterialItem[] = [];
 
-  // Agrupar fios por bitola
-  const fiosPorBitola: Record<number, number> = {};
+  // Cabos separados por bitola + cor (NBR 5410): fases, neutro e terra (PE)
+  const CORES_FASE = ['Preto', 'Vermelho', 'Marrom'] as const;
+  const ORDEM_COR = ['Preto', 'Vermelho', 'Marrom', 'Azul claro', 'Verde-amarelo'];
+  const FUNCAO_COR: Record<string, string> = {
+    Preto: 'fase', Vermelho: 'fase', Marrom: 'fase', 'Azul claro': 'neutro', 'Verde-amarelo': 'terra',
+  };
+  const fiosPorBitolaCor: Record<string, { bitola: number; cor: string; metros: number }> = {};
+  const bitolasSemTerra = new Set<number>();
+  const somarFio = (bitola: number, cor: string, metros: number) => {
+    const chave = `${bitola}mm²_${cor}`;
+    const atual = fiosPorBitolaCor[chave] ?? { bitola, cor, metros: 0 };
+    atual.metros += metros;
+    fiosPorBitolaCor[chave] = atual;
+  };
   for (const c of circuitos) {
-    const metragem = c.comprimentoM * c.nCondutores;
-    fiosPorBitola[c.bitolaMM2] = (fiosPorBitola[c.bitolaMM2] ?? 0) + metragem;
+    // 2 = F+N (sem PE separado); 3 = F+N+PE; 4 = 2F+N+PE; 5 = 3F+N+PE
+    const n = Math.max(2, Math.min(5, c.nCondutores));
+    const temTerra = n >= 3;
+    const fases = temTerra ? n - 2 : 1;
+    if (!temTerra) bitolasSemTerra.add(c.bitolaMM2);
+    for (let f = 0; f < fases; f++) somarFio(c.bitolaMM2, CORES_FASE[f], c.comprimentoM);
+    somarFio(c.bitolaMM2, 'Azul claro', c.comprimentoM);
+    if (temTerra) somarFio(c.bitolaMM2, 'Verde-amarelo', c.comprimentoM);
   }
-  for (const [bitola, metros] of Object.entries(fiosPorBitola)) {
+  const fmtBitola = (b: number) => String(b).replace('.', ',');
+  const linhasFio = Object.values(fiosPorBitolaCor).sort(
+    (a, b) => a.bitola - b.bitola || ORDEM_COR.indexOf(a.cor) - ORDEM_COR.indexOf(b.cor),
+  );
+  for (const { bitola, cor, metros } of linhasFio) {
+    const obsSemTerra = cor === 'Azul claro' && bitolasSemTerra.has(bitola)
+      ? ' — há circuito(s) sem condutor de terra separado'
+      : '';
     materiais.push({
-      item: `Cabo flexível ${bitola} mm²`,
-      qtd: Math.ceil(Number(metros) * 1.15), // 15% de folga
+      item: `Cabo flexível ${fmtBitola(bitola)} mm² — ${cor} (${FUNCAO_COR[cor]})`,
+      qtd: Math.ceil(metros * 1.15), // 15% de folga
       unidade: 'm',
-      detalhe: `Cobre, isolação PVC 750V`,
+      detalhe: `Cobre, isolação PVC 750V${obsSemTerra}`,
     });
   }
 
-  // Eletroduto por bitola mais comum
+  // Eletroduto rígido por DN: metragem, tubos de 3 m, luvas de emenda, curvas 90° e luvas das curvas
   const eletroPorDN: Record<number, number> = {};
+  const circuitosPorDN: Record<number, number> = {};
   for (const c of circuitos) {
     eletroPorDN[c.eletrodutoDN] = (eletroPorDN[c.eletrodutoDN] ?? 0) + c.comprimentoM;
+    circuitosPorDN[c.eletrodutoDN] = (circuitosPorDN[c.eletrodutoDN] ?? 0) + 1;
   }
-  for (const [dn, metros] of Object.entries(eletroPorDN)) {
-    materiais.push({
-      item: `Eletroduto PVC ${dn} mm`,
-      qtd: Math.ceil(Number(metros) * 1.1), // 10% de folga
-      unidade: 'm',
-      detalhe: 'Rígido ou corrugado, conforme instalação',
-    });
+  for (const dn of Object.keys(eletroPorDN).map(Number).sort((a, b) => a - b)) {
+    const metrosFolga = eletroPorDN[dn] * 1.1; // 10% de folga
+    const tubos = Math.ceil(metrosFolga / 3);
+    const curvas = circuitosPorDN[dn] * 2; // saída do quadro + chegada no cômodo
+    materiais.push({ item: `Eletroduto PVC rígido ${dn}mm`, qtd: Math.ceil(metrosFolga), unidade: 'm', detalhe: 'Rígido rosqueável, trecho(s) de 3 m' });
+    materiais.push({ item: `Tubo eletroduto ${dn}mm (3 m)`, qtd: tubos, unidade: 'pç', detalhe: 'Trecho unitário' });
+    materiais.push({ item: `Luva de emenda ${dn}mm`, qtd: Math.max(0, tubos - 1), unidade: 'un', detalhe: 'Rosqueável, PVC rígido' });
+    materiais.push({ item: `Curva 90° eletroduto ${dn}mm`, qtd: curvas, unidade: 'un', detalhe: 'PVC rígido com luva' });
+    materiais.push({ item: `Luva de rosca ${dn}mm (curva)`, qtd: curvas * 2, unidade: 'un', detalhe: 'Para fixação das curvas 90°' });
   }
 
   // Disjuntores
