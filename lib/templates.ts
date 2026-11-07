@@ -41,6 +41,15 @@ export function dpadPorTipo(tipo: string): string {
   return '1.5';
 }
 
+/**
+ * Tomada padrão de um ponto novo: simples (T10) em banheiro/lavabo, área de serviço/lavanderia
+ * e garagem; dupla (T10D) nos demais cômodos e quando o tipo não é identificado.
+ */
+export function tomadaPadrao(tipo: string): 'T10' | 'T10D' {
+  const t = (tipo ?? '').toLowerCase();
+  return /banheiro|lavabo|servi|lavanderia|garagem/.test(t) ? 'T10' : 'T10D';
+}
+
 function emptyRoom(base: string, nome: string): Room {
   return {
     id: uid(), base, nome,
@@ -64,11 +73,11 @@ export interface RoomTemplate {
 export const ROOM_TEMPLATES: RoomTemplate[] = [
   {
     label: 'Quarto típico',
-    desc: '3 tomadas, 1 luz, 1 interruptor',
+    desc: '3 tomadas duplas, 1 luz, 1 interruptor',
     icon: 'Bed',
     create: () => {
       const r = emptyRoom('Quarto', 'Quarto');
-      r.pontos = [mkPonto('baixa', [{ t: 'T10' }]), mkPonto('baixa', [{ t: 'T10' }]), mkPonto('baixa', [{ t: 'T10' }])];
+      r.pontos = Array.from({ length: 3 }, () => mkPonto('baixa', [{ t: 'T10D' }]));
       const luz = mkLuz();
       r.luzes = [luz];
       r.comandos = [mkComandoSimples([luz.id])];
@@ -119,11 +128,11 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Sala típica',
-    desc: '5 tomadas, 2 luzes, 1 interruptor',
+    desc: '5 tomadas duplas, 2 luzes, 1 interruptor',
     icon: 'Sofa',
     create: () => {
       const r = emptyRoom('Sala', 'Sala');
-      r.pontos = Array.from({ length: 5 }, () => mkPonto('baixa', [{ t: 'T10' }]));
+      r.pontos = Array.from({ length: 5 }, () => mkPonto('baixa', [{ t: 'T10D' }]));
       const l1 = mkLuz(); const l2 = mkLuz();
       r.luzes = [l1, l2];
       r.comandos = [mkComandoSimples([l1.id, l2.id])];

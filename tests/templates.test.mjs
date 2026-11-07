@@ -34,7 +34,7 @@ function loadTs(file) {
 }
 
 
-const { ROOM_TEMPLATES, dpadPorTipo } = loadTs(resolve(ROOT, 'lib/templates.ts'));
+const { ROOM_TEMPLATES, dpadPorTipo, tomadaPadrao } = loadTs(resolve(ROOT, 'lib/templates.ts'));
 
 let ok = 0;
 const t = (nome, fn) => { fn(); ok++; console.log('✓', nome); };
@@ -96,6 +96,17 @@ t('dpad por tipo de cômodo', () => {
   for (const c of ['Garagem', 'Varanda', 'Terraço', 'Subsolo']) assert.equal(dpadPorTipo(c), '2.0', c);
   assert.equal(dpadPorTipo('Escritório'), '1.5');
   assert.equal(dpadPorTipo(''), '1.5');
+});
+
+t('tomada dupla nos modelos Quarto, Sala e Suítes; simples em Banheiro e Área de serviço', () => {
+  for (const l of ['Quarto', 'Sala', 'Suíte 1', 'Suíte 2', 'Suíte 3']) assert.ok(tipos(tpl(l)).every((x) => x === 'T10D'), l);
+  for (const l of ['Banheiro', 'Área de serviço']) assert.ok(tipos(tpl(l)).filter((x) => x.startsWith('T10')).every((x) => x === 'T10'), l);
+  assert.deepEqual(tipos(tpl('Cozinha')).filter((x) => x === 'T20').length, 2);
+});
+
+t('tomadaPadrao: T10 em banheiro/serviço/lavanderia/garagem, T10D nos demais', () => {
+  for (const c of ['Banheiro Banheiro', 'Lavabo', 'Área de serviço', 'Lavanderia', 'Garagem']) assert.equal(tomadaPadrao(c), 'T10', c);
+  for (const c of ['Sala', 'Quarto Suíte 1', 'Cozinha', 'Varanda', 'Cômodo', '']) assert.equal(tomadaPadrao(c), 'T10D', c);
 });
 
 console.log(`\n${ok} testes OK`);

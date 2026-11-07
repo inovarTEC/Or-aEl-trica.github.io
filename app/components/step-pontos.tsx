@@ -1,6 +1,6 @@
 'use client';
 import { useStore } from '@/lib/store-cliente';
-import { uid } from '@/lib/templates';
+import { uid, tomadaPadrao } from '@/lib/templates';
 import { luzCount } from '@/lib/luz';
 import { Room, Ponto, Luz, Comando, Sw, TipoComando, TipoModulo } from '@/lib/types';
 import { resumoComodo, modulosDe, modulosSw, caixaPorModulos } from '@/lib/resumo-comodo';
@@ -39,7 +39,8 @@ export default function StepPontos() {
 
   const addTomada = () => {
     if (!r) return;
-    store.addPonto(r.id, { id: uid(), h: 'baixa', d: '', cx: '4x2', mods: [{ id: uid(), t: 'T10' }] });
+    const t = tomadaPadrao(`${r.base ?? ''} ${r.nome ?? ''}`);
+    store.addPonto(r.id, { id: uid(), h: 'baixa', d: '', cx: caixaPorModulos(modulosDe(t)), mods: [{ id: uid(), t }] });
     toast.success('Tomada adicionada');
   };
   const addLuz = () => {
