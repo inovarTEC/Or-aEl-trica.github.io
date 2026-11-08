@@ -85,7 +85,7 @@ const EQUIP_CX = ['4x2', '4x4'];
 const EQUIP_PONTO = ['T20', 'T20D', 'borne', 'tampa', 'emenda'];
 const EQUIP = ['', 'Chuveiro elétrico', 'Torneira elétrica', 'Ar-condicionado', 'Forno elétrico', 'Cooktop elétrico',
   'Máquina de lavar', 'Secadora', 'Aquecedor', 'Bomba', 'Carregador de veículo elétrico', 'Outro'];
-const TENSAO = ['', '127V', '220V'];
+const TENSAO = ['', '127V', '220V', '380V'];
 const ENT_TIPO = ['aerea', 'subterranea', 'parede'];
 const ENT_POSTE = ['6m', '7m', 'nao-tem'];
 const ENT_SISTEMA = ['monofasico', 'bifasico', 'trifasico'];

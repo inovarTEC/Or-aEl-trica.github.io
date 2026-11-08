@@ -144,6 +144,7 @@ export default function StepEquipamentos() {
                       <option value="">Selecione</option>
                       <option value="127V">127V</option>
                       <option value="220V">220V</option>
+                      <option value="380V">380V (só rede 380/220)</option>
                     </select>
                   </div>
                   <div>

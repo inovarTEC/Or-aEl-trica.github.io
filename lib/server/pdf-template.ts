@@ -244,7 +244,7 @@ export function gerarHtmlPdf(dados: AppState): string {
   @page { size: A4; margin: 22mm 20mm 32mm 20mm;
     /* Rodapé inteiro (o Chrome só resolve counter(page) em caixas de margem do @page) na margem inferior: repete em todas as páginas e nunca cobre o conteúdo */
     @bottom-center {
-      content: "OrçaElétrica — Orçamento de referência  ·  Página " counter(page) " de " counter(pages) "\\A Este documento é uma estimativa de referência e não substitui o projeto elétrico elaborado por profissional habilitado.";
+      content: "OrçaElétrica — Orçamento de referência  ·  Página " counter(page) " de " counter(pages) "\\A Estimativa baseada na NBR 5410:2004; não substitui projeto de profissional habilitado.";
       white-space: pre; font-family: 'Segoe UI', Arial, sans-serif; font-size: 7.5pt; line-height: 1.5; color: #94a3b8; text-align: center;
       vertical-align: top; padding-top: 4mm; border-top: 2px solid #2563EB; margin-top: 6mm;
     }
@@ -470,20 +470,20 @@ ${aterramentoHtml}
 <div class="section" style="margin-top:24px;">
   <h2>Observações Técnicas</h2>
   <ul style="font-size: 8.5pt; color: #475569; padding-left: 16px; line-height: 1.7;">
-    <li>Dimensionamento conforme <strong>NBR 5410:2004</strong> (ABNT) — Instalações elétricas de baixa tensão.</li>
-    <li>Seções mínimas: 1,5 mm² (iluminação), 2,5 mm² (tomadas e circuitos de uso específico).</li>
-    <li>Queda de tensão máxima considerada: 2% por circuito terminal.</li>
-    <li>Método de instalação B1 — condutores em eletroduto embutido em parede.</li>
-    <li>Fator de potência de referência: 0,92.</li>
-    <li>Fator de demanda para disjuntor geral: 0,70 (residencial).</li>
-    <li>Este orçamento é uma estimativa de referência. A instalação deve ser executada por profissional habilitado (eletricista com registro no CREA/CRT).</li>
-    <li>Os valores podem variar conforme as condições específicas da obra, comprimento real dos circuitos e particularidades da instalação.</li>
+    <li>Premissas: sistema ${resultado.quadro.sistema} V (${dados.entrada?.sistemaTensao && dados.entrada.sistemaTensao !== 'nao-sei' ? 'informado' : 'não informado — adotado 220/127 V, confirme'}); categoria de atendimento ${resultado.quadro.categoria}; carga instalada ${resultado.quadro.cargaInstaladaKw} kW; demanda ${resultado.quadro.demandaKva} kVA (DIS-NOR-030 6.26–6.27, fatores g/h/i = 1,00).</li>
+    <li>Seções mínimas: 1,5 mm² (iluminação), 2,5 mm² (tomadas e uso específico) — NBR 5410 6.2.6.1.1.</li>
+    <li>Método de referência B1 (Tabela 36) com fator de agrupamento da Tabela 42; disjuntor curva C com IB ≤ In ≤ Iz; mínimo de 10 A em TUG e iluminação.</li>
+    <li>Queda de tensão: meta de 3% no circuito terminal (ρ = 0,0225 Ω·mm²/m); fator de potência 1 (resistivos) e 0,92 (ar-condicionado e motores).</li>
+    <li>Iluminação e tomadas em fase-neutro (${resultado.quadro.sistema === '380/220' ? '220' : '127'} V); quadro com ${resultado.quadro.reserva} posições de reserva (NBR 5410 Tabela 59).</li>
+    <li>Disjuntor geral pela categoria de atendimento (DIS-NOR-030): padrão de referência; confirme na sua concessionária.${resultado.quadro.avisoCategoria ? ' ' + esc(resultado.quadro.avisoCategoria) : ''}</li>
+    <li>Diâmetros de eletroduto e capacidade do DR: A VALIDAR pelo profissional. Folgas de 15% (cabos) e 10% (eletroduto).</li>
+    <li>Motor de cálculo versão ${resultado.quadro.versaoMotor}. A instalação deve ser executada por profissional habilitado.</li>
   </ul>
 </div>
 
 <div class="footer-fixo">
   <strong>OrçaElétrica</strong> — Orçamento de referência<span class="pg-txt"> — Página <span class="pg"></span></span><br>
-  Este documento é uma estimativa de referência e não substitui o projeto elétrico elaborado por profissional habilitado.
+  Estimativa baseada na NBR 5410:2004; não substitui projeto de profissional habilitado.
 </div>
 
 </body>

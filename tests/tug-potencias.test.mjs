@@ -34,7 +34,7 @@ function loadTs(file) {
 }
 
 
-const { potenciaTUG } = loadTs(resolve(ROOT, 'lib/server/nbr5410.ts'));
+const { potenciaTUG } = loadTs(resolve(ROOT, 'lib/motor/eletrica.ts'));
 const { calcularMateriais } = loadTs(resolve(ROOT, 'lib/server/calc-materiais.ts'));
 
 let ok = 0;

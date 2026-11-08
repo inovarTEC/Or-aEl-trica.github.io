@@ -17,7 +17,7 @@ export type TipoEquip =
   | 'Chuveiro elétrico' | 'Torneira elétrica' | 'Ar-condicionado'
   | 'Forno elétrico' | 'Cooktop elétrico' | 'Máquina de lavar'
   | 'Secadora' | 'Aquecedor' | 'Bomba' | 'Carregador de veículo elétrico' | 'Outro' | '';
-export type Tensao = '127V' | '220V' | '';
+export type Tensao = '127V' | '220V' | '380V' | '';
 
 export interface Modulo {
   id: string;
@@ -96,6 +96,8 @@ export interface Equip {
   room: string; // id do cômodo
   pot: string; // potência W
   tens: Tensao;
+  /** Equipamento declarado trifásico (só em 380/220 V). Opcional: projetos antigos não têm. */
+  trifasico?: boolean;
   dint: string; // dist dentro do cômodo
   dist: string; // dist direta ao quadro
   alim: 'Unidade externa' | 'Unidade interna' | '';
@@ -116,6 +118,10 @@ export type UnidadeEletroduto = 'metro' | 'peca3m';
 
 /** Entrada / alimentador principal (Etapa 7). Campos numéricos ficam como string, como no resto do wizard. */
 export interface EntradaPrincipal {
+  /** Sistema de tensões da cidade (opcional; ausente = 220/127 V com aviso). */
+  sistemaTensao?: '220/127' | '380/220' | 'nao-sei';
+  /** Ligação pretendida (DIS-NOR-030): monofásica, bifásica ou trifásica. */
+  ligacao?: 'M' | 'B' | 'T' | 'nao-sei';
   tipoEntrada: TipoEntrada;
   poste: TipoPoste;
   sistema: SistemaAlimentacao;
