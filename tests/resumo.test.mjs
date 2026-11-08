@@ -45,7 +45,7 @@ const caso = (nome, fn) => { fn(); ok++; console.log('OK   ', nome); };
 caso('1. Tomadas simples/dupla/tripla e USB', () => {
   const r = { pontos: [ponto('T10'), ponto('T10D'), ponto('T20T'), ponto('USB')], luzes: [], comandos: [] };
   const s = resumoComodo(r);
-  assert.equal(s.nTomadas, 6); assert.equal(s.nModulos, 7); assert.equal(s.nCaixas4x2, 4);
+  assert.equal(s.nTomadas, 3); assert.equal(s.nModulos, 7); // pontos (NBR) x módulos físicos assert.equal(s.nCaixas4x2, 4);
 });
 caso('2. Interruptores, tomada junto e caixas', () => {
   const l1 = { id: 'L1', d: '', cx: 'Redonda' }, l2 = { id: 'L2', d: '', cx: 'Redonda' }, l3 = { id: 'L3', d: '', cx: 'Redonda' };
@@ -56,7 +56,7 @@ caso('2. Interruptores, tomada junto e caixas', () => {
   ] };
   const s = resumoComodo(r);
   assert.equal(s.nInterruptores, 3); assert.deepEqual([s.nIS, s.nIP, s.nII], [1, 1, 1]);
-  assert.equal(s.nTomadas, 4); assert.equal(s.nCaixas4x2, 5); assert.equal(s.nCaixas4x4, 1);
+  assert.equal(s.nTomadas, 2); assert.equal(s.nCaixas4x2, 5); assert.equal(s.nCaixas4x4, 1);
   assert.deepEqual(s.pendencias, ['Interruptor 3 sem luz vinculada', 'Luz 3 sem interruptor']);
 });
 caso('3. Sugestão de caixa', () => {

@@ -181,7 +181,19 @@ export interface CategoriaDisNor {
   caboRamal: string;
   caboEntrada: string;
   eletroduto: string;
+  /** Seção de cobre do ramal de entrada (mm²). */
+  secaoCu: number;
   aviso?: string;
+}
+
+/**
+ * Bitola do alimentador (6/10/16 mm²): a seção da categoria (DIS-NOR-030) e, por queda de tensão,
+ * no mínimo 10 mm² acima de 30 m e 16 mm² acima de 50 m de percurso.
+ */
+export function bitolaEntrada(secaoCu: number, percursoM: number): '6' | '10' | '16' {
+  const porPercurso = percursoM > 50 ? 16 : percursoM > 30 ? 10 : 6;
+  const s = Math.max(secaoCu || 6, porPercurso);
+  return s <= 6 ? '6' : s <= 10 ? '10' : '16';
 }
 
 const LIG_SISTEMA: Record<Ligacao, SistemaLigacao> = { M: 'monofasico', B: 'bifasico', T: 'trifasico' };
@@ -206,6 +218,7 @@ export function categoriaDisNor(cargaKw: number, demandaKva: number, tensao: Vol
     caboRamal: t2?.ramal ?? 'conforme distribuidora',
     caboEntrada: t2?.entrada ?? caboEstimado,
     eletroduto: eletrodutoPorSecao(secao),
+    secaoCu: secao,
     aviso,
   };
 }

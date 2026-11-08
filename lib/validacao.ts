@@ -1,7 +1,7 @@
 /* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
 import { UFS } from './tensao-por-uf';
 import type { DadosOrcamento, Room } from './types';
-import { minTomadas, perimetro, tomadasFisicas } from './nbr5410-regras';
+import { minTomadas, perimetro, pontosTomada } from './nbr5410-regras';
 
 const num = (v: unknown): number => {
   const n = typeof v === 'number' ? v : parseFloat(String(v ?? ''));
@@ -68,10 +68,10 @@ export function tomadasNbr(r: Room): { minimo: number; atual: number } | null {
   const c = num(r?.c), l = num(r?.l);
   if (c <= 0 || l <= 0) return null;
   const minimo = minTomadas(c * l, perimetro(c, l), `${r?.base ?? ''} ${r?.nome ?? ''}`);
-  // Tomadas físicas (dupla = 2, tripla = 3), mesma regra de countMods — inclui as montadas no interruptor.
+  // Pontos de tomada (simples/dupla/tripla = 1), mesma regra de countMods — inclui as montadas no interruptor.
   let atual = 0;
-  for (const p of r?.pontos ?? []) for (const m of p?.mods ?? []) if (String(m?.t ?? '').startsWith('T')) atual += tomadasFisicas(m.t);
-  for (const c of r?.comandos ?? []) for (const sw of c?.sws ?? []) if (String(sw?.tom ?? '').startsWith('T')) atual += tomadasFisicas(sw.tom);
+  for (const p of r?.pontos ?? []) for (const m of p?.mods ?? []) if (String(m?.t ?? '').startsWith('T')) atual += pontosTomada(m.t);
+  for (const c of r?.comandos ?? []) for (const sw of c?.sws ?? []) if (String(sw?.tom ?? '').startsWith('T')) atual += pontosTomada(sw.tom);
   return { minimo, atual };
 }
 

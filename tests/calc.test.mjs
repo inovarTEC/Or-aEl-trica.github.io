@@ -78,9 +78,9 @@ teste('2. Soma por cômodo = total (tomadas, caixas, eletroduto)', () => {
   assert.deepEqual(t.porComodo.map((c) => c.distTrajeto), [4, 6]);
 });
 
-teste('3. Dupla conta 2 e tripla conta 3 tomadas físicas', () => {
-  assert.equal(calcTotais(estado([room({ pontos: [ponto('T10D')] })])).totalTomadas, 2);
-  assert.equal(calcTotais(estado([room({ pontos: [ponto('T10T')] })])).totalTomadas, 3);
+teste('3. Dupla e tripla contam 1 ponto de tomada cada (NBR 5410 conta pontos)', () => {
+  assert.equal(calcTotais(estado([room({ pontos: [ponto('T10D')] })])).totalTomadas, 1);
+  assert.equal(calcTotais(estado([room({ pontos: [ponto('T10T')] })])).totalTomadas, 1);
   // interruptor paralelo/retorno: aguarda confirmação da regra elétrica
 });
 

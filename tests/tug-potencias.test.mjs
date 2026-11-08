@@ -69,7 +69,7 @@ t('sem tomadas = 0 VA', () => {
   assert.equal(potenciaTUG(0, 'Sala'), 0);
 });
 
-t('o circuito de TUG do cálculo usa a potência por tipo e conta tomadas físicas (T10D = 2)', () => {
+t('o circuito de TUG do cálculo usa a potência por tipo e conta pontos de tomada (T10D = 1 ponto)', () => {
   let n = 0; const id = () => 'i' + (++n);
   const room = (base, mods) => ({
     id: id(), base, nome: base, c: '4', l: '3', medE: false, via: '', dq: '5', dd: '', dr: '',
@@ -82,8 +82,8 @@ t('o circuito de TUG do cálculo usa a potência por tipo e conta tomadas físic
     rooms: [room('Cozinha', ['T10D', 'T10D']), room('Sala', ['T10D', 'T10D', 'T10'])],
   });
   const pot = (nome) => r.circuitos.find((c) => c.tipo === 'tug' && c.comodo === nome).potenciaW;
-  assert.equal(pot('Cozinha'), 1900); // 4 tomadas: 3×600 + 1×100
-  assert.equal(pot('Sala'), 500);     // 5 tomadas × 100
+  assert.equal(pot('Cozinha'), 1200); // 2 pontos × 600
+  assert.equal(pot('Sala'), 300);     // 3 pontos × 100
 });
 
 console.log(`\n${ok} testes OK`);

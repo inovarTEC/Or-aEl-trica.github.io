@@ -1,9 +1,14 @@
 /* ===== NBR 5410 — regras simples usadas no navegador E no servidor (sem cálculo pago) ===== */
 
 /**
- * Quantas tomadas físicas um módulo representa: simples/USB = 1, dupla (…D) = 2, tripla (…T) = 3.
- * Fonte única usada na prévia (countMods) e na conferência da NBR 5410 (tomadasNbr).
+ * Pontos de tomada que uma peça representa (NBR 5410 conta pontos/caixas): simples, dupla ou tripla = 1.
+ * Fonte única da contagem de pontos (countMods, tomadasNbr, resumo do cômodo) — base dos 600/100 VA por ponto.
  */
+export function pontosTomada(t: string | undefined | null): number {
+  return String(t ?? '') ? 1 : 0;
+}
+
+/** Módulos físicos de uma peça (caixa, placa e lista de materiais): simples/USB = 1, dupla (D) = 2, tripla (T) = 3. */
 export function tomadasFisicas(t: string | undefined | null): number {
   const s = String(t ?? '');
   if (/^T\d+T$/.test(s)) return 3;

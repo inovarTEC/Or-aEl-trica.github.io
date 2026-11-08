@@ -5,10 +5,10 @@ import { AlertTriangle, Lock, PlugZap, Package } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
 import {
-  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirBitola, sugerirDiametro, sugerirSistema,
+  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirDiametro,
   tensaoDoSistema, tipoEletrodutoPadrao,
 } from '@/lib/entrada-calc';
-import { UFS, infoUf, sistemaSugeridoUf } from '@/lib/tensao-por-uf';
+import { UFS, infoUf, sistemaSugeridoUf, categoriaDisNor, bitolaEntrada } from '@/lib/tensao-por-uf';
 import type {
   BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste, UnidadeEletroduto,
 } from '@/lib/types';
@@ -41,10 +41,15 @@ export default function StepEntrada() {
   // Sugestões automáticas: só mexem nos campos que o usuário não sobrescreveu.
   useEffect(() => {
     const patch: Partial<EntradaPrincipal> = {};
-    const sugerido = vs ? sistemaSugeridoUf(vs, potKw) : sugerirSistema(potKw);
+    const sugerido = sistemaSugeridoUf(vs ?? '220/127', potKw);
     const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerido;
     if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema, vs); }
-    if (!e.bitolaManual) { const b = sugerirBitola(percurso, sistema); if (b !== e.bitola) patch.bitola = b; }
+    if (!e.bitolaManual) {
+      // Potência estimada usada como carga instalada e demanda (o PDF refaz com a demanda completa).
+      const cat = potKw > 0 ? categoriaDisNor(potKw, potKw, vs ?? '220/127', sistema) : null;
+      const b = bitolaEntrada(cat?.secaoCu ?? 6, percurso);
+      if (b !== e.bitola) patch.bitola = b;
+    }
     if (!e.diametroManual) { const d = sugerirDiametro(sistema); if (d !== e.diametroEletroduto) patch.diametroEletroduto = d; }
     if (Object.keys(patch).length) up(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps

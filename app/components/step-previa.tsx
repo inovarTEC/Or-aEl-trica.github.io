@@ -21,6 +21,7 @@ interface Previa {
   totais: any;
   pendencias: Pendencia[];
   resumo: { nCircuitos: number; nMateriais: number };
+  entrada?: { demandaKva: number; categoria: string; disjuntorGeralA: number; sistema: string; uf: string | null };
 }
 
 /** Só os campos que alimentam o cálculo — o resto do estado (step, id...) não vai ao servidor. */
@@ -108,6 +109,28 @@ export default function StepPrevia() {
           );
         })}
       </div>
+
+      <Card className="shadow-sm">
+        <CardContent className="pt-4 pb-4">
+          <p className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" /> Padrão de entrada
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            {[
+              { label: 'Demanda total', value: previa.entrada ? `${previa.entrada.demandaKva.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} kVA` : '-' },
+              { label: 'Categoria', value: previa.entrada?.categoria ?? '-' },
+              { label: 'Disjuntor geral', value: previa.entrada?.disjuntorGeralA ? `${previa.entrada.disjuntorGeralA} A` : '-' },
+              { label: 'Tensão da localidade', value: previa.entrada ? `${previa.entrada.uf ? `${previa.entrada.uf} · ` : ''}${previa.entrada.sistema} V` : '-' },
+            ].map((x) => (
+              <div key={x.label}>
+                <p className="text-lg font-bold">{x.value}</p>
+                <p className="text-[10px] text-muted-foreground">{x.label}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">Pré-dimensionamento (DIS-NOR-030) — verificar com a distribuidora.</p>
+        </CardContent>
+      </Card>
 
       {/* Conteúdo pago: bloqueado na prévia */}
       <Card className="shadow-sm border-dashed">

@@ -1,6 +1,6 @@
 import { AppState, Room, Pendencia, Totais } from '../types';
 import { tomadasNbr } from '../validacao';
-import { tomadasFisicas } from '../nbr5410-regras';
+import { tomadasFisicas, pontosTomada } from '../nbr5410-regras';
 import { correnteEquip } from '../ponto-equip';
 import { avisosEntrada } from '../entrada-calc';
 import { avisosAterramento } from '../aterramento-calc';
@@ -11,20 +11,20 @@ import { num, routeLen } from '../util';
 export { routeLen };
 
 /**
- * Fonte única de contagem de tomadas físicas por prefixo ('T' = tomadas, 'USB'), inclusive as montadas
- * na caixa do interruptor. Dupla (T10D/T20D) conta 2, tripla (T10T/T20T) conta 3.
+ * Pontos de tomada por prefixo ('T' = tomadas, 'USB'), inclusive os montados na caixa do interruptor.
+ * NBR 5410 conta pontos: simples, dupla ou tripla = 1 ponto (os módulos físicos ficam na lista de materiais).
  */
 export function countMods(r: Room, prefix: string): number {
   let c = 0;
   for (const p of r?.pontos ?? []) {
     for (const m of p?.mods ?? []) {
-      if ((m?.t ?? '').startsWith(prefix)) c += tomadasFisicas(m?.t);
+      if ((m?.t ?? '').startsWith(prefix)) c += pontosTomada(m?.t);
     }
   }
   // tomadas na caixa do interruptor (não geram caixa extra)
   for (const cmd of r?.comandos ?? []) {
     for (const sw of cmd?.sws ?? []) {
-      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c += tomadasFisicas(sw.tom);
+      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c += pontosTomada(sw.tom);
     }
   }
   return c;

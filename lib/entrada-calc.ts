@@ -1,6 +1,6 @@
 /* Regras da Etapa 7 — entrada / alimentador principal (usado pelo wizard e pela prévia no servidor). */
 import type {
-  BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada,
+  DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada,
 } from './types';
 
 export const LIMIAR_PERCURSO_AVISO = 30; // metros
@@ -13,25 +13,7 @@ export function entradaPadrao(): EntradaPrincipal {
   };
 }
 
-/** Sugestão de sistema por potência (simplificada até o fator de demanda NBR 5410:2025 ser implementado). */
-export function sugerirSistema(potKw: number): SistemaAlimentacao {
-  if (potKw <= 7) return 'monofasico';
-  if (potKw <= 14) return 'bifasico';
-  return 'trifasico';
-}
-
-/** Mínimo 6 mm²; acima de 30 m sugere 10 mm²; acima de 50 m sugere 16 mm². */
-export function sugerirBitola(percursoM: number, _sistema: SistemaAlimentacao): BitolaCabo {
-  if (percursoM > 50) return '16';
-  if (percursoM > LIMIAR_PERCURSO_AVISO) return '10';
-  return '6';
-}
-
-export function faixaDisjuntor(bitola: BitolaCabo): string {
-  if (bitola === '6') return '32–40 A';
-  if (bitola === '10') return '40–50 A';
-  return '50–63 A';
-}
+/* Sistema, bitola e disjuntor da entrada: motor DIS-NOR-030 em lib/tensao-por-uf (sistemaSugeridoUf, categoriaDisNor, bitolaEntrada). */
 
 export function sugerirDiametro(sistema: SistemaAlimentacao): DiametroEletroduto {
   return sistema === 'trifasico' ? '1-1/4' : '1';
