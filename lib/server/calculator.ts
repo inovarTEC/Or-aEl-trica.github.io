@@ -7,15 +7,8 @@ import { avisosAterramento } from '../aterramento-calc';
 import { STEP_ATERRAMENTO, STEP_ENTRADA } from '../navegacao';
 
 /* ---------- helpers ---------- */
-function num(v: string | undefined | null): number {
-  const n = parseFloat(v ?? '');
-  return isNaN(n) ? 0 : n;
-}
-
-/** Trajeto do quadro até o cômodo: direto (dq) ou pelo caminho de outro (trecho compartilhado dd + desvio dr). */
-export function routeLen(r: Room): number {
-  return r?.via ? num(r?.dd) + num(r?.dr) : num(r?.dq);
-}
+import { num, routeLen } from '../util';
+export { routeLen };
 
 /**
  * Fonte única de contagem de tomadas físicas por prefixo ('T' = tomadas, 'USB'), inclusive as montadas
@@ -204,7 +197,7 @@ export function calcPendencias(state: AppState): Pendencia[] {
     if (!e?.room) p.push({ tipo: 'aviso', msg: `${en}: cômodo não definido`, step: 3, equipId: e?.id });
     if (!e?.pot) p.push({ tipo: 'aviso', msg: `${en}: potência não informada`, step: 3, equipId: e?.id });
     if (!e?.tens) p.push({ tipo: 'aviso', msg: `${en}: tensão não informada`, step: 3, equipId: e?.id });
-    const I = correnteEquip(e?.pot, e?.tens);
+    const I = correnteEquip(e?.pot, e?.tens, e?.tipo);
     if (I !== null && I > 16 && e?.ponto !== 'emenda' && e?.ponto !== 'borne') {
       p.push({ tipo: 'aviso', msg: `${en}: corrente estimada ${I.toFixed(1).replace('.', ',')} A — considere ligação direta`, step: 3, equipId: e?.id });
     }

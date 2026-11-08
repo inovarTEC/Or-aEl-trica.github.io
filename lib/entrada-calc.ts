@@ -41,7 +41,9 @@ export function tipoEletrodutoPadrao(t: TipoEntrada): TipoEletroduto {
   return t === 'parede' ? 'flexivel' : 'rigido';
 }
 
-export function tensaoDoSistema(s: SistemaAlimentacao): string {
+/** Tensão de referência do sistema: em 380/220 V o trifásico é 380 V; em 220/127 V a tensão entre fases é 220 V. */
+export function tensaoDoSistema(s: SistemaAlimentacao, sistemaTensao?: string): string {
+  if (sistemaTensao === '220/127') return s === 'monofasico' ? '127' : '220';
   return s === 'trifasico' ? '380' : '220';
 }
 
@@ -84,11 +86,10 @@ export function materiaisEntrada(e: EntradaPrincipal): MaterialEntrada[] {
     items.push({ descricao: `Kit fita/fixação eletroduto ${diam}"`, qtd: 1, unidade: 'kit', mostrarNaPrevia: true });
   }
 
-  // Cabo e disjuntor: reservados ao PDF (a prévia gratuita não mostra bitola nem disjuntor).
+  // Cabo: reservado ao PDF (a prévia gratuita não mostra bitola nem disjuntor).
   const nCondutores = e.sistema === 'trifasico' ? 5 : 3;
   items.push({ descricao: `Cabo ${e.bitola} mm² isolação 1 kV (alimentador)`, qtd: Math.ceil(percurso * nCondutores * 1.1), unidade: 'm', mostrarNaPrevia: false });
-  const sistemaLabel: Record<string, string> = { monofasico: 'Monofásico', bifasico: 'Bifásico', trifasico: 'Trifásico' };
-  items.push({ descricao: `Disjuntor geral ${faixaDisjuntor(e.bitola)} (${sistemaLabel[e.sistema] ?? e.sistema})`, qtd: 1, unidade: 'un', mostrarNaPrevia: false });
+  // Disjuntor geral: lançado uma única vez em calc-materiais, pela categoria de atendimento (DIS-NOR-030).
 
   const caixaTipo = e.sistema === 'monofasico' ? 'Monofásica' : e.sistema === 'bifasico' ? 'Bifásica' : 'Trifásica';
   items.push({ descricao: `Caixa padrão concessionária ${caixaTipo}`, qtd: 1, unidade: 'un', mostrarNaPrevia: true });

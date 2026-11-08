@@ -1,4 +1,5 @@
 /* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
+import { UFS } from './tensao-por-uf';
 import type { DadosOrcamento, Room } from './types';
 import { minTomadas, perimetro, tomadasFisicas } from './nbr5410-regras';
 
@@ -149,7 +150,9 @@ export function problemaEstrutura(d: any): string | null {
       || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
       || !opcional(en.unidadeEletroduto, ENT_UNIDADE)
       || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
-      || !texto(en.obs, LIM.obs) || !bool(en.incluirNoPdf)) return 'entrada inválida';
+      || !texto(en.obs, LIM.obs) || !bool(en.incluirNoPdf)
+      || !opcional(en.sistemaTensao, ['220/127', '380/220', 'nao-sei']) || !opcional(en.ligacao, ['M', 'B', 'T', 'nao-sei'])
+      || !opcional(en.uf, ['', ...UFS.map((u) => u.uf)])) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
   }
   const at = d.aterramento;

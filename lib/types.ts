@@ -120,6 +120,8 @@ export type UnidadeEletroduto = 'metro' | 'peca3m';
 export interface EntradaPrincipal {
   /** Sistema de tensões da cidade (opcional; ausente = 220/127 V com aviso). */
   sistemaTensao?: '220/127' | '380/220' | 'nao-sei';
+  /** UF da obra: define a distribuidora e a tensão de referência (lib/tensao-por-uf). */
+  uf?: string;
   /** Ligação pretendida (DIS-NOR-030): monofásica, bifásica ou trifásica. */
   ligacao?: 'M' | 'B' | 'T' | 'nao-sei';
   tipoEntrada: TipoEntrada;

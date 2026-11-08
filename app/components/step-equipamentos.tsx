@@ -153,7 +153,7 @@ export default function StepEquipamentos() {
                   </div>
                 </div>
                 {(() => {
-                  const I = correnteEquip(e?.pot, e?.tens);
+                  const I = correnteEquip(e?.pot, e?.tens, e?.tipo);
                   if (I === null) return null;
                   const av = avisoCorrente(I);
                   return (

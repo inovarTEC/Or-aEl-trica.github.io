@@ -25,7 +25,11 @@ interface Previa {
 
 /** Só os campos que alimentam o cálculo — o resto do estado (step, id...) não vai ao servidor. */
 export function dadosDoOrcamento(s: DadosOrcamento): DadosOrcamento {
-  return { imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips };
+  return {
+    imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips,
+    ...(s.entrada ? { entrada: s.entrada } : {}),
+    ...(s.aterramento ? { aterramento: s.aterramento } : {}),
+  };
 }
 
 export default function StepPrevia() {
@@ -36,8 +40,7 @@ export default function StepPrevia() {
   const [local, setLocal] = useState<EstadoLocal | null>(null);
   const [cep, setCep] = useState('');
 
-  // A entrada vai só para a prévia (/api/calcular); dadosDoOrcamento segue igual para não mudar a assinatura do checkout.
-  const dados = JSON.stringify({ ...dadosDoOrcamento(store), entrada: store.entrada, aterramento: store.aterramento });
+  const dados = JSON.stringify(dadosDoOrcamento(store));
 
   // Releitura do estado salvo a cada abertura/fechamento do modal (o modal altera pagamento/entrega).
   useEffect(() => { setLocal(carregarEstado()); }, [showCheckout]);

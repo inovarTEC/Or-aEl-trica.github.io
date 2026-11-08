@@ -1,5 +1,6 @@
 /* Ponto do equipamento (caixa + o que vai nela) — cálculo local da prévia gratuita, sem bitola/disjuntor/cabo. */
 import type { Equip, Room, TipoEquip } from './types';
+import { num, routeLen } from './util';
 
 export type PontoEquip = NonNullable<Equip['ponto']>;
 
@@ -11,12 +12,20 @@ export const PONTO_LABEL: Record<PontoEquip, string> = {
   emenda: 'Emenda / Conector Wago (ligação direta)',
 };
 
-/** Corrente estimada (A): I = P / (V × 0,92). Bivolt usa 127 V (conservador). Sem dados → null. */
-export function correnteEquip(pot: string | undefined, tens: string | undefined): number | null {
+/** Cargas resistivas (fp = 1,0): chuveiro, torneira elétrica, ferro, aquecedor de passagem, boiler. */
+const RESISTIVA = /chuveiro|torneira|ferro|aquecedor|boiler/i;
+
+/** Fator de potência da carga: 1,0 para resistivas; 0,92 para as demais (motores, compressores, eletrônicos). */
+export function fpEquip(tipo?: string): number {
+  return RESISTIVA.test(String(tipo ?? '')) ? 1 : 0.92;
+}
+
+/** Corrente estimada (A): I = P / (V × fp). Bivolt usa 127 V (conservador). Sem dados → null. */
+export function correnteEquip(pot: string | undefined, tens: string | undefined, tipo?: string): number | null {
   const p = parseFloat(String(pot ?? ''));
   const t = String(tens ?? '').toLowerCase() === 'bivolt' ? 127 : parseFloat(String(tens ?? ''));
   if (!(p > 0) || !(t > 0)) return null;
-  return p / (t * 0.92);
+  return p / (t * fpEquip(tipo));
 }
 
 export type AvisoCorrente = 'ok' | 'prefira20A' | 'ligacaoDireta';
@@ -30,7 +39,7 @@ export function avisoCorrente(I: number): AvisoCorrente {
 
 /** Sugestão visual (não aplicada automaticamente). A corrente, quando informada, tem prioridade sobre o tipo. */
 export function pontoSugerido(tipo: TipoEquip | string, pot?: string, tens?: string): PontoEquip | null {
-  const I = correnteEquip(pot, tens);
+  const I = correnteEquip(pot, tens, tipo);
   if (I !== null && avisoCorrente(I) === 'ligacaoDireta') {
     return tipo === 'Chuveiro elétrico' || tipo === 'Torneira elétrica' ? 'borne' : 'emenda';
   }
@@ -40,10 +49,6 @@ export function pontoSugerido(tipo: TipoEquip | string, pot?: string, tens?: str
   return null;
 }
 
-const num = (v: unknown) => { const n = parseFloat(String(v ?? '')); return Number.isFinite(n) ? n : 0; };
-
-/** Trajeto do quadro ao cômodo (mesma regra do calculator: dq, ou dd + dr quando passa por outro cômodo). */
-const rotaComodo = (r: Room) => (r?.via ? num(r.dd) + num(r.dr) : num(r.dq));
 
 /**
  * Distância considerada para o equipamento: a direta ao quadro, se informada; senão trajeto do cômodo + dint.
@@ -53,7 +58,7 @@ export function distanciaEquip(e: Equip, rooms: Room[]): { metros: number; orige
   const direta = num(e?.dist);
   if (direta > 0) return { metros: direta, origem: 'direta' };
   const room = (rooms ?? []).find((r) => r?.id === e?.room);
-  if (room) return { metros: Math.round((rotaComodo(room) + num(e?.dint)) * 10) / 10, origem: 'comodo' };
+  if (room) return { metros: Math.round((routeLen(room) + num(e?.dint)) * 10) / 10, origem: 'comodo' };
   return { metros: 0, origem: 'nenhuma' };
 }
 
