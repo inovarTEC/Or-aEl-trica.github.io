@@ -1,37 +1,30 @@
 import { AppState, Room, Pendencia, Totais } from '../types';
 import { tomadasNbr } from '../validacao';
-import { tomadasFisicas } from '../nbr5410-regras';
+import { tomadasFisicas, pontosTomada } from '../nbr5410-regras';
 import { correnteEquip } from '../ponto-equip';
 import { avisosEntrada } from '../entrada-calc';
 import { avisosAterramento } from '../aterramento-calc';
 import { STEP_ATERRAMENTO, STEP_ENTRADA } from '../navegacao';
 
 /* ---------- helpers ---------- */
-function num(v: string | undefined | null): number {
-  const n = parseFloat(v ?? '');
-  return isNaN(n) ? 0 : n;
-}
-
-/** Trajeto do quadro até o cômodo: direto (dq) ou pelo caminho de outro (trecho compartilhado dd + desvio dr). */
-export function routeLen(r: Room): number {
-  return r?.via ? num(r?.dd) + num(r?.dr) : num(r?.dq);
-}
+import { num, routeLen } from '../util';
+export { routeLen };
 
 /**
- * Fonte única de contagem de tomadas físicas por prefixo ('T' = tomadas, 'USB'), inclusive as montadas
- * na caixa do interruptor. Dupla (T10D/T20D) conta 2, tripla (T10T/T20T) conta 3.
+ * Pontos de tomada por prefixo ('T' = tomadas, 'USB'), inclusive os montados na caixa do interruptor.
+ * NBR 5410 conta pontos: simples, dupla ou tripla = 1 ponto (os módulos físicos ficam na lista de materiais).
  */
 export function countMods(r: Room, prefix: string): number {
   let c = 0;
   for (const p of r?.pontos ?? []) {
     for (const m of p?.mods ?? []) {
-      if ((m?.t ?? '').startsWith(prefix)) c += tomadasFisicas(m?.t);
+      if ((m?.t ?? '').startsWith(prefix)) c += pontosTomada(m?.t);
     }
   }
   // tomadas na caixa do interruptor (não geram caixa extra)
   for (const cmd of r?.comandos ?? []) {
     for (const sw of cmd?.sws ?? []) {
-      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c += tomadasFisicas(sw.tom);
+      if (sw?.tom && (sw?.tom ?? '').startsWith(prefix)) c += pontosTomada(sw.tom);
     }
   }
   return c;
@@ -204,7 +197,7 @@ export function calcPendencias(state: AppState): Pendencia[] {
     if (!e?.room) p.push({ tipo: 'aviso', msg: `${en}: cômodo não definido`, step: 3, equipId: e?.id });
     if (!e?.pot) p.push({ tipo: 'aviso', msg: `${en}: potência não informada`, step: 3, equipId: e?.id });
     if (!e?.tens) p.push({ tipo: 'aviso', msg: `${en}: tensão não informada`, step: 3, equipId: e?.id });
-    const I = correnteEquip(e?.pot, e?.tens);
+    const I = correnteEquip(e?.pot, e?.tens, e?.tipo);
     if (I !== null && I > 16 && e?.ponto !== 'emenda' && e?.ponto !== 'borne') {
       p.push({ tipo: 'aviso', msg: `${en}: corrente estimada ${I.toFixed(1).replace('.', ',')} A — considere ligação direta`, step: 3, equipId: e?.id });
     }

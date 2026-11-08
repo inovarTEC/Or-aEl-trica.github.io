@@ -1,6 +1,6 @@
 /* Resumo gratuito por cômodo (passo 3) — calculado no navegador, sem bitola/disjuntor/metragem. */
 import type { Room, TipoModulo } from './types';
-import { tomadasFisicas } from './nbr5410-regras';
+import { tomadasFisicas, pontosTomada } from './nbr5410-regras';
 
 /** Módulos ocupados por uma peça de tomada: simples=1, dupla=2, tripla=3, USB=1. */
 export const modulosDe = (t: TipoModulo | '' | undefined | null): number => tomadasFisicas(t);
@@ -28,7 +28,7 @@ export function resumoComodo(room: Room): ResumoComodo {
     for (const m of p?.mods ?? []) {
       const n = modulosDe(m?.t);
       nModulos += n;
-      if (String(m?.t ?? '').startsWith('T')) nTomadas += n;
+      if (String(m?.t ?? '').startsWith('T')) nTomadas += pontosTomada(m?.t);
     }
     if (p?.cx === '4x4') nCaixas4x4++; else nCaixas4x2++;
   }
@@ -40,7 +40,7 @@ export function resumoComodo(room: Room): ResumoComodo {
     if ((c?.luzes?.length ?? 0) === 0) pendencias.push(`Interruptor ${i + 1} sem luz vinculada`);
     for (const sw of c?.sws ?? []) {
       // tomada junto ao interruptor também é tomada física
-      if (sw?.tom && String(sw.tom).startsWith('T')) nTomadas += modulosDe(sw.tom);
+      if (sw?.tom && String(sw.tom).startsWith('T')) nTomadas += pontosTomada(sw.tom);
       if (sw?.cx === '4x4') nCaixas4x4++; else nCaixas4x2++;
     }
   });

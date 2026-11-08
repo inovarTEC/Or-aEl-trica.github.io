@@ -42,7 +42,8 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 0.1, `${a} ≉ ${b}`);
 const estado = (e) => ({ imovel: {}, rooms: [], equips: [{ id: 'e1', tipo: 'Chuveiro elétrico', room: 'r1', pot: '5500', tens: '220V', dist: '10', dint: '', alim: '', cx: '4x2', ...e }] });
 const aviso = (ps) => ps.filter((x) => x.equipId === 'e1' && /corrente estimada/.test(x.msg));
 
-t('chuveiro 5500W/220V ≈ 27,2 A', () => near(correnteEquip('5500', '220V'), 27.2));
+t('chuveiro 5500W/220V (resistivo, fp 1,0) = 25,0 A', () => near(correnteEquip('5500', '220V', 'Chuveiro elétrico'), 25));
+t('carga não resistiva 5500W/220V (fp 0,92) ≈ 27,2 A', () => near(correnteEquip('5500', '220V', 'Ar-condicionado'), 27.2));
 t('1000W/127V ≈ 8,6 A; bivolt usa 127V; sem dados → null', () => {
   near(correnteEquip('1000', '127'), 8.6);
   near(correnteEquip('1000', 'bivolt'), 8.6);
@@ -67,7 +68,7 @@ t('pendência: chuveiro 5500W/220V com T20 gera aviso (step 3, equipId)', () => 
   assert.equal(a.length, 1);
   assert.equal(a[0].tipo, 'aviso');
   assert.equal(a[0].step, 3);
-  assert.match(a[0].msg, /27,2 A/);
+  assert.match(a[0].msg, /25,0 A/); // chuveiro resistivo: fp 1,0
 });
 t('pendência: sem aviso com emenda/borne ou corrente baixa', () => {
   assert.equal(aviso(calcPendencias(estado({ ponto: 'emenda' }))).length, 0);

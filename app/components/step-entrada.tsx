@@ -5,9 +5,10 @@ import { AlertTriangle, Lock, PlugZap, Package } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
 import {
-  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirBitola, sugerirDiametro, sugerirSistema,
+  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirDiametro,
   tensaoDoSistema, tipoEletrodutoPadrao,
 } from '@/lib/entrada-calc';
+import { UFS, infoUf, sistemaSugeridoUf, categoriaDisNor, bitolaEntrada } from '@/lib/tensao-por-uf';
 import type {
   BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste, UnidadeEletroduto,
 } from '@/lib/types';
@@ -25,17 +26,34 @@ export default function StepEntrada() {
 
   const potKw = parseFloat(e.potenciaDemandada) || 0;
   const percurso = parseFloat(e.percurso) || 0;
+  const vs = e.sistemaTensao === '220/127' || e.sistemaTensao === '380/220' ? e.sistemaTensao : undefined;
+  const ufInfo = infoUf(e.uf);
+  const [fn, ff] = vs === '220/127' ? ['127', '220'] : ['220', '380'];
+
+  /** UF escolhida: grava a tensão da localidade e pré-preenche o sistema (o usuário pode alterar abaixo). */
+  const escolherUf = (sigla: string) => {
+    const u = infoUf(sigla);
+    if (!u) { up({ uf: '', sistemaTensao: undefined }); return; }
+    const s = sistemaSugeridoUf(u.tensao, potKw);
+    up({ uf: u.uf, sistemaTensao: u.tensao, sistema: s, sistemaManual: false, tensao: tensaoDoSistema(s, u.tensao) });
+  };
 
   // Sugestões automáticas: só mexem nos campos que o usuário não sobrescreveu.
   useEffect(() => {
     const patch: Partial<EntradaPrincipal> = {};
-    const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerirSistema(potKw);
-    if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema); }
-    if (!e.bitolaManual) { const b = sugerirBitola(percurso, sistema); if (b !== e.bitola) patch.bitola = b; }
+    const sugerido = sistemaSugeridoUf(vs ?? '220/127', potKw);
+    const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerido;
+    if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema, vs); }
+    if (!e.bitolaManual) {
+      // Potência estimada usada como carga instalada e demanda (o PDF refaz com a demanda completa).
+      const cat = potKw > 0 ? categoriaDisNor(potKw, potKw, vs ?? '220/127', sistema) : null;
+      const b = bitolaEntrada(cat?.secaoCu ?? 6, percurso);
+      if (b !== e.bitola) patch.bitola = b;
+    }
     if (!e.diametroManual) { const d = sugerirDiametro(sistema); if (d !== e.diametroEletroduto) patch.diametroEletroduto = d; }
     if (Object.keys(patch).length) up(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [potKw, percurso, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
+  }, [potKw, percurso, vs, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
 
   const materiais = materiaisEntrada(e).filter((m) => m.mostrarNaPrevia);
   const avisos = avisosEntrada(e);
@@ -54,6 +72,30 @@ export default function StepEntrada() {
             <PlugZap className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold">Dados da entrada</span>
           </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Estado (UF) da obra</Label>
+              <select value={e.uf ?? ''} className={selCls} onChange={(ev) => escolherUf(ev.target.value)}>
+                <option value="">Selecione…</option>
+                {UFS.map((u) => <option key={u.uf} value={u.uf}>{u.uf} — {u.nome}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs">Tensão da localidade</Label>
+              <select value={e.sistemaTensao ?? 'nao-sei'} className={selCls}
+                onChange={(ev) => { const t = ev.target.value as NonNullable<EntradaPrincipal['sistemaTensao']>; up({ sistemaTensao: t, tensao: tensaoDoSistema(e.sistema, t) }); }}>
+                <option value="nao-sei">Não sei (adota 220/127 V)</option>
+                <option value="220/127">220/127 V</option>
+                <option value="380/220">380/220 V</option>
+              </select>
+            </div>
+          </div>
+          {ufInfo && (
+            <p className="text-[11px] text-muted-foreground -mt-2">
+              Distribuidora: {ufInfo.distribuidora} — {ufInfo.tensao} V.{ufInfo.verificar ? ' Tabela de categorias usada como referência: verificar com a distribuidora local.' : ''} Confirme ou altere o sistema abaixo.
+            </p>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -94,10 +136,10 @@ export default function StepEntrada() {
             <div>
               <Label className="text-xs">Sistema{sug(e.sistemaManual)}</Label>
               <select value={e.sistema} className={selCls}
-                onChange={(ev) => { const s = ev.target.value as SistemaAlimentacao; up({ sistema: s, tensao: tensaoDoSistema(s), sistemaManual: true }); }}>
-                <option value="monofasico">Monofásico 220V</option>
-                <option value="bifasico">Bifásico 220V</option>
-                <option value="trifasico">Trifásico 380V</option>
+                onChange={(ev) => { const s = ev.target.value as SistemaAlimentacao; up({ sistema: s, tensao: tensaoDoSistema(s, vs), sistemaManual: true }); }}>
+                <option value="monofasico">Monofásico {fn}V</option>
+                {vs !== '380/220' && <option value="bifasico">Bifásico {ff}V</option>}
+                <option value="trifasico">Trifásico {ff}V</option>
               </select>
             </div>
             <div>

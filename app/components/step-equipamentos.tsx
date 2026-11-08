@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Zap, Cpu, AlertTriangle, ClipboardList } from 'lucide-react';
+import { infoUf } from '@/lib/tensao-por-uf';
 import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto, correnteEquip, avisoCorrente } from '@/lib/ponto-equip';
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,6 +33,14 @@ export default function StepEquipamentos() {
   const store = useStore();
   const equips = store?.equips ?? [];
   const rooms = store?.rooms ?? [];
+  // Rede 220/127 V (escolhida na entrada ou pela UF; sem informação adota 220/127): 380 V não existe.
+  const ent = store?.entrada;
+  const rede380 = ent?.sistemaTensao === '380/220' || (ent?.sistemaTensao !== '220/127' && infoUf(ent?.uf)?.tensao === '380/220');
+  useEffect(() => {
+    if (rede380) return;
+    for (const q of equips) if (q?.tens === '380V') store.updateEquip(q.id, { tens: '220V' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rede380, equips]);
 
   const addEquip = () => {
     store.addEquip({
@@ -144,8 +153,9 @@ export default function StepEquipamentos() {
                       <option value="">Selecione</option>
                       <option value="127V">127V</option>
                       <option value="220V">220V</option>
-                      <option value="380V">380V (só rede 380/220)</option>
+                      <option value="380V" disabled={!rede380}>380V (só rede 380/220)</option>
                     </select>
+                    {!rede380 && <p className="mt-1 text-[11px] text-muted-foreground">Rede 220/127 V — 380 V não disponível</p>}
                   </div>
                   <div>
                     <Label className="text-xs">Distância ao quadro (m)</Label>
@@ -153,7 +163,7 @@ export default function StepEquipamentos() {
                   </div>
                 </div>
                 {(() => {
-                  const I = correnteEquip(e?.pot, e?.tens);
+                  const I = correnteEquip(e?.pot, e?.tens, e?.tipo);
                   if (I === null) return null;
                   const av = avisoCorrente(I);
                   return (

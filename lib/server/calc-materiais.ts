@@ -10,25 +10,22 @@ import {
   VERSAO_MOTOR, SistemaTensao, normalizarSistema, tensoesSistema, potenciaIluminacao, potenciaTUG,
   dimensionarCircuito, reservaQuadro,
 } from '../motor/eletrica';
-import { Ligacao, AparelhoDemanda, cargaTomadasW, cargaIluminacaoW, calcularDemanda, categoriaAtendimento } from '../motor/demanda';
+import { cargaTomadasW, cargaIluminacaoW } from '../motor/demanda';
+import { calcularDemandaDIS, categoriaDisNor, infoUf, type CargasDIS, type SistemaLigacao } from '../tensao-por-uf';
+import { num, routeLen, areaMolhada } from '../util';
+import { fpEquip } from '../ponto-equip';
 
 /* ---------- Helpers ---------- */
 
-function num(v: string | number | undefined | null): number {
-  if (typeof v === 'number') return v;
-  const n = parseFloat(v ?? '');
-  return isNaN(n) ? 0 : n;
-}
-
-function routeLen(r: Room): number {
-  if (r.via) return num(r.dd) + num(r.dr);
-  return num(r.dq);
-}
-
-/** Sistema da rede: campo novo da entrada; projetos antigos caem em 220/127 V (premissa no PDF). */
+/**
+ * Sistema de tensões: o escolhido na entrada (sistemaTensao); senão o da UF; projetos antigos sem
+ * nenhum dos dois caem em 220/127 V (premissa avisada no PDF).
+ */
 export function sistemaDoEstado(state: Pick<AppState, 'entrada'>): SistemaTensao {
   const e = state.entrada;
-  if (e?.sistemaTensao) return normalizarSistema(e.sistemaTensao);
+  if (e?.sistemaTensao === '220/127' || e?.sistemaTensao === '380/220') return e.sistemaTensao;
+  const u = infoUf(e?.uf);
+  if (u) return u.tensao;
   return normalizarSistema(String(e?.tensao ?? '').includes('380') ? '380/220' : '220/127');
 }
 
@@ -42,17 +39,24 @@ export function tensaoEquipamento(tens: string, sistema: SistemaTensao, rede: st
   return rede === 'Monofásico' ? { v: 127, ligacao: 'F-N' } : { v: 220, ligacao: 'F-F' };
 }
 
-/** fp = 1 para cargas resistivas; 0,92 para ar-condicionado e motores (premissa). */
-function fatorPotencia(tipo: string): number {
-  const t = tipo.toLowerCase();
-  return /ar-cond|ar cond|motor|bomba|geladeira|freezer|máquina|maquina/.test(t) ? 0.92 : 1;
-}
-
-function grupoDemanda(tipo: string): AparelhoDemanda['grupo'] {
-  const t = tipo.toLowerCase();
-  if (/chuveiro|torneira|aquecedor/.test(t)) return 'b';
-  if (/ar-cond|ar cond/.test(t)) return 'f';
-  return 'ghi';
+/** Distribui os equipamentos nas parcelas da demanda (DIS-NOR-030 6.27). */
+function cargasDosEquipamentos(equips: AppState['equips'], iluminacaoTomadasKw: number): CargasDIS {
+  const c: Required<Pick<CargasDIS, 'resistivos' | 'boilers' | 'maquinas' | 'fogoes' | 'arKva' | 'motoresKva' | 'bombas' | 'veiculoKva' | 'outrosKw'>> =
+    { resistivos: [], boilers: [], maquinas: [], fogoes: [], arKva: [], motoresKva: [], bombas: [], veiculoKva: [], outrosKw: [] };
+  for (const e of equips) {
+    const kw = num(e.pot) / 1000;
+    const t = String(e.tipo).toLowerCase();
+    if (/boiler/.test(t)) c.boilers.push(kw);
+    else if (/chuveiro|torneira|aquecedor|ferro/.test(t)) c.resistivos.push(kw);
+    else if (/lavar|secadora|lava-lou|micro/.test(t)) c.maquinas.push(kw);
+    else if (/forno|fogão|fogao|cooktop/.test(t)) c.fogoes.push(kw);
+    else if (/ar-cond|ar cond/.test(t)) c.arKva.push(kw);
+    else if (/bomba|hidromassagem/.test(t)) c.bombas.push(kw);
+    else if (/motor/.test(t)) c.motoresKva.push(kw / 0.92);
+    else if (/veículo|veiculo/.test(t)) c.veiculoKva.push(kw);
+    else c.outrosKw.push(kw);
+  }
+  return { iluminacaoTomadasKw, ...c };
 }
 
 /* ---------- Tipos de resultado ---------- */
@@ -92,6 +96,14 @@ export interface QuadroGeral {
   cargaInstaladaKw: number;
   avisoCategoria?: string;
   versaoMotor: string;
+  /** Localidade e padrão de entrada (pré-dimensionamento DIS-NOR-030; verificar com a distribuidora). */
+  uf?: string;
+  distribuidora?: string;
+  verificarDistribuidora: boolean;
+  ligacaoSistema?: SistemaLigacao;
+  caboRamal?: string;
+  caboEntrada?: string;
+  eletrodutoEntrada?: string;
 }
 
 export interface ResultadoCalculo {
@@ -99,8 +111,6 @@ export interface ResultadoCalculo {
   quadro: QuadroGeral;
   materiais: MaterialItem[];
 }
-
-const AREA_MOLHADA = /banheiro|lavabo|cozinha|copa|servi|lavanderia|piscina|externa|varanda|garagem/i;
 
 /* ---------- Motor principal ---------- */
 
@@ -120,7 +130,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     const roomName = r.nome || r.base || 'Cômodo';
     // NBR 5410 6.2.5.5 / Tabela 42: circuitos no mesmo trecho (decisão 10.3: ilum + TUG por cômodo + TUEs dele)
     const nAgrupados = (nLuzes > 0 ? 1 : 0) + (nTomadas > 0 ? 1 : 0) + equips.filter((e) => e.room === r.id).length;
-    const dr = AREA_MOLHADA.test(`${r.base} ${r.nome}`); // NBR 5410 5.1.3.2.2
+    const dr = areaMolhada(`${r.base} ${r.nome}`); // NBR 5410 5.1.3.2.2
 
     if (nLuzes > 0) {
       const pot = potenciaIluminacao(area, nLuzes); // NBR 5410 9.5.2.1.2
@@ -155,7 +165,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     if (dist <= 0 && room) dist = routeLen(room) + num(eq.dint);
     if (dist <= 0) dist = 10;
     const nAgrupados = room ? circuitos.filter((c) => c.comodo === (room.nome || room.base || 'Cômodo')).length + 1 : 1;
-    const d = dimensionarCircuito({ potencia: potW, tensao: tri ? 380 : t.v, fp: fatorPotencia(eq.tipo), tipo: 'tue', comprimentoM: dist, nAgrupados, trifasico: tri });
+    const d = dimensionarCircuito({ potencia: potW, tensao: tri ? 380 : t.v, fp: fpEquip(eq.tipo), tipo: 'tue', comprimentoM: dist, nAgrupados, trifasico: tri });
     // F-N: fase + neutro + PE; F-F: 2 fases + PE; 3F: 3 fases + PE
     const nCond = tri ? 4 : 3;
     circuitos.push({
@@ -163,7 +173,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       tensaoV: tri ? 380 : t.v, ligacao: tri ? '3F' : t.ligacao,
       correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
       comprimentoM: dist, eletrodutoDN: eletrodutoDN(d.secao, nCond), nCondutores: nCond,
-      dr: /chuveiro|torneira|aquecedor|máquina|maquina/i.test(eq.tipo) || (room ? AREA_MOLHADA.test(`${room.base} ${room.nome}`) : false),
+      dr: /chuveiro|torneira|aquecedor|máquina|maquina/i.test(eq.tipo) || (room ? areaMolhada(`${room.base} ${room.nome}`) : false),
       comodo: room ? (room.nome || room.base) : undefined, instalacao: room?.inst || '', materialAparente: room?.materialAparente,
     });
   }
@@ -175,25 +185,36 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   const pontosTom = rooms.reduce((s, r) => s + countMods(r, 'T'), 0);
   const pontosLuz = rooms.reduce((s, r) => s + (r.luzes?.length ?? 0), 0);
   const cargaIT = (cargaTomadasW(areaTotal, pontosTom) + cargaIluminacaoW(pontosLuz, rooms.length)) / 1000;
-  const dem = calcularDemanda(cargaIT, equips.map((e) => ({ grupo: grupoDemanda(e.tipo), kw: num(e.pot) / 1000, kva: num(e.pot) / 1000 })));
-  const lig: Ligacao | null = (['M', 'B', 'T'] as const).find((l) => l === state.entrada?.ligacao)
-    ?? (rede === 'Trifásico' ? 'T' : rede === 'Bifásico' ? 'B' : rede === 'Monofásico' ? 'M' : null);
-  const cat = categoriaAtendimento(sistema, lig, dem.cargaInstaladaKw, dem.demandaKva);
+  const dem = calcularDemandaDIS(cargasDosEquipamentos(equips, cargaIT));
+  const ent = state.entrada;
+  const sistLig: SistemaLigacao | null =
+    ent?.ligacao === 'M' ? 'monofasico' : ent?.ligacao === 'B' ? 'bifasico' : ent?.ligacao === 'T' ? 'trifasico'
+      : ent?.tipoEntrada && ent?.sistema ? ent.sistema
+        : rede === 'Trifásico' ? 'trifasico' : rede === 'Bifásico' ? 'bifasico' : rede === 'Monofásico' ? 'monofasico' : null;
+  const cat = categoriaDisNor(dem.cargaInstaladaKw, dem.demandaKva, sistema, sistLig);
+  const uf = infoUf(ent?.uf);
   const reserva = reservaQuadro(circuitos.length); // NBR 5410 6.5.4.7 Tabela 59
 
   const quadro: QuadroGeral = {
-    disjuntorGeralA: cat.categoria?.disjuntor ?? 0,
+    disjuntorGeralA: cat?.disjuntor ?? 0,
     nCircuitos: circuitos.length,
     reserva,
     posicoes: circuitos.length + reserva,
     cargaTotalW: Math.round(cargaTotal),
     correnteTotalA: Math.round(correnteTotal * 100) / 100,
     sistema,
-    categoria: cat.categoria?.codigo ?? 'fora do escopo',
+    categoria: cat?.categoria ?? 'fora do escopo',
     demandaKva: Math.round(dem.demandaKva * 100) / 100,
     cargaInstaladaKw: Math.round(dem.cargaInstaladaKw * 100) / 100,
-    avisoCategoria: cat.aviso,
+    avisoCategoria: cat ? cat.aviso : 'Carga acima de 75 kW/kVA: fora do escopo, procure a concessionária.',
     versaoMotor: VERSAO_MOTOR,
+    uf: uf?.uf,
+    distribuidora: uf?.distribuidora,
+    verificarDistribuidora: !uf || uf.verificar,
+    ligacaoSistema: cat?.sistema,
+    caboRamal: cat?.caboRamal,
+    caboEntrada: cat?.caboEntrada,
+    eletrodutoEntrada: cat?.eletroduto,
   };
 
   /* ----- Lista de materiais consolidada ----- */
@@ -328,15 +349,15 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     });
   }
 
-  // Disjuntor geral: um só. Se a etapa Entrada foi preenchida, vale o da entrada (lançado abaixo).
-  const polosGeral = rede === 'Trifásico' ? 'tripolar' : rede === 'Bifásico' ? 'bipolar' : 'monopolar';
+  // Disjuntor geral: uma única linha, pela categoria de atendimento (DIS-NOR-030).
+  const polosGeral = quadro.ligacaoSistema === 'trifasico' ? 'tripolar' : quadro.ligacaoSistema === 'bifasico' ? 'bipolar' : 'monopolar';
   const temEntrada = !!state.entrada?.tipoEntrada && state.entrada?.incluirNoPdf !== false;
-  if (!temEntrada) {
+  if (quadro.disjuntorGeralA > 0) {
     materiais.push({
       item: `Disjuntor geral ${quadro.disjuntorGeralA}A`,
       qtd: 1,
       unidade: 'un',
-      detalhe: `Curva C, ${polosGeral}`,
+      detalhe: `Curva C, ${polosGeral} — categoria ${quadro.categoria} (pré-dimensionamento, verificar com a distribuidora)`,
     });
   }
 
@@ -481,18 +502,18 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     materiais.push({ item: 'Bucha e parafuso para abraçadeira de eletroduto', qtd: abracadeiras, unidade: 'un', detalhe: 'Uma por abraçadeira (eletroduto aparente)' });
   }
 
-  // Materiais da entrada / alimentador principal
-  if (temEntrada && state.entrada && state.entrada.incluirNoPdf !== false) {
-    for (const m of materiaisEntrada(state.entrada)) {
-      const ehGeral = m.descricao.startsWith('Disjuntor geral');
+  // Materiais da entrada / alimentador principal + padrão de entrada pela categoria
+  if (temEntrada && state.entrada) {
+    if (quadro.caboRamal) {
       materiais.push({
-        item: m.descricao,
-        qtd: m.qtd,
-        unidade: m.unidade,
-        detalhe: ehGeral
-          ? `Entrada / alimentador principal — curva C, ${polosGeral}; pela carga instalada o mínimo é ${quadro.disjuntorGeralA}A`
-          : 'Entrada / alimentador principal',
+        item: `Padrão de entrada categoria ${quadro.categoria}`,
+        qtd: 1,
+        unidade: 'conjunto',
+        detalhe: `Ramal de conexão ${quadro.caboRamal}; ramal de entrada ${quadro.caboEntrada}; eletroduto ${quadro.eletrodutoEntrada} — verificar com a distribuidora`,
       });
+    }
+    for (const m of materiaisEntrada(state.entrada)) {
+      materiais.push({ item: m.descricao, qtd: m.qtd, unidade: m.unidade, detalhe: 'Entrada / alimentador principal' });
     }
   }
 

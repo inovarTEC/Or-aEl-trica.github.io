@@ -3,11 +3,7 @@ import { AppState, Room } from '../types';
 import { calcTotais } from './calculator';
 import { calcularMateriais, CircuitoCalc, ResultadoCalculo } from './calc-materiais';
 
-function num(v: string | number | undefined | null): number {
-  if (typeof v === 'number') return v;
-  const n = parseFloat(v ?? '');
-  return isNaN(n) ? 0 : n;
-}
+import { num, routeLen } from '../util';
 
 /** Escapa texto digitado pelo cliente antes de inserir no HTML (evita XSS no relatório). */
 const esc = (v: unknown): string =>
@@ -22,10 +18,6 @@ function tipoLabel(t: string) {
   if (t === 'iluminacao') return 'Iluminação';
   if (t === 'tug') return 'Tomadas (TUG)';
   return 'Uso específico (TUE)';
-}
-
-function routeLen(r: Room): number {
-  return r.via ? num(r.dd) + num(r.dr) : num(r.dq);
 }
 
 /** Tomadas físicas por módulo (dupla = 2, tripla = 3; USB conta 1). */
@@ -370,11 +362,16 @@ ${aterramentoHtml}
 <div class="section">
   <h2>Quadro de Distribuição</h2>
   <div class="info-grid">
-    <div><div class="label">Disjuntor geral</div><div class="value">${resultado.quadro.disjuntorGeralA}A — ${dados.rede === 'Trifásico' ? 'Tripolar' : dados.rede === 'Bifásico' ? 'Bipolar' : 'Monopolar'}</div></div>
+    <div><div class="label">UF / distribuidora</div><div class="value">${resultado.quadro.uf ? `${esc(resultado.quadro.uf)} — ${esc(resultado.quadro.distribuidora)}` : 'Não informada'}</div></div>
+    <div><div class="label">Tensão da localidade</div><div class="value">${esc(resultado.quadro.sistema)} V</div></div>
+    <div><div class="label">Demanda total calculada</div><div class="value">${fmtD(resultado.quadro.demandaKva)} kVA (carga instalada ${fmtD(resultado.quadro.cargaInstaladaKw)} kW)</div></div>
+    <div><div class="label">Categoria de atendimento</div><div class="value">${esc(resultado.quadro.categoria)}${resultado.quadro.caboRamal ? ` — ramal ${esc(resultado.quadro.caboRamal)}; entrada ${esc(resultado.quadro.caboEntrada)}; eletroduto ${esc(resultado.quadro.eletrodutoEntrada)}` : ''}</div></div>
+    <div><div class="label">Disjuntor geral</div><div class="value">${resultado.quadro.disjuntorGeralA}A — ${resultado.quadro.ligacaoSistema === 'trifasico' ? 'Tripolar' : resultado.quadro.ligacaoSistema === 'bifasico' ? 'Bipolar' : 'Monopolar'}</div></div>
     <div><div class="label">Número de circuitos</div><div class="value">${resultado.quadro.nCircuitos}</div></div>
     <div><div class="label">Carga total instalada</div><div class="value">${fmt(resultado.quadro.cargaTotalW)} W</div></div>
     <div><div class="label">Corrente total</div><div class="value">${fmtD(resultado.quadro.correnteTotalA)} A</div></div>
   </div>
+  <p class="aviso-box">Pré-dimensionamento (DIS-NOR-030 Rev.05) — verificar com a distribuidora${resultado.quadro.verificarDistribuidora ? ' local: a tabela de categorias usada é apenas referência para esta UF' : ''}.</p>
 </div>
 
 <div class="section">
@@ -470,7 +467,7 @@ ${aterramentoHtml}
 <div class="section" style="margin-top:24px;">
   <h2>Observações Técnicas</h2>
   <ul style="font-size: 8.5pt; color: #475569; padding-left: 16px; line-height: 1.7;">
-    <li>Premissas: sistema ${resultado.quadro.sistema} V (${dados.entrada?.sistemaTensao && dados.entrada.sistemaTensao !== 'nao-sei' ? 'informado' : 'não informado — adotado 220/127 V, confirme'}); categoria de atendimento ${resultado.quadro.categoria}; carga instalada ${resultado.quadro.cargaInstaladaKw} kW; demanda ${resultado.quadro.demandaKva} kVA (DIS-NOR-030 6.26–6.27, fatores g/h/i = 1,00).</li>
+    <li>Premissas: sistema ${resultado.quadro.sistema} V (${(dados.entrada?.sistemaTensao && dados.entrada.sistemaTensao !== 'nao-sei') || resultado.quadro.uf ? 'informado' : 'não informado — adotado 220/127 V, confirme'}); categoria de atendimento ${resultado.quadro.categoria}; carga instalada ${resultado.quadro.cargaInstaladaKw} kW; demanda ${resultado.quadro.demandaKva} kVA (DIS-NOR-030 6.26–6.27, fatores g/h/i = 1,00).</li>
     <li>Seções mínimas: 1,5 mm² (iluminação), 2,5 mm² (tomadas e uso específico) — NBR 5410 6.2.6.1.1.</li>
     <li>Método de referência B1 (Tabela 36) com fator de agrupamento da Tabela 42; disjuntor curva C com IB ≤ In ≤ Iz; mínimo de 10 A em TUG e iluminação.</li>
     <li>Queda de tensão: meta de 3% no circuito terminal (ρ = 0,0225 Ω·mm²/m); fator de potência 1 (resistivos) e 0,92 (ar-condicionado e motores).</li>

@@ -33,7 +33,8 @@ function loadTs(file) {
   return m.exports;
 }
 
-const { sugerirSistema, sugerirBitola, materiaisEntrada, avisosEntrada, entradaPadrao } = loadTs(resolve(ROOT, 'lib/entrada-calc.ts'));
+const { materiaisEntrada, avisosEntrada, entradaPadrao } = loadTs(resolve(ROOT, 'lib/entrada-calc.ts'));
+const { sistemaSugeridoUf, bitolaEntrada } = loadTs(resolve(ROOT, 'lib/tensao-por-uf.ts'));
 const { calcPendencias } = loadTs(resolve(ROOT, 'lib/server/calculator.ts'));
 const { problemaEstrutura, primeiraEtapaInvalida } = loadTs(resolve(ROOT, 'lib/validacao.ts'));
 
@@ -42,15 +43,18 @@ const t = (nome, fn) => { fn(); ok++; console.log('✓', nome); };
 const ent = (x = {}) => ({ ...entradaPadrao(), ...x });
 const qtd = (itens, re) => itens.filter((m) => re.test(m.descricao)).reduce((a, m) => a + m.qtd, 0);
 
-t('sugerirSistema: 5→mono, 10→bi, 20→tri', () => {
-  assert.equal(sugerirSistema(5), 'monofasico');
-  assert.equal(sugerirSistema(10), 'bifasico');
-  assert.equal(sugerirSistema(20), 'trifasico');
+t('sistemaSugeridoUf (220/127): 5→mono, 12→bi, 20→tri; (380/220): 12→mono, 20→tri', () => {
+  assert.equal(sistemaSugeridoUf('220/127', 5), 'monofasico');
+  assert.equal(sistemaSugeridoUf('220/127', 12), 'bifasico');
+  assert.equal(sistemaSugeridoUf('220/127', 20), 'trifasico');
+  assert.equal(sistemaSugeridoUf('380/220', 12), 'monofasico');
+  assert.equal(sistemaSugeridoUf('380/220', 20), 'trifasico');
 });
-t('sugerirBitola: 20→6, 35→10, 55→16', () => {
-  assert.equal(sugerirBitola(20, 'monofasico'), '6');
-  assert.equal(sugerirBitola(35, 'monofasico'), '10');
-  assert.equal(sugerirBitola(55, 'monofasico'), '16');
+t('bitolaEntrada: seção 6 com 20→6, 35→10, 55→16; seção 16 com 10 m → 16', () => {
+  assert.equal(bitolaEntrada(6, 20), '6');
+  assert.equal(bitolaEntrada(6, 35), '10');
+  assert.equal(bitolaEntrada(6, 55), '16');
+  assert.equal(bitolaEntrada(16, 10), '16');
 });
 t('poste 6 m: 2 tubos, 1 curva 90°, 1 curva 180°, 4 luvas, 1 abraçadeira', () => {
   const m = materiaisEntrada(ent({ poste: '6m', percurso: '10' }));

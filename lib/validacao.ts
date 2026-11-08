@@ -1,6 +1,7 @@
 /* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
+import { UFS } from './tensao-por-uf';
 import type { DadosOrcamento, Room } from './types';
-import { minTomadas, perimetro, tomadasFisicas } from './nbr5410-regras';
+import { minTomadas, perimetro, pontosTomada } from './nbr5410-regras';
 
 const num = (v: unknown): number => {
   const n = typeof v === 'number' ? v : parseFloat(String(v ?? ''));
@@ -67,10 +68,10 @@ export function tomadasNbr(r: Room): { minimo: number; atual: number } | null {
   const c = num(r?.c), l = num(r?.l);
   if (c <= 0 || l <= 0) return null;
   const minimo = minTomadas(c * l, perimetro(c, l), `${r?.base ?? ''} ${r?.nome ?? ''}`);
-  // Tomadas físicas (dupla = 2, tripla = 3), mesma regra de countMods — inclui as montadas no interruptor.
+  // Pontos de tomada (simples/dupla/tripla = 1), mesma regra de countMods — inclui as montadas no interruptor.
   let atual = 0;
-  for (const p of r?.pontos ?? []) for (const m of p?.mods ?? []) if (String(m?.t ?? '').startsWith('T')) atual += tomadasFisicas(m.t);
-  for (const c of r?.comandos ?? []) for (const sw of c?.sws ?? []) if (String(sw?.tom ?? '').startsWith('T')) atual += tomadasFisicas(sw.tom);
+  for (const p of r?.pontos ?? []) for (const m of p?.mods ?? []) if (String(m?.t ?? '').startsWith('T')) atual += pontosTomada(m.t);
+  for (const c of r?.comandos ?? []) for (const sw of c?.sws ?? []) if (String(sw?.tom ?? '').startsWith('T')) atual += pontosTomada(sw.tom);
   return { minimo, atual };
 }
 
@@ -149,7 +150,9 @@ export function problemaEstrutura(d: any): string | null {
       || !opcional(en.bitola, ENT_BITOLA) || !opcional(en.diametroEletroduto, ENT_DIAM) || !opcional(en.tipoEletroduto, ENT_ELETRODUTO)
       || !opcional(en.unidadeEletroduto, ENT_UNIDADE)
       || !opcional(en.tensao, ENT_TENSAO) || !bool(en.sistemaManual) || !bool(en.bitolaManual) || !bool(en.diametroManual)
-      || !texto(en.obs, LIM.obs) || !bool(en.incluirNoPdf)) return 'entrada inválida';
+      || !texto(en.obs, LIM.obs) || !bool(en.incluirNoPdf)
+      || !opcional(en.sistemaTensao, ['220/127', '380/220', 'nao-sei']) || !opcional(en.ligacao, ['M', 'B', 'T', 'nao-sei'])
+      || !opcional(en.uf, ['', ...UFS.map((u) => u.uf)])) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
   }
   const at = d.aterramento;

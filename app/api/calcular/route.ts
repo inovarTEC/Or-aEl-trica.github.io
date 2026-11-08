@@ -25,5 +25,13 @@ export const POST = rota('calcular', async (req) => {
       nCircuitos: resultado.circuitos.length,
       nMateriais: resultado.materiais.length,
     },
+    // Padrão de entrada (DIS-NOR-030): demanda, categoria, disjuntor geral e tensão da localidade.
+    entrada: {
+      demandaKva: resultado.quadro.demandaKva,
+      categoria: resultado.quadro.categoria,
+      disjuntorGeralA: resultado.quadro.disjuntorGeralA,
+      sistema: resultado.quadro.sistema,
+      uf: resultado.quadro.uf ?? null,
+    },
   });
 });
