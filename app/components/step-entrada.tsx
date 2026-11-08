@@ -1,7 +1,7 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Lock, PlugZap, Package } from 'lucide-react';
+import { AlertTriangle, Lock, PlugZap, Package, Zap } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
 import {
@@ -19,6 +19,9 @@ import { Label } from '@/components/ui/label';
 const selCls = 'mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm';
 const sug = (manual: boolean) => (manual ? '' : ' (sugerido)');
 
+/** Resultado do motor (mesmo campo `entrada` que /api/calcular devolve para a prévia). */
+interface PadraoEntrada { demandaKva: number; categoria: string; disjuntorGeralA: number; sistema: string; uf: string | null }
+
 export default function StepEntrada() {
   const store = useStore();
   const e: EntradaPrincipal = { ...entradaPadrao(), ...(store?.entrada ?? {}) };
@@ -28,6 +31,32 @@ export default function StepEntrada() {
   const percurso = parseFloat(e.percurso) || 0;
   const vs = e.sistemaTensao === '220/127' || e.sistemaTensao === '380/220' ? e.sistemaTensao : undefined;
   const ufInfo = infoUf(e.uf);
+
+  // Padrão de entrada calculado pelo motor (mesma chamada da prévia), ao montar e quando potência/UF mudam.
+  const [padrao, setPadrao] = useState<PadraoEntrada | null>(null);
+  const [calculando, setCalculando] = useState(false);
+  useEffect(() => {
+    const s = store;
+    if (!(s?.rooms?.length || s?.equips?.length)) { setPadrao(null); return; }
+    const dados = {
+      imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips,
+      ...(s.entrada ? { entrada: s.entrada } : {}),
+      ...(s.aterramento ? { aterramento: s.aterramento } : {}),
+    };
+    const ctrl = new AbortController();
+    setCalculando(true);
+    fetch('/api/calcular', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dados }),
+      signal: ctrl.signal,
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('falha'))))
+      .then((j) => { setPadrao(j?.entrada?.disjuntorGeralA ? j.entrada : null); setCalculando(false); })
+      .catch((err) => { if (err?.name !== 'AbortError') { setPadrao(null); setCalculando(false); } });
+    return () => ctrl.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [e.potenciaDemandada, e.uf, e.sistemaTensao]);
   const [fn, ff] = vs === '220/127' ? ['127', '220'] : ['220', '380'];
 
   /** UF escolhida: grava a tensão da localidade e pré-preenche o sistema (o usuário pode alterar abaixo). */
@@ -131,6 +160,31 @@ export default function StepEntrada() {
               <p className="mt-1 text-[11px] text-muted-foreground">Soma das cargas principais; a demanda e a categoria são calculadas no PDF (DIS-NOR-030)</p>
             </div>
           </div>
+
+          {calculando && !padrao && <p className="text-xs text-muted-foreground">Calculando…</p>}
+          {padrao && (
+            <Card className="shadow-sm">
+              <CardContent className="pt-4 pb-4">
+                <p className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" /> Padrão de entrada{calculando ? <span className="text-[11px] font-normal text-muted-foreground">Calculando…</span> : null}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  {[
+                    { label: 'Demanda total', value: `${padrao.demandaKva.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} kVA` },
+                    { label: 'Categoria', value: padrao.categoria },
+                    { label: 'Disjuntor geral', value: `${padrao.disjuntorGeralA} A` },
+                    { label: 'Tensão da localidade', value: `${padrao.uf ? `${padrao.uf} · ` : ''}${padrao.sistema} V` },
+                  ].map((x) => (
+                    <div key={x.label}>
+                      <p className="text-lg font-bold">{x.value}</p>
+                      <p className="text-[10px] text-muted-foreground">{x.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-[11px] text-muted-foreground">Pré-dimensionamento (DIS-NOR-030) — verificar com a distribuidora.</p>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
