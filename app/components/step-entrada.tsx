@@ -86,7 +86,7 @@ export default function StepEntrada() {
               <Label className="text-xs">Potência estimada (kW)</Label>
               <Input type="number" step="0.1" min="0" value={e.potenciaDemandada} placeholder="Ex: 8" className="mt-1"
                 onChange={(ev) => up({ potenciaDemandada: semNegativo(ev.target.value) })} />
-              <p className="mt-1 text-[11px] text-muted-foreground">Soma das cargas principais; fator de demanda NBR 5410:2025 em breve</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Soma das cargas principais; a demanda e a categoria são calculadas no PDF (DIS-NOR-030)</p>
             </div>
           </div>
 

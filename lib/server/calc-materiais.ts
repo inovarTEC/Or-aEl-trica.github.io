@@ -1,20 +1,16 @@
-/* ===== Motor de cálculo de materiais (NBR 5410) ===== */
+/* ===== Lista de materiais — circuitos dimensionados pelo motor lib/motor (NBR 5410:2004) ===== */
 import { AppState, Comando, Room } from '../types';
 import { countMods } from './calculator';
 import { tomadasFisicas, gruposTeclas } from '../nbr5410-regras';
 export { gruposTeclas };
 import { materiaisEntrada } from '../entrada-calc';
 import { materiaisAterramento } from '../aterramento-calc';
+import { eletrodutoDN, MaterialItem } from './nbr5410';
 import {
-  potenciaIluminacao,
-  potenciaTUG,
-  bitolaCircuito,
-  disjuntor,
-  disjuntorGeral,
-  eletrodutoDN,
-  nCondutoresCircuito,
-  MaterialItem,
-} from './nbr5410';
+  VERSAO_MOTOR, SistemaTensao, normalizarSistema, tensoesSistema, potenciaIluminacao, potenciaTUG,
+  dimensionarCircuito, reservaQuadro,
+} from '../motor/eletrica';
+import { Ligacao, AparelhoDemanda, cargaTomadasW, cargaIluminacaoW, calcularDemanda, categoriaAtendimento } from '../motor/demanda';
 
 /* ---------- Helpers ---------- */
 
@@ -24,20 +20,39 @@ function num(v: string | number | undefined | null): number {
   return isNaN(n) ? 0 : n;
 }
 
-function routeLen(r: Room, rooms: Room[]): number {
-  if (r.via) {
-    return num(r.dd) + num(r.dr);
-  }
+function routeLen(r: Room): number {
+  if (r.via) return num(r.dd) + num(r.dr);
   return num(r.dq);
 }
 
-function tensaoCircuito(rede: string, tipo: string): number {
-  // TUEs de alta potência geralmente são 220V
-  if (tipo === 'tue') {
-    return (rede === 'Monofásico') ? 127 : 220;
-  }
-  // Iluminação e TUGs: 127V (monofásico/bifásico) ou 127V (trifásico F-N)
-  return 127;
+/** Sistema da rede: campo novo da entrada; projetos antigos caem em 220/127 V (premissa no PDF). */
+export function sistemaDoEstado(state: Pick<AppState, 'entrada'>): SistemaTensao {
+  const e = state.entrada;
+  if (e?.sistemaTensao) return normalizarSistema(e.sistemaTensao);
+  return normalizarSistema(String(e?.tensao ?? '').includes('380') ? '380/220' : '220/127');
+}
+
+/** NBR 5410 4.1 (seção 4.1 da especificação): tensão e ligação de cada equipamento conforme o sistema. */
+export function tensaoEquipamento(tens: string, sistema: SistemaTensao, rede: string): { v: number; ligacao: 'F-N' | 'F-F' } {
+  const t = tensoesSistema(sistema);
+  if (tens === '380V') return sistema === '380/220' ? { v: 380, ligacao: 'F-F' } : { v: 220, ligacao: 'F-F' };
+  if (tens === '127V') return { v: t.fn, ligacao: 'F-N' };
+  if (tens === '220V') return sistema === '380/220' ? { v: 220, ligacao: 'F-N' } : { v: 220, ligacao: 'F-F' };
+  if (sistema === '380/220') return { v: 220, ligacao: 'F-N' };
+  return rede === 'Monofásico' ? { v: 127, ligacao: 'F-N' } : { v: 220, ligacao: 'F-F' };
+}
+
+/** fp = 1 para cargas resistivas; 0,92 para ar-condicionado e motores (premissa). */
+function fatorPotencia(tipo: string): number {
+  const t = tipo.toLowerCase();
+  return /ar-cond|ar cond|motor|bomba|geladeira|freezer|máquina|maquina/.test(t) ? 0.92 : 1;
+}
+
+function grupoDemanda(tipo: string): AparelhoDemanda['grupo'] {
+  const t = tipo.toLowerCase();
+  if (/chuveiro|torneira|aquecedor/.test(t)) return 'b';
+  if (/ar-cond|ar cond/.test(t)) return 'f';
+  return 'ghi';
 }
 
 /* ---------- Tipos de resultado ---------- */
@@ -47,12 +62,16 @@ export interface CircuitoCalc {
   tipo: 'iluminacao' | 'tug' | 'tue';
   potenciaW: number;
   tensaoV: number;
+  ligacao: 'F-N' | 'F-F' | '3F';
   correnteA: number;
   bitolaMM2: number;
+  izA: number;
   disjuntorA: number;
+  quedaPct: number;
   comprimentoM: number;
   eletrodutoDN: number;
   nCondutores: number;
+  dr: boolean;
   comodo?: string;
   /** Tipo de instalação escolhido no cômodo (define eletroduto corrugado x canaleta). */
   instalacao?: string;
@@ -63,8 +82,16 @@ export interface CircuitoCalc {
 export interface QuadroGeral {
   disjuntorGeralA: number;
   nCircuitos: number;
+  reserva: number;
+  posicoes: number;
   cargaTotalW: number;
   correnteTotalA: number;
+  sistema: SistemaTensao;
+  categoria: string;
+  demandaKva: number;
+  cargaInstaladaKw: number;
+  avisoCategoria?: string;
+  versaoMotor: string;
 }
 
 export interface ResultadoCalculo {
@@ -73,113 +100,100 @@ export interface ResultadoCalculo {
   materiais: MaterialItem[];
 }
 
+const AREA_MOLHADA = /banheiro|lavabo|cozinha|copa|servi|lavanderia|piscina|externa|varanda|garagem/i;
+
 /* ---------- Motor principal ---------- */
 
 export function calcularMateriais(state: AppState): ResultadoCalculo {
   const circuitos: CircuitoCalc[] = [];
   const rede = state.rede || 'Monofásico';
+  const sistema = sistemaDoEstado(state);
+  const { fn } = tensoesSistema(sistema);
+  const rooms = state.rooms ?? [];
+  const equips = (state.equips ?? []).filter((e) => e.tipo && e.pot);
 
-  /* ----- Circuitos por cômodo ----- */
-  for (const r of state.rooms ?? []) {
+  for (const r of rooms) {
     const area = num(r.c) * num(r.l);
-    const distQuadro = routeLen(r, state.rooms);
+    const distQuadro = routeLen(r);
     const nTomadas = countMods(r, 'T');
     const nLuzes = r.luzes?.length ?? 0;
     const roomName = r.nome || r.base || 'Cômodo';
+    // NBR 5410 6.2.5.5 / Tabela 42: circuitos no mesmo trecho (decisão 10.3: ilum + TUG por cômodo + TUEs dele)
+    const nAgrupados = (nLuzes > 0 ? 1 : 0) + (nTomadas > 0 ? 1 : 0) + equips.filter((e) => e.room === r.id).length;
+    const dr = AREA_MOLHADA.test(`${r.base} ${r.nome}`); // NBR 5410 5.1.3.2.2
 
-    /* Circuito de iluminação */
     if (nLuzes > 0) {
-      const potIlum = potenciaIluminacao(area);
-      const tensao = 127;
-      const calc = bitolaCircuito(potIlum, tensao, distQuadro, 'iluminacao', 2);
-      const nCond = nCondutoresCircuito('iluminacao', rede);
+      const pot = potenciaIluminacao(area, nLuzes); // NBR 5410 9.5.2.1.2
+      const d = dimensionarCircuito({ potencia: pot, tensao: fn, tipo: 'iluminacao', comprimentoM: distQuadro, nAgrupados });
       circuitos.push({
-        nome: `Iluminação — ${roomName}`,
-        tipo: 'iluminacao',
-        potenciaW: potIlum,
-        tensaoV: tensao,
-        correnteA: calc.corrente,
-        bitolaMM2: calc.secao,
-        disjuntorA: disjuntor(calc.corrente, calc.secao),
-        comprimentoM: distQuadro,
-        eletrodutoDN: eletrodutoDN(calc.secao, nCond),
-        nCondutores: nCond,
-        comodo: roomName,
-        instalacao: r.inst || '',
-        materialAparente: r.materialAparente,
+        nome: `Iluminação — ${roomName}`, tipo: 'iluminacao', potenciaW: pot, tensaoV: fn, ligacao: 'F-N',
+        correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
+        comprimentoM: distQuadro, eletrodutoDN: eletrodutoDN(d.secao, 3), nCondutores: 3, dr,
+        comodo: roomName, instalacao: r.inst || '', materialAparente: r.materialAparente,
       });
     }
 
-    /* Circuito de TUGs */
     if (nTomadas > 0) {
-      const potTug = potenciaTUG(nTomadas, r.base || roomName);
-      const tensao = 127;
-      const calc = bitolaCircuito(potTug, tensao, distQuadro, 'tug', 2);
-      const nCond = nCondutoresCircuito('tug', rede);
+      const pot = potenciaTUG(nTomadas, r.base || roomName); // NBR 5410 9.5.2.2.2
+      const d = dimensionarCircuito({ potencia: pot, tensao: fn, tipo: 'tug', comprimentoM: distQuadro, nAgrupados });
       circuitos.push({
-        nome: `Tomadas (TUG) — ${roomName}`,
-        tipo: 'tug',
-        potenciaW: potTug,
-        tensaoV: tensao,
-        correnteA: calc.corrente,
-        bitolaMM2: calc.secao,
-        disjuntorA: disjuntor(calc.corrente, calc.secao),
-        comprimentoM: distQuadro,
-        eletrodutoDN: eletrodutoDN(calc.secao, nCond),
-        nCondutores: nCond,
-        comodo: roomName,
-        instalacao: r.inst || '',
-        materialAparente: r.materialAparente,
+        nome: `Tomadas (TUG) — ${roomName}`, tipo: 'tug', potenciaW: pot, tensaoV: fn, ligacao: 'F-N',
+        correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
+        comprimentoM: distQuadro, eletrodutoDN: eletrodutoDN(d.secao, 3), nCondutores: 3, dr,
+        comodo: roomName, instalacao: r.inst || '', materialAparente: r.materialAparente,
       });
     }
   }
 
-  /* ----- Circuitos de equipamentos (TUEs) ----- */
-  for (const eq of state.equips ?? []) {
-    if (!eq.tipo || !eq.pot) continue;
-    const room = (state.rooms ?? []).find(r => r.id === eq.room);
-    const eqName = eq.tipo;
+  /* NBR 5410 9.5.3.1: equipamento acima de 10 A em circuito próprio (TUE) */
+  for (const eq of equips) {
+    const room = rooms.find((r) => r.id === eq.room);
     const potW = num(eq.pot);
-    const tensao = eq.tens === '127V' ? 127 : eq.tens === '220V' ? 220 : tensaoCircuito(rede, 'tue');
-
-    // Distância: direta ou estimada pela rota do cômodo + dint
+    const tri = !!eq.trifasico && sistema === '380/220';
+    const t = tensaoEquipamento(eq.tens, sistema, rede);
     let dist = num(eq.dist);
-    if (dist <= 0 && room) {
-      dist = routeLen(room, state.rooms) + num(eq.dint);
-    }
-    if (dist <= 0) dist = 10; // fallback
-
-    const condCarr: 2 | 3 = tensao > 200 && (rede === 'Trifásico') ? 3 : 2;
-    const calc = bitolaCircuito(potW, tensao, dist, 'tue', condCarr);
-    const nCond = nCondutoresCircuito('tue', rede);
-
+    if (dist <= 0 && room) dist = routeLen(room) + num(eq.dint);
+    if (dist <= 0) dist = 10;
+    const nAgrupados = room ? circuitos.filter((c) => c.comodo === (room.nome || room.base || 'Cômodo')).length + 1 : 1;
+    const d = dimensionarCircuito({ potencia: potW, tensao: tri ? 380 : t.v, fp: fatorPotencia(eq.tipo), tipo: 'tue', comprimentoM: dist, nAgrupados, trifasico: tri });
+    // F-N: fase + neutro + PE; F-F: 2 fases + PE; 3F: 3 fases + PE
+    const nCond = tri ? 4 : 3;
     circuitos.push({
-      nome: `${eqName}${room ? ` — ${room.nome || room.base}` : ''}`,
-      tipo: 'tue',
-      potenciaW: potW,
-      tensaoV: tensao,
-      correnteA: calc.corrente,
-      bitolaMM2: calc.secao,
-      disjuntorA: disjuntor(calc.corrente, calc.secao),
-      comprimentoM: dist,
-      eletrodutoDN: eletrodutoDN(calc.secao, nCond),
-      nCondutores: nCond,
-      comodo: room ? (room.nome || room.base) : undefined,
-      instalacao: room?.inst || '',
-      materialAparente: room?.materialAparente,
+      nome: `${eq.tipo}${room ? ` — ${room.nome || room.base}` : ''}`, tipo: 'tue', potenciaW: potW,
+      tensaoV: tri ? 380 : t.v, ligacao: tri ? '3F' : t.ligacao,
+      correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
+      comprimentoM: dist, eletrodutoDN: eletrodutoDN(d.secao, nCond), nCondutores: nCond,
+      dr: /chuveiro|torneira|aquecedor|máquina|maquina/i.test(eq.tipo) || (room ? AREA_MOLHADA.test(`${room.base} ${room.nome}`) : false),
+      comodo: room ? (room.nome || room.base) : undefined, instalacao: room?.inst || '', materialAparente: room?.materialAparente,
     });
   }
 
-  /* ----- Quadro geral ----- */
+  /* ----- Quadro geral: demanda e categoria pela DIS-NOR-030 6.26–6.27 ----- */
   const cargaTotal = circuitos.reduce((s, c) => s + c.potenciaW, 0);
   const correnteTotal = circuitos.reduce((s, c) => s + c.correnteA, 0);
-  const djGeral = disjuntorGeral(correnteTotal, rede);
+  const areaTotal = rooms.reduce((s, r) => s + num(r.c) * num(r.l), 0);
+  const pontosTom = rooms.reduce((s, r) => s + countMods(r, 'T'), 0);
+  const pontosLuz = rooms.reduce((s, r) => s + (r.luzes?.length ?? 0), 0);
+  const cargaIT = (cargaTomadasW(areaTotal, pontosTom) + cargaIluminacaoW(pontosLuz, rooms.length)) / 1000;
+  const dem = calcularDemanda(cargaIT, equips.map((e) => ({ grupo: grupoDemanda(e.tipo), kw: num(e.pot) / 1000, kva: num(e.pot) / 1000 })));
+  const lig: Ligacao | null = (['M', 'B', 'T'] as const).find((l) => l === state.entrada?.ligacao)
+    ?? (rede === 'Trifásico' ? 'T' : rede === 'Bifásico' ? 'B' : rede === 'Monofásico' ? 'M' : null);
+  const cat = categoriaAtendimento(sistema, lig, dem.cargaInstaladaKw, dem.demandaKva);
+  const reserva = reservaQuadro(circuitos.length); // NBR 5410 6.5.4.7 Tabela 59
 
   const quadro: QuadroGeral = {
-    disjuntorGeralA: djGeral,
+    disjuntorGeralA: cat.categoria?.disjuntor ?? 0,
     nCircuitos: circuitos.length,
+    reserva,
+    posicoes: circuitos.length + reserva,
     cargaTotalW: Math.round(cargaTotal),
     correnteTotalA: Math.round(correnteTotal * 100) / 100,
+    sistema,
+    categoria: cat.categoria?.codigo ?? 'fora do escopo',
+    demandaKva: Math.round(dem.demandaKva * 100) / 100,
+    cargaInstaladaKw: Math.round(dem.cargaInstaladaKw * 100) / 100,
+    avisoCategoria: cat.aviso,
+    versaoMotor: VERSAO_MOTOR,
   };
 
   /* ----- Lista de materiais consolidada ----- */
@@ -319,7 +333,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   const temEntrada = !!state.entrada?.tipoEntrada && state.entrada?.incluirNoPdf !== false;
   if (!temEntrada) {
     materiais.push({
-      item: `Disjuntor geral ${djGeral}A`,
+      item: `Disjuntor geral ${quadro.disjuntorGeralA}A`,
       qtd: 1,
       unidade: 'un',
       detalhe: `Curva C, ${polosGeral}`,
@@ -476,7 +490,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
         qtd: m.qtd,
         unidade: m.unidade,
         detalhe: ehGeral
-          ? `Entrada / alimentador principal — curva C, ${polosGeral}; pela carga instalada o mínimo é ${djGeral}A`
+          ? `Entrada / alimentador principal — curva C, ${polosGeral}; pela carga instalada o mínimo é ${quadro.disjuntorGeralA}A`
           : 'Entrada / alimentador principal',
       });
     }
