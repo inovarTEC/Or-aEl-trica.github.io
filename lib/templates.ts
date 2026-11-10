@@ -31,8 +31,8 @@ function mkComandoSimples(luzIds: string[]): Comando {
 
 /**
  * Distância padrão entre pontos (m) por tipo de cômodo:
- * cozinha/copa/serviço/lavanderia/banheiro 1,0 · garagem/varanda/terraço/subsolo 2,0 ·
- * sala, quarto, suíte e demais 1,5 (padrão).
+ * cozinha/copa/serviço/lavanderia/banheiro 3 · garagem/varanda/terraço/subsolo 5 ·
+ * sala, quarto, suíte e demais 5 (padrão).
  */
 export function dpadPorTipo(tipo: string): string {
   const t = (tipo ?? '').toLowerCase();
@@ -73,7 +73,7 @@ export interface RoomTemplate {
 export const ROOM_TEMPLATES: RoomTemplate[] = [
   {
     label: 'Quarto típico',
-    desc: '3 tomadas duplas, 1 luz, 1 interruptor',
+    desc: '2 tomadas duplas, 1 luz, 1 interruptor',
     icon: 'Bed',
     create: () => {
       const r = emptyRoom('Quarto', 'Quarto');
@@ -100,7 +100,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Suíte 2 (padrão)',
-    desc: '3 tomadas duplas, 1 luz, 1 interruptor',
+    desc: '2 tomadas duplas, 1 luz, 1 interruptor',
     icon: 'Bed',
     create: () => {
       const r = emptyRoom('Quarto', 'Suíte 2');
@@ -114,7 +114,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Suíte 3 (luxo)',
-    desc: '4 tomadas duplas, 2 luzes, 1 interruptor',
+    desc: '3 tomadas duplas, 2 luzes, 1 interruptor',
     icon: 'Bed',
     create: () => {
       const r = emptyRoom('Quarto', 'Suíte 3');
@@ -128,7 +128,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Sala típica',
-    desc: '5 tomadas duplas, 2 luzes, 1 interruptor',
+    desc: '3 tomadas duplas, 2 luzes, 1 interruptor',
     icon: 'Sofa',
     create: () => {
       const r = emptyRoom('Sala', 'Sala');
@@ -141,7 +141,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Cozinha típica',
-    desc: '3 tomadas 10A, 2 tomadas 20A, 1 luz',
+    desc: '5 tomadas 10A, 2 tomadas 20A, 1 luz',
     icon: 'CookingPot',
     create: () => {
       const r = emptyRoom('Cozinha', 'Cozinha');
@@ -160,7 +160,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Banheiro típico',
-    desc: '2 tomadas, 1 luz, 1 interruptor',
+    desc: '1 tomadas, 1 luz, 1 interruptor',
     icon: 'Bath',
     create: () => {
       const r = emptyRoom('Banheiro', 'Banheiro');
