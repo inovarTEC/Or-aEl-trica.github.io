@@ -1,4 +1,4 @@
-/* ===== OrçaElétrica — Tipos do modelo de dados ===== */
+﻿/* ===== OrçaElétrica — Tipos do modelo de dados ===== */
 
 export type TipoImovel = 'Casa' | 'Apartamento' | 'Comércio pequeno' | '';
 export type TipoObra = 'Construção nova' | 'Reforma' | 'Ampliação' | '';
@@ -30,6 +30,8 @@ export interface Ponto {
   d: string; // distância do anterior — vazio = padrão
   cx: '4x2' | '4x4';
   mods: Modulo[];
+  /** true = tomada criada automaticamente para cumprir o mínimo da NBR 5410 (some se o cômodo diminuir). Editar a tomada tira a marca. */
+  auto?: boolean;
 }
 
 export interface Luz {
@@ -138,6 +140,8 @@ export interface EntradaPrincipal {
   percurso: string;
   tensao: string;
   potenciaDemandada: string;
+  /** true = a pessoa digitou a potência (não sobrescrever). false/ausente = preenchida pela demanda calculada. */
+  potenciaManual?: boolean;
   obs: string;
   /** Incluir a entrada no orçamento/PDF (ausente = true). */
   incluirNoPdf?: boolean;
@@ -148,11 +152,35 @@ export interface AterramentoPrincipal {
   nHastes: number;
   comprimentoHaste: '2.4';
   nCaixasInspecao: number;
+  /** Conectores de haste. Ausente = acompanha o número de hastes. */
+  nConectores?: number;
   bitolaCabo: '6' | '10';
   distancia: string;
   obs: string;
   /** Incluir o aterramento no orçamento/PDF (ausente = true). */
   incluirNoPdf?: boolean;
+}
+
+/** Como dividir os circuitos do quadro (cada circuito = 1 disjuntor). */
+export type ModoCircuitos = 'norma' | 'economico' | 'maximo' | 'manual';
+
+/** Cômodos vizinhos que dividem o mesmo circuito (iluminação juntos e tomadas juntos; ou tudo junto se `unico`). */
+export interface GrupoCircuito {
+  id: string;
+  /** ids dos cômodos; o primeiro é o mais próximo do quadro (o trajeto até o quadro é o dele). */
+  rooms: string[];
+  /** Mesmo tamanho de `rooms`; dists[i] = metros de cabo a mais para chegar em rooms[i] saindo do anterior (dists[0] fica vazio). */
+  dists: string[];
+  /** Iluminação e tomadas do grupo no mesmo disjuntor. */
+  unico?: boolean;
+}
+
+export interface ConfigCircuitos {
+  modo: ModoCircuitos;
+  /** Só no modo manual: cômodos soltos com iluminação e tomadas no mesmo disjuntor. */
+  unico: string[];
+  /** Só no modo manual: grupos de cômodos. */
+  grupos: GrupoCircuito[];
 }
 
 export interface AppState {
@@ -165,6 +193,8 @@ export interface AppState {
   equips: Equip[];
   entrada: EntradaPrincipal;
   aterramento: AterramentoPrincipal;
+  /** Divisão dos circuitos (ausente em orçamentos antigos = padrão da norma, tudo separado). */
+  circuitos: ConfigCircuitos;
   step: number;
   /** Navegação (não vai ao servidor): cômodo/equipamento a abrir e se veio da prévia. */
   activeRoomId: string;
@@ -177,6 +207,7 @@ export type DadosOrcamento = Pick<AppState, 'imovel' | 'obra' | 'cobertura' | 'r
   /** Opcional: orçamentos antigos e o fluxo do PDF não enviam a entrada. */
   entrada?: EntradaPrincipal;
   aterramento?: AterramentoPrincipal;
+  circuitos?: ConfigCircuitos;
 };
 
 export interface Pendencia {

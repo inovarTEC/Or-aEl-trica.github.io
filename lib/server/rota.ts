@@ -3,6 +3,7 @@ import { erro } from './pedido';
 import { logErro } from './log';
 import type { DadosOrcamento } from '../types';
 import { faltasObrigatorias, problemaEstrutura, somenteDados } from '../validacao';
+import { limparOrfaos } from '../limpeza';
 
 /** Erro "esperado": vira a resposta { erro: codigo } com o status indicado. */
 export class ErroApi extends Error {
@@ -36,7 +37,8 @@ export function rota(nome: string, fn: Handler): Handler {
 export function exigirDados(d: unknown, completo: boolean): DadosOrcamento {
   const problema = problemaEstrutura(d);
   if (problema) throw new ErroApi(400, 'dados_invalidos');
-  const dados = somenteDados(d);
+  // Rede de segurança: sem ponto vazio, interruptor sem função nem referência a cômodo removido no cálculo.
+  const dados = limparOrfaos(somenteDados(d));
   if (completo && faltasObrigatorias(dados).length > 0) throw new ErroApi(422, 'dados_incompletos');
   return dados;
 }

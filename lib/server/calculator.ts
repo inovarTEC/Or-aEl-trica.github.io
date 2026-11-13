@@ -4,7 +4,8 @@ import { tomadasFisicas, pontosTomada } from '../nbr5410-regras';
 import { correnteEquip } from '../ponto-equip';
 import { avisosEntrada } from '../entrada-calc';
 import { avisosAterramento } from '../aterramento-calc';
-import { STEP_ATERRAMENTO, STEP_ENTRADA } from '../navegacao';
+import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_EQUIPAMENTOS } from '../navegacao';
+import { resolverUnidades } from './circuitos';
 
 /* ---------- helpers ---------- */
 import { num, routeLen } from '../util';
@@ -201,6 +202,11 @@ export function calcPendencias(state: AppState): Pendencia[] {
     if (I !== null && I > 16 && e?.ponto !== 'emenda' && e?.ponto !== 'borne') {
       p.push({ tipo: 'aviso', msg: `${en}: corrente estimada ${I.toFixed(1).replace('.', ',')} A — considere ligação direta`, step: 3, equipId: e?.id });
     }
+  }
+
+  // Divisão dos circuitos (passo 3): distância entre cômodos que dividem circuito, limites de potência etc.
+  if (state?.circuitos && state.circuitos.modo !== 'norma') {
+    for (const msg of resolverUnidades(state.rooms ?? [], state.circuitos).avisos) p.push({ tipo: 'aviso', msg: `Circuitos: ${msg}`, step: STEP_EQUIPAMENTOS });
   }
 
   // Entrada / alimentador (passo 4). Orçamentos sem `entrada` (antigos ou do fluxo do PDF) não geram pendência.

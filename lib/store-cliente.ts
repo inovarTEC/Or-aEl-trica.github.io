@@ -1,10 +1,13 @@
 'use client';
 import { create } from 'zustand';
-import { AppState, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal, AterramentoPrincipal } from './types';
+import { AppState, ConfigCircuitos, Room, Equip, Ponto, Luz, Comando, Sw, Modulo, TipoComando, EntradaPrincipal, AterramentoPrincipal } from './types';
 import { aterramentoPadrao } from './aterramento-calc';
 import { entradaPadrao } from './entrada-calc';
 import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_PREVIA } from './navegacao';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
+import { sincronizarTomadas } from './tomadas-auto';
+import { comandoTemTomada, limparOrfaos } from './limpeza';
+import { configPadrao, podarConfig } from './circuitos-config';
 
 function defaultState(): AppState {
   return {
@@ -17,6 +20,7 @@ function defaultState(): AppState {
     equips: [],
     entrada: entradaPadrao(),
     aterramento: aterramentoPadrao(),
+    circuitos: configPadrao(),
     step: 0,
     activeRoomId: '',
     activeEquipId: '',
@@ -44,6 +48,8 @@ interface StoreActions {
   removeEquip: (id: string) => void;
   updateEntrada: (patch: Partial<EntradaPrincipal>) => void;
   updateAterramento: (patch: Partial<AterramentoPrincipal>) => void;
+  /** Como dividir os circuitos do quadro (modo pronto ou ajuste manual). */
+  setCircuitos: (cfg: ConfigCircuitos) => void;
   // Points helpers
   addPonto: (roomId: string, ponto: Ponto) => void;
   updatePonto: (roomId: string, pontoId: string, patch: Partial<Ponto>) => void;
@@ -96,19 +102,27 @@ export const useStore = create<Store>((set) => {
     setActiveRoomId: (activeRoomId) => update(() => ({ activeRoomId })),
     setActiveEquipId: (activeEquipId) => update(() => ({ activeEquipId })),
     setVeioDaPrevia: (veioDaPrevia) => update(() => ({ veioDaPrevia })),
-    addRoom: (room) => update((s) => ({ rooms: [...(s?.rooms ?? []), room] })),
+    addRoom: (room) => update((s) => ({ rooms: [...(s?.rooms ?? []), sincronizarTomadas(room)] })),
+    // Mudou medida ou nome (tipo do cômodo)? Completa/enxuga as tomadas automáticas pela NBR 5410.
     updateRoom: (id, patch) => update((s) => ({
-      rooms: updateRoomInner(s?.rooms ?? [], id, (r) => ({ ...r, ...patch })),
+      rooms: updateRoomInner(s?.rooms ?? [], id, (r) => {
+        const n = { ...r, ...patch };
+        return ('c' in patch || 'l' in patch || 'nome' in patch || 'base' in patch) ? sincronizarTomadas(n) : n;
+      }),
     })),
     // Remove o cômodo (com seus pontos, luzes, comandos e caixas), os equipamentos dele
     // e qualquer rota de outro cômodo que passava por ele.
-    removeRoom: (id) => update((s) => ({
-      rooms: (s?.rooms ?? [])
+    removeRoom: (id) => update((s) => {
+      const rooms = (s?.rooms ?? [])
         .filter((r: Room) => r?.id !== id)
-        .map((r: Room) => r?.via === id ? { ...r, via: '' } : r),
+        .map((r: Room) => r?.via === id ? { ...r, via: '' } : r);
+      return {
+      rooms,
+      circuitos: podarConfig(s?.circuitos, rooms),
       equips: (s?.equips ?? []).filter((e: Equip) => e?.room !== id),
       activeRoomId: s?.activeRoomId === id ? '' : s?.activeRoomId,
-    })),
+      };
+    }),
     addEquip: (equip) => update((s) => ({ equips: [...(s?.equips ?? []), equip] })),
     updateEquip: (id, patch) => update((s) => ({
       equips: (s?.equips ?? []).map((e: Equip) => e?.id === id ? { ...e, ...patch } : e),
@@ -117,6 +131,7 @@ export const useStore = create<Store>((set) => {
       equips: (s?.equips ?? []).filter((e: Equip) => e?.id !== id),
     })),
     updateEntrada: (patch) => update((s) => ({ entrada: { ...entradaPadrao(), ...(s?.entrada ?? {}), ...patch } })),
+    setCircuitos: (circuitos) => update((s) => ({ circuitos: podarConfig(circuitos, s?.rooms ?? []) })),
     updateAterramento: (patch) => update((s) => ({ aterramento: { ...aterramentoPadrao(), ...(s?.aterramento ?? {}), ...patch } })),
     addPonto: (roomId, ponto) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({ ...r, pontos: [...(r?.pontos ?? []), ponto] })),
@@ -124,7 +139,7 @@ export const useStore = create<Store>((set) => {
     updatePonto: (roomId, pontoId, patch) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
         ...r,
-        pontos: (r?.pontos ?? []).map((p: Ponto) => p?.id === pontoId ? { ...p, ...patch } : p),
+        pontos: (r?.pontos ?? []).map((p: Ponto) => p?.id === pontoId ? { ...p, ...patch, ...('auto' in patch ? {} : { auto: false }) } : p),
       })),
     })),
     removePonto: (roomId, pontoId) => update((s) => ({
@@ -155,10 +170,14 @@ export const useStore = create<Store>((set) => {
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
         ...r,
         luzes: (r?.luzes ?? []).filter((l: Luz) => l?.id !== luzId),
-        comandos: (r?.comandos ?? []).map((c: Comando) => ({
-          ...c,
-          luzes: (c?.luzes ?? []).filter((lid: string) => lid !== luzId),
-        })),
+        // O interruptor que ficou sem nenhuma luz some junto (senão caixa e placa continuariam no orçamento),
+        // exceto se tiver tomada na placa — esse fica, com o aviso na tela.
+        comandos: (r?.comandos ?? [])
+          .map((c: Comando) => ({ ...c, luzes: (c?.luzes ?? []).filter((lid: string) => lid !== luzId) }))
+          .filter((c: Comando, i: number) => {
+            const tinha = ((r?.comandos ?? [])[i]?.luzes ?? []).includes(luzId);
+            return !(tinha && c.luzes.length === 0 && !comandoTemTomada(c));
+          }),
       })),
     })),
     addComando: (roomId, cmd) => update((s) => ({
@@ -180,16 +199,19 @@ export const useStore = create<Store>((set) => {
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
         ...r,
         pontos: (r?.pontos ?? []).map((p: Ponto) =>
-          p?.id === pontoId ? { ...p, mods: [...(p?.mods ?? []), mod] } : p
+          p?.id === pontoId ? { ...p, mods: [...(p?.mods ?? []), mod], auto: false } : p
         ),
       })),
     })),
     removeModulo: (roomId, pontoId, modId) => update((s) => ({
       rooms: updateRoomInner(s?.rooms ?? [], roomId, (r) => ({
         ...r,
-        pontos: (r?.pontos ?? []).map((p: Ponto) =>
-          p?.id === pontoId ? { ...p, mods: (p?.mods ?? []).filter((m: Modulo) => m?.id !== modId) } : p
-        ),
+        // Ponto que ficou sem módulo some junto (a caixa dele não pode continuar no orçamento).
+        pontos: (r?.pontos ?? [])
+          .map((p: Ponto) =>
+            p?.id === pontoId ? { ...p, mods: (p?.mods ?? []).filter((m: Modulo) => m?.id !== modId), auto: false } : p
+          )
+          .filter((p: Ponto) => (p?.mods ?? []).length > 0),
       })),
     })),
     addSw: (roomId, cmdId, sw) => update((s) => ({
@@ -249,10 +271,16 @@ export const useStore = create<Store>((set) => {
       const d = dados as Partial<AppState>;
       const passo = dados.step ?? 0;
       const step = (!d.entrada && passo >= STEP_ENTRADA) || (!d.aterramento && passo >= STEP_ATERRAMENTO) ? STEP_PREVIA : passo;
+      const limpo = limparOrfaos({ rooms: dados.rooms ?? [], equips: dados.equips ?? [] });
       set({
-        ...defaultState(), ...dados, step,
-        entrada: { ...entradaPadrao(), ...(d.entrada ?? {}) },
+        ...defaultState(), ...dados, ...limpo, step,
+        // Orçamento antigo com potência digitada (sem a flag): é manual, não sobrescrever.
+        entrada: {
+          ...entradaPadrao(), ...(d.entrada ?? {}),
+          potenciaManual: d.entrada?.potenciaManual ?? !!d.entrada?.potenciaDemandada,
+        },
         aterramento: { ...aterramentoPadrao(), ...(d.aterramento ?? {}) },
+        circuitos: podarConfig({ ...configPadrao(), ...(d.circuitos ?? {}) }, limpo.rooms),
       });
     },
   };

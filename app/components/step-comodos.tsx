@@ -1,8 +1,10 @@
 'use client';
 import { useStore } from '@/lib/store-cliente';
-import { ROOM_TEMPLATES } from '@/lib/templates';
+import { ROOM_TEMPLATES, novoComodo } from '@/lib/templates';
 import { semNegativo } from '@/lib/validacao';
 import { Room } from '@/lib/types';
+import { qtdTomadasAuto } from '@/lib/tomadas-auto';
+import { perimetro } from '@/lib/nbr5410-regras';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,17 +28,12 @@ export default function StepComodos() {
   const [advancedOpen, setAdvancedOpen] = useState<Record<string, boolean>>({});
 
   const addFromTemplate = (tpl: typeof ROOM_TEMPLATES[0]) => {
-    const room = tpl.create();
-    // rename if duplicate
-    const names = rooms.map((r: Room) => r?.nome);
-    if (names.includes(room.nome)) {
-      let i = 2;
-      while (names.includes(`${room.nome} ${i}`)) i++;
-      room.nome = `${room.nome} ${i}`;
-    }
+    const room = novoComodo(tpl, rooms);
     store.addRoom(room);
+    // O cômodo novo aparece primeiro e já aberto; os outros ficam fechados (só um aberto por vez).
     setExpanded(room.id);
     setShowTemplates(false);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
     toast.success(`${room.nome} adicionado`);
   };
 
@@ -56,10 +53,18 @@ export default function StepComodos() {
       <div className="text-center mb-4">
         <h2 className="text-2xl font-bold tracking-tight">Cômodos</h2>
         <p className="text-muted-foreground mt-1">Adicione os cômodos e informe as medidas</p>
+        <p className="text-xs text-muted-foreground mt-1">As tomadas dos modelos aumentam sozinhas se o cômodo for maior (NBR 5410, pelo perímetro).</p>
       </div>
 
+      {/* Botão fixo no topo da lista: não precisa rolar a página para adicionar outro cômodo */}
+      {rooms.length > 0 && (
+        <Button variant={showTemplates ? 'secondary' : 'outline'} className="w-full" onClick={() => setShowTemplates((v) => !v)}>
+          <Plus className="w-4 h-4 mr-2" /> {showTemplates ? 'Fechar modelos' : 'Adicionar cômodo'}
+        </Button>
+      )}
+
       {/* Templates */}
-      {showTemplates && (
+      {(showTemplates || rooms.length === 0) && (
         <Card className="shadow-sm">
           <CardContent className="pt-5 pb-5">
             <p className="text-sm font-semibold mb-3">Escolha um modelo pronto ou comece do zero</p>
@@ -80,9 +85,9 @@ export default function StepComodos() {
         </Card>
       )}
 
-      {/* Room list */}
+      {/* Lista: o mais novo primeiro. Só na tela — a ordem guardada (abas, circuitos, PDF) não muda. */}
       <AnimatePresence mode="popLayout">
-        {rooms.map((r: Room) => (
+        {[...rooms].reverse().map((r: Room) => (
           <motion.div key={r?.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
             <Card className="shadow-sm">
               <CardContent className="pt-4 pb-4">
@@ -121,6 +126,14 @@ export default function StepComodos() {
                         <Input type="number" step="0.1" min="0" value={r?.l ?? ''} onChange={(e: any) => store.updateRoom(r?.id ?? '', { l: semNegativo(e?.target?.value) })} placeholder="0.0" className="mt-1" />
                       </div>
                     </div>
+
+                    {qtdTomadasAuto(r) > 0 && (
+                      <p className="text-xs rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-blue-900">
+                        {plural(qtdTomadasAuto(r), 'tomada adicionada', 'tomadas adicionadas')} automaticamente pela NBR 5410
+                        (perímetro de {perimetro(parseFloat(r?.c ?? '') || 0, parseFloat(r?.l ?? '') || 0).toFixed(1)} m).
+                        Se diminuir o cômodo, elas saem sozinhas. Ajuste ou remova no passo Pontos.
+                      </p>
+                    )}
 
                     {/* Route to panel */}
                     <div>
@@ -230,11 +243,6 @@ export default function StepComodos() {
         ))}
       </AnimatePresence>
 
-      {!showTemplates && (
-        <Button variant="outline" className="w-full" onClick={() => setShowTemplates(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Adicionar cômodo
-        </Button>
-      )}
     </motion.div>
   );
 }

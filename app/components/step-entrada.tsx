@@ -5,10 +5,10 @@ import { AlertTriangle, Lock, PlugZap, Package, Zap } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
 import {
-  avisosEntrada, entradaPadrao, materiaisEntrada, sugerirDiametro,
+  avisosEntrada, entradaPadrao, materiaisEntrada, sincronizarEntrada, textoPotencia,
   tensaoDoSistema, tipoEletrodutoPadrao,
 } from '@/lib/entrada-calc';
-import { UFS, infoUf, sistemaSugeridoUf, categoriaDisNor, bitolaEntrada } from '@/lib/tensao-por-uf';
+import { UFS, infoUf, sistemaSugeridoUf } from '@/lib/tensao-por-uf';
 import type {
   BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste, UnidadeEletroduto,
 } from '@/lib/types';
@@ -28,20 +28,22 @@ export default function StepEntrada() {
   const up = (patch: Partial<EntradaPrincipal>) => store.updateEntrada(patch);
 
   const potKw = parseFloat(e.potenciaDemandada) || 0;
-  const percurso = parseFloat(e.percurso) || 0;
   const vs = e.sistemaTensao === '220/127' || e.sistemaTensao === '380/220' ? e.sistemaTensao : undefined;
   const ufInfo = infoUf(e.uf);
 
-  // Padrão de entrada calculado pelo motor (mesma chamada da prévia), ao montar e quando potência/UF mudam.
+  // Padrão de entrada calculado pelo motor (mesma chamada da prévia), ao montar e quando UF/sistema mudam.
   const [padrao, setPadrao] = useState<PadraoEntrada | null>(null);
   const [calculando, setCalculando] = useState(false);
+  // Só sincroniza a potência depois do primeiro resultado (evita esvaziar o campo enquanto carrega).
+  const [pronto, setPronto] = useState(false);
   useEffect(() => {
     const s = store;
-    if (!(s?.rooms?.length || s?.equips?.length)) { setPadrao(null); return; }
+    if (!(s?.rooms?.length || s?.equips?.length)) { setPadrao(null); setPronto(true); return; }
     const dados = {
       imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips,
       ...(s.entrada ? { entrada: s.entrada } : {}),
       ...(s.aterramento ? { aterramento: s.aterramento } : {}),
+      ...(s.circuitos ? { circuitos: s.circuitos } : {}),
     };
     const ctrl = new AbortController();
     setCalculando(true);
@@ -52,11 +54,11 @@ export default function StepEntrada() {
       signal: ctrl.signal,
     })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error('falha'))))
-      .then((j) => { setPadrao(j?.entrada?.disjuntorGeralA ? j.entrada : null); setCalculando(false); })
+      .then((j) => { setPadrao(j?.entrada?.disjuntorGeralA ? j.entrada : null); setCalculando(false); setPronto(true); })
       .catch((err) => { if (err?.name !== 'AbortError') { setPadrao(null); setCalculando(false); } });
     return () => ctrl.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [e.potenciaDemandada, e.uf, e.sistemaTensao]);
+  }, [e.uf, e.sistemaTensao, e.sistema, e.ligacao]);
   const [fn, ff] = vs === '220/127' ? ['127', '220'] : ['220', '380'];
 
   /** UF escolhida: grava a tensão da localidade e pré-preenche o sistema (o usuário pode alterar abaixo). */
@@ -67,22 +69,15 @@ export default function StepEntrada() {
     up({ uf: u.uf, sistemaTensao: u.tensao, sistema: s, sistemaManual: false, tensao: tensaoDoSistema(s, u.tensao) });
   };
 
-  // Sugestões automáticas: só mexem nos campos que o usuário não sobrescreveu.
+  // Potência estimada = demanda do padrão de entrada (kVA), enquanto a pessoa não editar.
+  // Sem cômodo/equipamento o campo esvazia. Sistema, bitola e diâmetro acompanham (só se não forem manuais).
+  // O mesmo cálculo roda na prévia, então tela, prévia e PDF não divergem.
   useEffect(() => {
-    const patch: Partial<EntradaPrincipal> = {};
-    const sugerido = sistemaSugeridoUf(vs ?? '220/127', potKw);
-    const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerido;
-    if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema, vs); }
-    if (!e.bitolaManual) {
-      // Potência estimada usada como carga instalada e demanda (o PDF refaz com a demanda completa).
-      const cat = potKw > 0 ? categoriaDisNor(potKw, potKw, vs ?? '220/127', sistema) : null;
-      const b = bitolaEntrada(cat?.secaoCu ?? 6, percurso);
-      if (b !== e.bitola) patch.bitola = b;
-    }
-    if (!e.diametroManual) { const d = sugerirDiametro(sistema); if (d !== e.diametroEletroduto) patch.diametroEletroduto = d; }
+    if (!pronto || calculando) return;
+    const patch = sincronizarEntrada(e, padrao ? padrao.demandaKva : null);
     if (Object.keys(patch).length) up(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [potKw, percurso, vs, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
+  }, [padrao, pronto, calculando, e.potenciaManual, e.potenciaDemandada, e.percurso, e.sistemaTensao, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
 
   const materiais = materiaisEntrada(e).filter((m) => m.mostrarNaPrevia);
   const avisos = avisosEntrada(e);
@@ -154,10 +149,21 @@ export default function StepEntrada() {
               <p className="mt-1 text-[11px] text-muted-foreground">Inclua descidas, curvas e percurso horizontal</p>
             </div>
             <div>
-              <Label className="text-xs">Potência estimada (kW)</Label>
-              <Input type="number" step="0.1" min="0" value={e.potenciaDemandada} placeholder="Ex: 8" className="mt-1"
-                onChange={(ev) => up({ potenciaDemandada: semNegativo(ev.target.value) })} />
-              <p className="mt-1 text-[11px] text-muted-foreground">Soma das cargas principais; a demanda e a categoria são calculadas no PDF (DIS-NOR-030)</p>
+              <Label className="text-xs">Potência estimada (kVA){e.potenciaManual ? '' : ' (automática)'}</Label>
+              <Input type="number" step="0.01" min="0" value={e.potenciaDemandada} placeholder="Ex: 8" className="mt-1"
+                onChange={(ev) => up({ potenciaDemandada: semNegativo(ev.target.value), potenciaManual: true })}
+                onBlur={() => { if (e.potenciaManual && e.potenciaDemandada === '') up({ potenciaManual: false }); }} />
+              {e.potenciaManual ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Valor editado por você.{' '}
+                  <button type="button" className="text-primary hover:underline"
+                    onClick={() => up({ potenciaManual: false, potenciaDemandada: textoPotencia(padrao?.demandaKva) })}>
+                    Voltar ao automático{padrao ? ` (${textoPotencia(padrao.demandaKva).replace('.', ',')} kVA)` : ''}
+                  </button>
+                </p>
+              ) : (
+                <p className="mt-1 text-[11px] text-muted-foreground">Vem da demanda do padrão de entrada (soma das cargas). Você pode editar; a bitola e o sistema usam este valor.</p>
+              )}
             </div>
           </div>
 

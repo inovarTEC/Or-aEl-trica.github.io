@@ -1,4 +1,4 @@
-/* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
+﻿/* ===== Validação compartilhada: wizard (navegador) e rotas de API (servidor) ===== */
 import { UFS } from './tensao-por-uf';
 import type { DadosOrcamento, Room } from './types';
 import { minTomadas, perimetro, pontosTomada } from './nbr5410-regras';
@@ -129,7 +129,7 @@ export function problemaEstrutura(d: any): string | null {
     for (const k of ['c', 'l', 'dq', 'dd', 'dr', 'dpad', 'pe']) if (!medida(r[k], LIM.metros)) return `medida "${k}" inválida`;
     for (const k of ['pontos', 'luzes', 'comandos', 'caixas']) if (!lista(r[k], LIM.itens)) return `${k} inválido`;
     for (const p of r.pontos ?? []) {
-      if (!p || !lista(p.mods, 10) || !medida(p.d, LIM.metros)) return 'tomada inválida';
+      if (!p || !lista(p.mods, 10) || !medida(p.d, LIM.metros) || !bool(p.auto)) return 'tomada inválida';
       for (const m of p.mods ?? []) if (!m || !MODULO.includes(m.t)) return 'módulo inválido';
     }
     for (const l of r.luzes ?? []) if (!l || !medida(l.d, LIM.metros)) return 'luz inválida';
@@ -155,11 +155,23 @@ export function problemaEstrutura(d: any): string | null {
       || !opcional(en.uf, ['', ...UFS.map((u) => u.uf)])) return 'entrada inválida';
     if (!medida(en.percurso, LIM.metros) || !medida(en.potenciaDemandada, 1000)) return 'medida da entrada inválida';
   }
+  const ci = d.circuitos;
+  if (ci !== undefined) {
+    if (!ci || typeof ci !== 'object' || Array.isArray(ci)) return 'circuitos inválido';
+    if (!opcional(ci.modo, ['norma', 'economico', 'maximo', 'manual']) || !lista(ci.unico, LIM.comodos) || !lista(ci.grupos, LIM.comodos)) return 'circuitos inválido';
+    for (const id of ci.unico ?? []) if (typeof id !== 'string' || id.length > 64) return 'circuitos inválido';
+    for (const g of ci.grupos ?? []) {
+      if (!g || typeof g !== 'object' || typeof g.id !== 'string' || g.id.length > 80 || !Array.isArray(g.rooms) || g.rooms.length > LIM.comodos
+        || !Array.isArray(g.dists) || g.dists.length > LIM.comodos || !bool(g.unico)) return 'grupo de circuito inválido';
+      for (const id of g.rooms) if (typeof id !== 'string' || id.length > 64) return 'grupo de circuito inválido';
+      for (const x of g.dists) if (!medida(x, LIM.metros)) return 'distância do grupo inválida';
+    }
+  }
   const at = d.aterramento;
   if (at !== undefined) {
     if (!at || typeof at !== 'object' || Array.isArray(at)) return 'aterramento inválido';
     const inteiro = (v: unknown, max: number) => v === undefined || (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= max);
-    if (!inteiro(at.nHastes, 50) || !inteiro(at.nCaixasInspecao, 50) || !opcional(at.comprimentoHaste, ['2.4'])
+    if (!inteiro(at.nHastes, 50) || !inteiro(at.nCaixasInspecao, 50) || !inteiro(at.nConectores, 50) || !opcional(at.comprimentoHaste, ['2.4'])
       || !opcional(at.bitolaCabo, ['6', '10']) || !texto(at.obs, LIM.obs) || !bool(at.incluirNoPdf)) return 'aterramento inválido';
     if (!medida(at.distancia, LIM.metros)) return 'medida do aterramento inválida';
   }
@@ -173,5 +185,6 @@ export function somenteDados(d: any): DadosOrcamento {
     rooms: d.rooms ?? [], equips: d.equips ?? [],
     ...(d.entrada ? { entrada: d.entrada } : {}),
     ...(d.aterramento ? { aterramento: d.aterramento } : {}),
+    ...(d.circuitos ? { circuitos: d.circuitos } : {}),
   };
 }

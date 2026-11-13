@@ -1,8 +1,11 @@
-/* Regras da Etapa 8 — aterramento principal (usado pelo wizard e pela prévia no servidor). */
+﻿/* Regras da Etapa 8 — aterramento principal (usado pelo wizard e pela prévia no servidor). */
 import type { AterramentoPrincipal } from './types';
 
+/** Caixas de inspeção sugeridas para cada quantidade de hastes (1 caixa por haste). */
+export const caixasDasHastes = (hastes: number): number => hastes;
+
 export function aterramentoPadrao(): AterramentoPrincipal {
-  return { nHastes: 3, comprimentoHaste: '2.4', nCaixasInspecao: 1, bitolaCabo: '6', distancia: '', obs: '' };
+  return { nHastes: 3, comprimentoHaste: '2.4', nCaixasInspecao: caixasDasHastes(3), bitolaCabo: '6', distancia: '', obs: '' };
 }
 
 export interface MaterialAterramento {
@@ -17,7 +20,7 @@ export function materiaisAterramento(a: AterramentoPrincipal): MaterialAterramen
   const comp = a.comprimentoHaste.replace('.', ',');
   const items: MaterialAterramento[] = [
     { descricao: `Haste de aterramento ${comp} m`, qtd: a.nHastes, unidade: 'un', mostrarNaPrevia: true },
-    { descricao: 'Conector de haste de aterramento', qtd: a.nHastes, unidade: 'un', mostrarNaPrevia: true },
+    { descricao: 'Conector de haste de aterramento', qtd: a.nConectores ?? a.nHastes, unidade: 'un', mostrarNaPrevia: true },
     { descricao: 'Caixa de inspeção de aterramento', qtd: a.nCaixasInspecao, unidade: 'un', mostrarNaPrevia: true },
   ];
   // Cabo: reservado ao PDF (a prévia gratuita não mostra bitola).

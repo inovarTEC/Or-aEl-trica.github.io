@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
 import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
+import { entradaPadrao, sincronizarEntrada } from '@/lib/entrada-calc';
 import { AFILIADOS, LINK_NOSSOS_APPS } from '@/lib/afiliados';
 
 interface Previa {
@@ -30,6 +31,7 @@ export function dadosDoOrcamento(s: DadosOrcamento): DadosOrcamento {
     imovel: s.imovel, obra: s.obra, cobertura: s.cobertura, rede: s.rede, rooms: s.rooms, equips: s.equips,
     ...(s.entrada ? { entrada: s.entrada } : {}),
     ...(s.aterramento ? { aterramento: s.aterramento } : {}),
+    ...(s.circuitos ? { circuitos: s.circuitos } : {}),
   };
 }
 
@@ -60,6 +62,17 @@ export default function StepPrevia() {
       .catch((e) => { if (e?.name !== 'AbortError') setFalha(true); });
     return () => ctrl.abort();
   }, [dados]);
+
+  // Mantém a entrada em dia com os cômodos/equipamentos atuais (ex.: apagou um cômodo depois de passar pela Entrada):
+  // potência automática, bitola e sistema acompanham a demanda, para a prévia e o PDF saírem iguais.
+  useEffect(() => {
+    if (!previa || !store.entrada) return;
+    const demanda = (store.rooms?.length || store.equips?.length) && previa.entrada?.disjuntorGeralA ? previa.entrada.demandaKva : null;
+    const atual = { ...entradaPadrao(), ...store.entrada };
+    const patch = sincronizarEntrada(atual, demanda);
+    if (Object.keys(patch).length) store.updateEntrada(patch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previa]);
 
   if (falha) {
     return (

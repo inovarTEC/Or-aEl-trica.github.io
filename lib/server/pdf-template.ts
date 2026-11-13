@@ -2,6 +2,7 @@
 import { AppState, Room } from '../types';
 import { calcTotais } from './calculator';
 import { calcularMateriais, CircuitoCalc, ResultadoCalculo } from './calc-materiais';
+import { resolverUnidades } from './circuitos';
 
 import { num, routeLen } from '../util';
 
@@ -17,6 +18,7 @@ const ouTraco = (v: unknown) => (v === undefined || v === null || String(v).trim
 function tipoLabel(t: string) {
   if (t === 'iluminacao') return 'Iluminação';
   if (t === 'tug') return 'Tomadas (TUG)';
+  if (t === 'misto') return 'Iluminação + Tomadas';
   return 'Uso específico (TUE)';
 }
 
@@ -79,6 +81,22 @@ export function gerarHtmlPdf(dados: AppState): string {
   const resultado: ResultadoCalculo = calcularMateriais(dados);
   const dataAtual = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' });
   const cliente = nomeCliente(dados as AppState & Record<string, any>);
+
+  /* Divisão de circuitos escolhida: o PDF diz o que foi juntado e repete os avisos (a juntada é escolha do cliente, não da norma). */
+  const ROTULO_MODO: Record<string, string> = {
+    economico: 'econômico (iluminação e tomadas no mesmo disjuntor, por cômodo)',
+    maximo: 'mais econômico (também junta cômodos vizinhos)',
+    manual: 'ajuste manual',
+  };
+  const divisao = resolverUnidades(dados.rooms ?? [], dados.circuitos);
+  const modoCirc = dados.circuitos?.modo ?? 'norma';
+  const juntados = divisao.unidades.filter((u) => u.rooms.length > 1 || u.unico);
+  const circuitosObsHtml = modoCirc === 'norma' && juntados.length === 0 ? '' : `
+    <li>Divisão de circuitos: ${esc(ROTULO_MODO[modoCirc] ?? modoCirc)}. ${juntados.length === 0 ? 'Nenhum circuito foi juntado.' : 'Circuitos juntados: ' + juntados.map((u) => {
+      const nomes = u.rooms.map((r) => r.nome || r.base || 'Cômodo').join(' + ');
+      return esc(`${nomes} (${u.unico ? 'iluminação e tomadas no mesmo disjuntor' : 'iluminação juntas e tomadas juntas'})`);
+    }).join('; ') + '.'} Juntar circuitos é escolha do cliente para reduzir disjuntores e cabo: o padrão da NBR 5410 é separar iluminação e tomadas — confirme com o profissional responsável.</li>
+    ${divisao.avisos.map((a) => `<li>Circuitos: ${esc(a)}</li>`).join('')}`;
 
   const circuitosHtml = resultado.circuitos.map((c: CircuitoCalc, i: number) => `
     <tr>
@@ -468,6 +486,7 @@ ${aterramentoHtml}
   <h2>Observações Técnicas</h2>
   <ul style="font-size: 8.5pt; color: #475569; padding-left: 16px; line-height: 1.7;">
     <li>Premissas: sistema ${resultado.quadro.sistema} V (${(dados.entrada?.sistemaTensao && dados.entrada.sistemaTensao !== 'nao-sei') || resultado.quadro.uf ? 'informado' : 'não informado — adotado 220/127 V, confirme'}); categoria de atendimento ${resultado.quadro.categoria}; carga instalada ${resultado.quadro.cargaInstaladaKw} kW; demanda ${resultado.quadro.demandaKva} kVA (DIS-NOR-030 6.26–6.27, fatores g/h/i = 1,00).</li>
+    ${circuitosObsHtml}
     <li>Seções mínimas: 1,5 mm² (iluminação), 2,5 mm² (tomadas e uso específico) — NBR 5410 6.2.6.1.1.</li>
     <li>Método de referência B1 (Tabela 36) com fator de agrupamento da Tabela 42; disjuntor curva C com IB ≤ In ≤ Iz; mínimo de 10 A em TUG e iluminação.</li>
     <li>Queda de tensão: meta de 3% no circuito terminal (ρ = 0,0225 Ω·mm²/m); fator de potência 1 (resistivos) e 0,92 (ar-condicionado e motores).</li>

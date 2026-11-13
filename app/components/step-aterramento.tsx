@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Info, Lock, Package, ShieldCheck } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
-import { aterramentoPadrao, avisosAterramento, materiaisAterramento } from '@/lib/aterramento-calc';
+import { aterramentoPadrao, avisosAterramento, caixasDasHastes, materiaisAterramento } from '@/lib/aterramento-calc';
 import type { AterramentoPrincipal } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,7 +39,10 @@ export default function StepAterramento() {
             <div>
               <Label className="text-xs">Número de hastes</Label>
               <Input type="number" min="0" step="1" value={a.nHastes} className="mt-1"
-                onChange={(ev) => up({ nHastes: inteiro(ev.target.value) })} />
+                onChange={(ev) => {
+                  const n = inteiro(ev.target.value);
+                  up({ nHastes: n, nConectores: n, nCaixasInspecao: caixasDasHastes(n) }); // conectores e caixas acompanham as hastes (ainda editáveis)
+                }} />
               <p className="mt-1 text-[11px] text-muted-foreground">Proposta inicial: 3 hastes de 2,40 m</p>
             </div>
             <div>
@@ -50,10 +53,19 @@ export default function StepAterramento() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
+              <Label className="text-xs">Número de conectores de haste</Label>
+              <Input type="number" min="0" step="1" value={a.nConectores ?? a.nHastes} className="mt-1"
+                onChange={(ev) => up({ nConectores: inteiro(ev.target.value) })} />
+              <p className="mt-1 text-[11px] text-muted-foreground">Padrão: 1 por haste</p>
+            </div>
+            <div>
               <Label className="text-xs">Número de caixas de inspeção</Label>
               <Input type="number" min="0" step="1" value={a.nCaixasInspecao} className="mt-1"
                 onChange={(ev) => up({ nCaixasInspecao: inteiro(ev.target.value) })} />
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="text-xs">Bitola do cabo</Label>
               <select value={a.bitolaCabo} className={selCls} onChange={(ev) => up({ bitolaCabo: ev.target.value as '6' | '10' })}>

@@ -2,6 +2,7 @@
 import type {
   DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada,
 } from './types';
+import { bitolaEntrada, categoriaDisNor, sistemaSugeridoUf } from './tensao-por-uf';
 
 export const LIMIAR_PERCURSO_AVISO = 30; // metros
 
@@ -9,7 +10,7 @@ export function entradaPadrao(): EntradaPrincipal {
   return {
     tipoEntrada: 'aerea', poste: 'nao-tem', sistema: 'monofasico', sistemaManual: false,
     bitola: '6', bitolaManual: false, diametroEletroduto: '1', diametroManual: false,
-    tipoEletroduto: 'rigido', percurso: '', tensao: '220', potenciaDemandada: '', obs: '',
+    tipoEletroduto: 'rigido', percurso: '', tensao: '220', potenciaDemandada: '', potenciaManual: false, obs: '',
   };
 }
 
@@ -27,6 +28,50 @@ export function tipoEletrodutoPadrao(t: TipoEntrada): TipoEletroduto {
 export function tensaoDoSistema(s: SistemaAlimentacao, sistemaTensao?: string): string {
   if (sistemaTensao === '220/127') return s === 'monofasico' ? '127' : '220';
   return s === 'trifasico' ? '380' : '220';
+}
+
+/**
+ * Sugestões automáticas da entrada (sistema, bitola, diâmetro): só mexem nos campos que a pessoa
+ * não sobrescreveu. A potência estimada é usada como carga instalada e demanda.
+ * Função pura: devolve só o que mudou (vazio = nada a fazer).
+ */
+export function sugestoesEntrada(e: EntradaPrincipal): Partial<EntradaPrincipal> {
+  const patch: Partial<EntradaPrincipal> = {};
+  const potKw = parseFloat(e.potenciaDemandada) || 0;
+  const percurso = parseFloat(e.percurso) || 0;
+  const vs = e.sistemaTensao === '220/127' || e.sistemaTensao === '380/220' ? e.sistemaTensao : undefined;
+  const sugerido = sistemaSugeridoUf(vs ?? '220/127', potKw);
+  const sistema = e.sistemaManual || potKw <= 0 ? e.sistema : sugerido;
+  if (sistema !== e.sistema) { patch.sistema = sistema; patch.tensao = tensaoDoSistema(sistema, vs); }
+  if (!e.bitolaManual) {
+    const cat = potKw > 0 ? categoriaDisNor(potKw, potKw, vs ?? '220/127', sistema) : null;
+    const b = bitolaEntrada(cat?.secaoCu ?? 6, percurso);
+    if (b !== e.bitola) patch.bitola = b;
+  }
+  if (!e.diametroManual) {
+    const d = sugerirDiametro(sistema);
+    if (d !== e.diametroEletroduto) patch.diametroEletroduto = d;
+  }
+  return patch;
+}
+
+/** Potência (kVA) como texto do campo: sem demanda = vazio. */
+export const textoPotencia = (demandaKva: number | null | undefined): string =>
+  demandaKva && demandaKva > 0 ? String(Math.round(demandaKva * 100) / 100) : '';
+
+/**
+ * Sincroniza a entrada com a demanda calculada (padrão de entrada): se a pessoa não editou a potência,
+ * ela acompanha a demanda (some quando não há mais carga) e sistema/bitola/diâmetro se ajustam junto.
+ * `demandaKva` null = não há cômodo nem equipamento. Devolve só o que mudou.
+ */
+export function sincronizarEntrada(e: EntradaPrincipal, demandaKva: number | null): Partial<EntradaPrincipal> {
+  const patch: Partial<EntradaPrincipal> = {};
+  if (!e.potenciaManual) {
+    const alvo = textoPotencia(demandaKva);
+    if (alvo !== (e.potenciaDemandada ?? '')) patch.potenciaDemandada = alvo;
+  }
+  const depois: EntradaPrincipal = { ...e, ...patch };
+  return { ...patch, ...sugestoesEntrada(depois) };
 }
 
 export interface MaterialEntrada {

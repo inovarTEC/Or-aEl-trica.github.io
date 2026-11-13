@@ -65,3 +65,24 @@ export function distanciaEquip(e: Equip, rooms: Room[]): { metros: number; orige
 export function resumoPonto(e: Equip): { caixa: string; ponto: string; caixas: number } {
   return { caixa: e?.cx ?? '4x2', ponto: e?.ponto ? PONTO_LABEL[e.ponto] : 'não definido', caixas: 1 };
 }
+
+
+/** O que falta no equipamento (vazio = completo). Mesmas exigências da etapa: tipo, potência e cômodo. */
+export function faltasEquip(e: Pick<Equip, 'tipo' | 'pot' | 'room'>): string[] {
+  const f: string[] = [];
+  if (!e?.tipo) f.push('tipo');
+  if (!(num(e?.pot) > 0)) f.push('potência');
+  if (!e?.room) f.push('cômodo');
+  return f;
+}
+
+/** Linha-resumo do cartão recolhido: tipo · cômodo · potência. */
+export function resumoLinhaEquip(e: Pick<Equip, 'tipo' | 'pot' | 'room' | 'tens'>, rooms: Pick<Room, 'id' | 'nome' | 'base'>[]): string {
+  const rm = rooms.find((r) => r?.id === e?.room);
+  const partes = [
+    e?.tipo || 'Tipo não definido',
+    rm ? (rm.nome || rm.base || 'Cômodo') : 'Sem cômodo',
+    num(e?.pot) > 0 ? `${num(e.pot).toLocaleString('pt-BR')} W${e?.tens ? ` · ${e.tens}` : ''}` : 'Sem potência',
+  ];
+  return partes.join(' · ');
+}

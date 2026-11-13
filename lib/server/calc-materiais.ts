@@ -1,13 +1,14 @@
 /* ===== Lista de materiais — circuitos dimensionados pelo motor lib/motor (NBR 5410:2004) ===== */
 import { AppState, Comando, Room } from '../types';
 import { countMods } from './calculator';
+import { circuitosBrutos, resolverUnidades } from './circuitos';
 import { tomadasFisicas, gruposTeclas } from '../nbr5410-regras';
 export { gruposTeclas };
 import { materiaisEntrada } from '../entrada-calc';
 import { materiaisAterramento } from '../aterramento-calc';
 import { eletrodutoDN, MaterialItem } from './nbr5410';
 import {
-  VERSAO_MOTOR, SistemaTensao, normalizarSistema, tensoesSistema, potenciaIluminacao, potenciaTUG,
+  VERSAO_MOTOR, SistemaTensao, normalizarSistema, tensoesSistema,
   dimensionarCircuito, reservaQuadro,
 } from '../motor/eletrica';
 import { cargaTomadasW, cargaIluminacaoW } from '../motor/demanda';
@@ -63,7 +64,7 @@ function cargasDosEquipamentos(equips: AppState['equips'], iluminacaoTomadasKw: 
 
 export interface CircuitoCalc {
   nome: string;
-  tipo: 'iluminacao' | 'tug' | 'tue';
+  tipo: 'iluminacao' | 'tug' | 'tue' | 'misto';
   potenciaW: number;
   tensaoV: number;
   ligacao: 'F-N' | 'F-F' | '3F';
@@ -122,37 +123,29 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   const rooms = state.rooms ?? [];
   const equips = (state.equips ?? []).filter((e) => e.tipo && e.pot);
 
-  for (const r of rooms) {
-    const area = num(r.c) * num(r.l);
-    const distQuadro = routeLen(r);
-    const nTomadas = countMods(r, 'T');
-    const nLuzes = r.luzes?.length ?? 0;
-    const roomName = r.nome || r.base || 'Cômodo';
+  // Divisão dos circuitos (config do usuário): cada unidade é um cômodo ou um grupo de cômodos vizinhos.
+  const { unidades } = resolverUnidades(rooms, state.circuitos);
+  const unidadeDoComodo = new Map<string, number>();
+  unidades.forEach((u, k) => u.rooms.forEach((r) => unidadeDoComodo.set(r.id, k)));
+  const nCircPorUnidade: number[] = unidades.map(() => 0);
+  const brutos = circuitosBrutos(unidades);
+  for (const b of brutos) {
+    const u = unidades[b.unidade];
     // NBR 5410 6.2.5.5 / Tabela 42: circuitos no mesmo trecho (decisão 10.3: ilum + TUG por cômodo + TUEs dele)
-    const nAgrupados = (nLuzes > 0 ? 1 : 0) + (nTomadas > 0 ? 1 : 0) + equips.filter((e) => e.room === r.id).length;
-    const dr = areaMolhada(`${r.base} ${r.nome}`); // NBR 5410 5.1.3.2.2
-
-    if (nLuzes > 0) {
-      const pot = potenciaIluminacao(area, nLuzes); // NBR 5410 9.5.2.1.2
-      const d = dimensionarCircuito({ potencia: pot, tensao: fn, tipo: 'iluminacao', comprimentoM: distQuadro, nAgrupados });
-      circuitos.push({
-        nome: `Iluminação — ${roomName}`, tipo: 'iluminacao', potenciaW: pot, tensaoV: fn, ligacao: 'F-N',
-        correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
-        comprimentoM: distQuadro, eletrodutoDN: eletrodutoDN(d.secao, 3), nCondutores: 3, dr,
-        comodo: roomName, instalacao: r.inst || '', materialAparente: r.materialAparente,
-      });
-    }
-
-    if (nTomadas > 0) {
-      const pot = potenciaTUG(nTomadas, r.base || roomName); // NBR 5410 9.5.2.2.2
-      const d = dimensionarCircuito({ potencia: pot, tensao: fn, tipo: 'tug', comprimentoM: distQuadro, nAgrupados });
-      circuitos.push({
-        nome: `Tomadas (TUG) — ${roomName}`, tipo: 'tug', potenciaW: pot, tensaoV: fn, ligacao: 'F-N',
-        correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
-        comprimentoM: distQuadro, eletrodutoDN: eletrodutoDN(d.secao, 3), nCondutores: 3, dr,
-        comodo: roomName, instalacao: r.inst || '', materialAparente: r.materialAparente,
-      });
-    }
+    const nAgrupados = brutos.filter((x) => x.unidade === b.unidade).length
+      + equips.filter((e) => u.rooms.some((r) => r.id === e.room)).length;
+    const dr = u.rooms.some((r) => areaMolhada(`${r.base} ${r.nome}`)); // NBR 5410 5.1.3.2.2
+    const primeiro = u.rooms[0];
+    const d = dimensionarCircuito({
+      potencia: b.potenciaW, tensao: fn, tipo: b.tipo === 'iluminacao' ? 'iluminacao' : 'tug', comprimentoM: b.comprimentoM, nAgrupados,
+    });
+    circuitos.push({
+      nome: b.nome, tipo: b.tipo, potenciaW: b.potenciaW, tensaoV: fn, ligacao: 'F-N',
+      correnteA: Math.round(d.ib * 100) / 100, bitolaMM2: d.secao, izA: d.iz, disjuntorA: d.disjuntor, quedaPct: d.queda,
+      comprimentoM: b.comprimentoM, eletrodutoDN: eletrodutoDN(d.secao, 3), nCondutores: 3, dr,
+      comodo: b.comodo, instalacao: primeiro.inst || '', materialAparente: primeiro.materialAparente,
+    });
+    nCircPorUnidade[b.unidade] += 1;
   }
 
   /* NBR 5410 9.5.3.1: equipamento acima de 10 A em circuito próprio (TUE) */
@@ -164,7 +157,8 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     let dist = num(eq.dist);
     if (dist <= 0 && room) dist = routeLen(room) + num(eq.dint);
     if (dist <= 0) dist = 10;
-    const nAgrupados = room ? circuitos.filter((c) => c.comodo === (room.nome || room.base || 'Cômodo')).length + 1 : 1;
+    const uIdx = room ? unidadeDoComodo.get(room.id) : undefined;
+    const nAgrupados = uIdx !== undefined ? nCircPorUnidade[uIdx] + 1 : 1;
     const d = dimensionarCircuito({ potencia: potW, tensao: tri ? 380 : t.v, fp: fpEquip(eq.tipo), tipo: 'tue', comprimentoM: dist, nAgrupados, trifasico: tri });
     // F-N: fase + neutro + PE; F-F: 2 fases + PE; 3F: 3 fases + PE
     const nCond = tri ? 4 : 3;
@@ -176,6 +170,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       dr: /chuveiro|torneira|aquecedor|máquina|maquina/i.test(eq.tipo) || (room ? areaMolhada(`${room.base} ${room.nome}`) : false),
       comodo: room ? (room.nome || room.base) : undefined, instalacao: room?.inst || '', materialAparente: room?.materialAparente,
     });
+    if (uIdx !== undefined) nCircPorUnidade[uIdx] += 1;
   }
 
   /* ----- Quadro geral: demanda e categoria pela DIS-NOR-030 6.26–6.27 ----- */
