@@ -82,6 +82,7 @@ t('quarto típico 8×8 (perímetro 32, mínimo 7): completa para 7 com 4 automá
 
 t('as tomadas automáticas entram no cálculo (prévia e PDF): mais caixas, tomadas e potência', () => {
   const id = novo('Quarto típico', 3, 3);
+  S().setCircuitos({ modo: 'norma', unico: [], grupos: [] }); // circuitos de tomadas separados, para somar só as tomadas
   const antes = calcTotais(S());
   const potAntes = calcularMateriais(S()).circuitos.filter((c) => c.tipo === 'tug').reduce((a, c) => a + c.potenciaW, 0);
   S().updateRoom(id, { c: '8', l: '8' });
@@ -116,7 +117,7 @@ t('cozinha típica 6×5 (perímetro 22, mínimo 7): completa com tomada média; 
   const r = roomDe(id);
   assert.equal(tomadasNbr(r).atual, 7);
   const extras = r.pontos.filter((p) => p.auto);
-  assert.equal(extras.length, 2);
+  assert.equal(extras.length, 3); // modelo atual da cozinha tem 4 pontos
   assert.ok(extras.every((p) => p.h === 'media'));
   const tug = calcularMateriais(S()).circuitos.filter((c) => c.tipo === 'tug').reduce((a, c) => a + c.potenciaW, 0);
   assert.equal(tug, 3 * 600 + 4 * 100);
@@ -125,7 +126,7 @@ t('cozinha típica 6×5 (perímetro 22, mínimo 7): completa com tomada média; 
 t('área de serviço 4×4 (perímetro 16, mínimo 5): completa com tomada simples T10', () => {
   const id = novo('Área de serviço', 4, 4);
   const extras = roomDe(id).pontos.filter((p) => p.auto);
-  assert.equal(extras.length, 2);
+  assert.equal(extras.length, 3); // modelo atual da cozinha tem 4 pontos
   assert.ok(extras.every((p) => p.mods[0].t === 'T10'));
 });
 
