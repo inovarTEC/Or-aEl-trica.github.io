@@ -135,7 +135,9 @@ t('o cálculo não conta mais a carga nem os circuitos do cômodo removido', () 
   const cargaBanheiro = antes.circuitos.filter((c) => c.comodo === 'Banheiro').reduce((a, c) => a + c.potenciaW, 0);
   assert.ok(cargaBanheiro >= 10000);
   assert.equal(depois.quadro.cargaTotalW, Math.round(antes.quadro.cargaTotalW - cargaBanheiro));
-  assert.equal(depois.quadro.nCircuitos, antes.quadro.nCircuitos - 4);
+  const nBanheiro = antes.circuitos.filter((c) => c.comodo === 'Banheiro').length; // luz/tomadas (juntas ou não, conforme o modo) + chuveiro + aquecedor
+  assert.ok(nBanheiro >= 3);
+  assert.equal(depois.quadro.nCircuitos, antes.quadro.nCircuitos - nBanheiro);
   assert.ok(!totDepois.porComodo.some((p) => p.roomId === banheiro.id));
   assert.equal(totDepois.totalLuzes, totAntes.totalLuzes - 1);
 });

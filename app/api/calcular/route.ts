@@ -1,5 +1,6 @@
 import { calcTotais, calcPendencias } from '@/lib/server/calculator';
 import { calcularMateriais } from '@/lib/server/calc-materiais';
+import { STEP_EQUIPAMENTOS } from '@/lib/navegacao';
 import { ok } from '@/lib/server/pedido';
 import { preco } from '@/lib/server/mercadopago';
 import { ErroApi, exigirDados, lerCorpo, rota } from '@/lib/server/rota';
@@ -20,7 +21,10 @@ export const POST = rota('calcular', async (req) => {
   return ok({
     valor: preco(),
     totais: calcTotais(dados),
-    pendencias: calcPendencias(dados),
+    pendencias: [
+      ...calcPendencias(dados),
+      ...resultado.avisosEquip.map((msg: string) => ({ tipo: 'aviso', msg, step: STEP_EQUIPAMENTOS })),
+    ],
     resumo: {
       nCircuitos: resultado.circuitos.length,
       nMateriais: resultado.materiais.length,
@@ -28,6 +32,11 @@ export const POST = rota('calcular', async (req) => {
     // Padrão de entrada (DIS-NOR-030): demanda, categoria, disjuntor geral e tensão da localidade.
     entrada: {
       demandaKva: resultado.quadro.demandaKva,
+      cargaInstaladaKw: resultado.quadro.cargaInstaladaKw,
+      ligacaoNecessaria: resultado.quadro.ligacaoNecessaria ?? null,
+      avisoCircuitos: resultado.quadro.avisoCircuitos ?? null,
+      ligacao: resultado.quadro.ligacaoSistema ?? null,
+      sugestaoTrifasica: resultado.quadro.sugestaoTrifasica ?? null,
       categoria: resultado.quadro.categoria,
       disjuntorGeralA: resultado.quadro.disjuntorGeralA,
       sistema: resultado.quadro.sistema,

@@ -82,25 +82,29 @@ t('padrão (norma): 1 circuito de luz + 1 de tomadas por cômodo, igual a antes'
   assert.equal(calcularMateriais(estado(todos, undefined)).circuitos.length, 12); // orçamento antigo, sem config
 });
 
-t('classe dos cômodos: comum, serviço (cozinha) e isolado (banheiro)', () => {
+t('classe dos cômodos: comum, serviço (cozinha), banheiro e externo (varanda)', () => {
   assert.equal(classeCircuito(sala), 'comum');
   assert.equal(classeCircuito(coz), 'servico');
-  assert.equal(classeCircuito(ban), 'isolado');
+  assert.equal(classeCircuito(ban), 'banheiro');
+  assert.equal(classeCircuito({ base: 'Lavabo', nome: 'Lavabo' }), 'banheiro');
+  assert.equal(classeCircuito({ base: 'Cômodo', nome: 'Varanda gourmet' }), 'externo');
 });
 
-t('econômico: luz + tomadas juntas só nos cômodos comuns; cozinha e banheiro seguem separados', () => {
+t('econômico: luz + tomadas juntas nos cômodos comuns e no banheiro; cozinha segue separada', () => {
   const c = calcularMateriais(estado(todos, cfg('economico'))).circuitos;
-  assert.equal(c.filter((x) => x.tipo === 'misto').length, 4); // sala, jantar, q1, q2
-  assert.equal(c.length, 4 + 2 + 2); // + cozinha(2) + banheiro(2)
+  assert.equal(c.filter((x) => x.tipo === 'misto').length, 5); // sala, jantar, q1, q2, banheiro
+  assert.equal(c.length, 5 + 2); // + cozinha (luz e tomadas separadas)
   assert.ok(c.find((x) => x.nome === 'Iluminação e tomadas — Sala'));
-  assert.ok(c.find((x) => x.nome === 'Iluminação — Cozinha') && c.find((x) => x.nome === 'Tomadas (TUG) — Banheiro'));
+  assert.ok(c.find((x) => x.nome === 'Iluminação e tomadas — Banheiro'));
+  assert.ok(c.find((x) => x.nome === 'Iluminação — Cozinha') && c.find((x) => x.nome === 'Tomadas (TUG) — Cozinha'));
+  assert.ok(c.find((x) => x.nome === 'Iluminação e tomadas — Banheiro').dr); // banheiro leva DR
 });
 
 t('mais econômico: junta cômodos que seguem o mesmo caminho (via) num circuito só', () => {
   const c = calcularMateriais(estado(todos, cfg('maximo'))).circuitos;
   assert.ok(c.find((x) => x.nome === 'Iluminação e tomadas — Sala + Sala de jantar'));
   assert.ok(c.find((x) => x.nome === 'Iluminação e tomadas — Quarto 1 + Quarto 2'));
-  assert.equal(c.length, 2 + 2 + 2); // 2 grupos + cozinha + banheiro
+  assert.equal(c.length, 2 + 2 + 1); // 2 grupos + cozinha (luz e tomadas) + banheiro (misto)
 });
 
 t('SEM DUPLICAR CABO: o grupo mede trajeto do 1º cômodo + metros extras, não dois trajetos', () => {
@@ -124,7 +128,7 @@ t('disjuntores, quadro e conectores diminuem junto com os circuitos', () => {
   const max = calcularMateriais(estado(todos, cfg('maximo')));
   const nDj = (r) => r.materiais.filter((m) => /^Disjuntor \d+A$/.test(m.item)).reduce((s, m) => s + m.qtd, 0);
   assert.equal(nDj(norma), 12);
-  assert.equal(nDj(max), 6);
+  assert.equal(nDj(max), 5);
   assert.ok(max.quadro.nCircuitos < norma.quadro.nCircuitos);
   assert.ok(max.quadro.reserva <= norma.quadro.reserva);
   assert.equal(max.quadro.cargaTotalW, norma.quadro.cargaTotalW); // a carga (e a demanda da entrada) não muda
@@ -145,23 +149,39 @@ t('manual: luz + tomadas juntas só em um cômodo escolhido', () => {
   assert.equal(c.length, 11);
 });
 
-t('banheiro nunca divide circuito, nem no manual (DR)', () => {
-  const g = { id: 'g', rooms: [q1.id, ban.id], dists: ['', '2'] };
-  const r = resolverUnidades(todos, cfg('manual', { grupos: [g], unico: [ban.id] }));
-  assert.ok(r.unidades.every((u) => u.rooms.length === 1));
-  assert.ok(!r.unidades.find((u) => u.rooms[0].id === ban.id).unico);
-  assert.ok(r.avisos.some((a) => a.includes('Banheiro')));
+t('banheiro pode dividir circuito com o quarto (carga pequena), com DR no circuito', () => {
+  const g = { id: 'g', rooms: [q1.id, ban.id], dists: ['', '2'], unico: true };
+  const r = resolverUnidades(todos, cfg('manual', { grupos: [g] }));
+  const u = r.unidades.find((x) => x.rooms.length === 2);
+  assert.deepEqual(u.rooms.map((x) => x.nome), ['Quarto 1', 'Banheiro']);
+  assert.ok(u.unico); // luz e tomadas no mesmo disjuntor (comum + banheiro)
+  const c = calcularMateriais(estado(todos, cfg('manual', { grupos: [g] }))).circuitos.find((x) => x.nome === 'Iluminação e tomadas — Quarto 1 + Banheiro');
+  assert.ok(c && c.dr);
 });
 
-t('cozinha não junta com sala; cozinha com área de serviço pode, mas sem luz+tomada no mesmo disjuntor', () => {
-  const r1 = resolverUnidades(todos, cfg('manual', { grupos: [{ id: 'g', rooms: [sala.id, coz.id], dists: ['', '2'] }] }));
-  assert.ok(r1.unidades.every((u) => u.rooms.length === 1));
+t('cozinha: luz divide com sala, mas as tomadas ficam separadas; cozinha com serviço divide tomadas, sem luz+tomada no mesmo disjuntor', () => {
+  const r1 = resolverUnidades(todos, cfg('manual', { grupos: [{ id: 'g', rooms: [sala.id, coz.id], dists: ['', '2'], unico: true }] }));
+  const u1 = r1.unidades.find((u) => u.rooms.length === 2);
+  assert.ok(u1 && !u1.unico); // cozinha não aceita luz + tomada no mesmo disjuntor
+  assert.deepEqual(circuitosBrutos([u1]).map((x) => x.nome), ['Iluminação — Sala + Cozinha', 'Tomadas (TUG) — Sala', 'Tomadas (TUG) — Cozinha']);
   const serv = room('Área de serviço', { dq: '9' });
   const r2 = resolverUnidades([coz, serv], cfg('manual', { grupos: [{ id: 'g', rooms: [coz.id, serv.id], dists: ['', '2'], unico: true }] }));
   assert.equal(r2.unidades.length, 1);
   assert.equal(r2.unidades[0].unico, false);
   const c = circuitosBrutos(r2.unidades);
   assert.deepEqual(c.map((x) => x.tipo).sort(), ['iluminacao', 'tug']);
+});
+
+t('área externa divide tomadas com serviço ou comum só com aviso de DR; cozinha e sala nunca dividem tomadas', () => {
+  const varanda = room('Varanda', { dq: '6' });
+  const r = resolverUnidades([coz, varanda], cfg('manual', { grupos: [{ id: 'g', rooms: [coz.id, varanda.id], dists: ['', '2'] }] }));
+  assert.equal(circuitosBrutos(r.unidades).filter((x) => x.tipo === 'tug').length, 1);
+  assert.ok(r.avisos.some((a) => a.includes('DR de 30 mA')));
+  const r2 = resolverUnidades([sala, varanda], cfg('manual', { grupos: [{ id: 'g', rooms: [sala.id, varanda.id], dists: ['', '2'] }] }));
+  assert.equal(circuitosBrutos(r2.unidades).filter((x) => x.tipo === 'tug').length, 1);
+  assert.ok(r2.avisos.some((a) => a.includes('DR de 30 mA')));
+  const r3 = resolverUnidades([sala, coz], cfg('manual', { grupos: [{ id: 'g', rooms: [sala.id, coz.id], dists: ['', '2'] }] }));
+  assert.equal(circuitosBrutos(r3.unidades).filter((x) => x.tipo === 'tug').length, 2);
 });
 
 t('cômodos com instalação diferente (embutida x aparente) não dividem circuito', () => {
@@ -199,13 +219,13 @@ t('compararCircuitos: números por modo e configuração resolvida para ajuste m
   const cmp = compararCircuitos(todos, eq, cfg('norma'));
   assert.equal(cmp.nTUE, 1);
   assert.equal(cmp.modos.norma.disjuntores, 12 + 1);
-  assert.equal(cmp.modos.economico.disjuntores, 8 + 1);
-  assert.equal(cmp.modos.maximo.disjuntores, 6 + 1);
+  assert.equal(cmp.modos.economico.disjuntores, 7 + 1);
+  assert.equal(cmp.modos.maximo.disjuntores, 5 + 1);
   assert.ok(cmp.modos.maximo.metrosCabo < cmp.modos.economico.metrosCabo);
-  const cm = compararCircuitos(todos, eq, cfg('maximo')).resolvido;
-  assert.equal(cm.modo, 'manual');
-  assert.equal(cm.grupos.length, 2);
-  assert.deepEqual(cm.grupos[0].dists, ['', '3']);
+  const lm = compararCircuitos(todos, eq, cfg('maximo')).lista; // lista que a tela mostra e a pessoa edita
+  const doisComodos = lm.filter((x) => x.rooms.length === 2);
+  assert.equal(doisComodos.length, 2);
+  assert.deepEqual(doisComodos[0].dists, ['', '3']);
 });
 
 t('TUE no cômodo de um grupo conta no agrupamento do grupo (fator de agrupamento)', () => {
@@ -213,7 +233,7 @@ t('TUE no cômodo de um grupo conta no agrupamento do grupo (fator de agrupament
   const r = calcularMateriais(estado(todos, cfg('maximo'), eq));
   const tue = r.circuitos.find((c) => c.tipo === 'tue');
   assert.ok(tue && tue.comodo === 'Sala de jantar');
-  assert.ok(r.circuitos.length >= 7);
+  assert.ok(r.circuitos.length >= 6); // 5 circuitos de luz/tomadas + o ar-condicionado
 });
 
 t('validação do servidor aceita a config e recusa lixo', () => {
@@ -256,7 +276,7 @@ t('PDF: mostra o circuito juntado uma vez, explica a divisão e não lista os ci
   assert.ok(!html.includes('Iluminação — Sala<') && !html.includes('Iluminação — Sala de jantar'));
   assert.ok(html.includes('Divisão de circuitos: mais econômico'));
   assert.ok(html.includes('Iluminação + Tomadas'));
-  assert.ok(html.includes('Iluminação — Cozinha') && html.includes('Tomadas (TUG) — Banheiro'));
+  assert.ok(html.includes('Iluminação — Cozinha') && html.includes('Tomadas (TUG) — Cozinha') && html.includes('Iluminação e tomadas — Banheiro'));
 });
 
 t('PDF: no padrão não aparece a observação de divisão e os circuitos saem separados como antes', () => {

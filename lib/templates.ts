@@ -141,7 +141,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Cozinha típica',
-    desc: '4 tomadas 10A, 2 tomadas 20A, 1 luz',
+    desc: '3 tomadas 10A, 1 tomada 20A, 1 luz',
     icon: 'CookingPot',
     create: () => {
       const r = emptyRoom('Cozinha', 'Cozinha');
@@ -159,7 +159,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Banheiro típico',
-    desc: '1 tomadas, 1 luz, 1 interruptor',
+    desc: '1 tomada, 1 luz, 1 interruptor',
     icon: 'Bath',
     create: () => {
       const r = emptyRoom('Banheiro', 'Banheiro');
@@ -172,7 +172,7 @@ export const ROOM_TEMPLATES: RoomTemplate[] = [
   },
   {
     label: 'Área de serviço',
-    desc: '1 tomadas 10A, 1 tomada 20A, 1 luz',
+    desc: '1 tomada 10A, 1 tomada 20A, 1 luz',
     icon: 'WashingMachine',
     create: () => {
       const r = emptyRoom('Área de serviço', 'Área de serviço');

@@ -5,7 +5,7 @@ import { correnteEquip } from '../ponto-equip';
 import { avisosEntrada } from '../entrada-calc';
 import { avisosAterramento } from '../aterramento-calc';
 import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_EQUIPAMENTOS } from '../navegacao';
-import { resolverUnidades } from './circuitos';
+import { montarCircuitos } from './circuitos';
 
 /* ---------- helpers ---------- */
 import { num, routeLen } from '../util';
@@ -206,7 +206,7 @@ export function calcPendencias(state: AppState): Pendencia[] {
 
   // Divisão dos circuitos (passo 3): distância entre cômodos que dividem circuito, limites de potência etc.
   if (state?.circuitos && state.circuitos.modo !== 'norma') {
-    for (const msg of resolverUnidades(state.rooms ?? [], state.circuitos).avisos) p.push({ tipo: 'aviso', msg: `Circuitos: ${msg}`, step: STEP_EQUIPAMENTOS });
+    for (const msg of montarCircuitos(state.rooms ?? [], state.circuitos).avisos) p.push({ tipo: 'aviso', msg: `Circuitos: ${msg}`, step: STEP_EQUIPAMENTOS });
   }
 
   // Entrada / alimentador (passo 4). Orçamentos sem `entrada` (antigos ou do fluxo do PDF) não geram pendência.

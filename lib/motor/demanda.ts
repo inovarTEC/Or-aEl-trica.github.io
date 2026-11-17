@@ -1,12 +1,8 @@
-/* ===== Entrada de energia — DIS-NOR-030 REV 05 (Neoenergia) como padrão de referência ===== */
+/* ===== Entrada de energia — DIS-NOR-030 REV 05 (Neoenergia) como padrão de referência =====
+ * Tabelas de fatores e categorias. O cálculo da demanda (D = a + b + ... + j) fica em tensao-por-uf.ts (calcularDemandaDIS). */
 import type { SistemaTensao } from './eletrica';
 
 export type Ligacao = 'M' | 'B' | 'T';
-
-/** Grupos de aparelho para a demanda (DIS-NOR-030 6.27). */
-export type GrupoDemanda = 'b' | 'c' | 'd' | 'e' | 'f' | 'ghi';
-
-export interface AparelhoDemanda { grupo: GrupoDemanda; kw: number; kva?: number }
 
 /** DIS-NOR-030 6.26 Tabela 5: [área máx (m²), pontos de 100 W, pontos de cozinha de 600 W]. */
 const TABELA_5: [number, number, number][] = [
@@ -25,12 +21,6 @@ export function cargaTomadasW(areaConstruidaM2: number, pontosDeclarados: number
 export function cargaIluminacaoW(pontosLuz: number, nComodos: number): number {
   return Math.max(pontosLuz, nComodos) * 100;
 }
-
-/** DIS-NOR-030 6.26: potência média quando o usuário não informa a de placa (W). */
-export const POTENCIA_MEDIA_W: Record<string, number> = {
-  'Torneira elétrica': 3000, 'Chuveiro elétrico': 4000, 'Máquina de lavar': 1500, 'Secadora': 2500,
-  'Forno elétrico': 1500, 'Carregador de veículo elétrico': 3300,
-};
 
 /** DIS-NOR-030 6.27 Tabela 6 (iluminação e tomadas), faixas em kW. */
 export function fatorTabela6(kw: number): number {
@@ -55,32 +45,6 @@ export function fatorTabela10(n: number): number {
 }
 /** DIS-NOR-030 6.27 Tabela 12 (ar-condicionado residencial). Acima de 30 aparelhos: fora do escopo (usa 0,80). */
 export function fatorTabela12(n: number): number { return n <= 10 ? 1 : n <= 20 ? 0.86 : 0.8; }
-
-export interface ResultadoDemanda {
-  cargaInstaladaKw: number;
-  demandaKva: number;
-  parcelas: Record<'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'ghi', number>;
-}
-
-/** DIS-NOR-030 6.27: D = a + b + c + d + e + f + g + h + i (kVA). g, h, i = fator 1,00 (premissa 10.8). */
-export function calcularDemanda(cargaIlumTomadasKw: number, aparelhos: AparelhoDemanda[]): ResultadoDemanda {
-  const soma = (g: GrupoDemanda) => aparelhos.filter((x) => x.grupo === g).reduce((s, x) => s + x.kw, 0);
-  const qtd = (g: GrupoDemanda) => aparelhos.filter((x) => x.grupo === g).length;
-  const a = cargaIlumTomadasKw * fatorTabela6(cargaIlumTomadasKw);
-  const b = soma('b') * fatorTabela7(qtd('b'));
-  const c = soma('c') * fatorTabela8(qtd('c'));
-  const d = (soma('d') / 0.92) * fatorTabela9(qtd('d'));
-  const e = soma('e') * fatorTabela10(qtd('e'));
-  const f = aparelhos.filter((x) => x.grupo === 'f').reduce((s, x) => s + (x.kva ?? x.kw), 0) * fatorTabela12(qtd('f'));
-  const ghi = soma('ghi');
-  const cargaInstaladaKw = cargaIlumTomadasKw + aparelhos.reduce((s, x) => s + x.kw, 0);
-  const r2 = (v: number) => Math.round(v * 1000) / 1000;
-  return {
-    cargaInstaladaKw: r2(cargaInstaladaKw),
-    demandaKva: r2(a + b + c + d + e + f + ghi),
-    parcelas: { a: r2(a), b: r2(b), c: r2(c), d: r2(d), e: r2(e), f: r2(f), ghi: r2(ghi) },
-  };
-}
 
 export interface Categoria { codigo: string; ligacao: Ligacao; max: number; disjuntor: number; por: 'kW' | 'kVA' }
 

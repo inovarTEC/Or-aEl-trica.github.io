@@ -46,7 +46,7 @@ t('3 hastes: 3 hastes + 3 conectores + 1 caixa', () => {
   const m = materiaisAterramento(at());
   assert.equal(qtd(m, /^Haste de aterramento/), 3);
   assert.equal(qtd(m, /^Conector de haste/), 3);
-  assert.equal(qtd(m, /^Caixa de inspeção/), 1);
+  assert.equal(qtd(m, /^Caixa de inspeção/), 3); // 1 caixa por haste (padrão: 3 hastes)
 });
 t('distância 10 m: cabo com 11 m, fora da prévia', () => {
   const cabo = materiaisAterramento(at({ distancia: '10' })).filter((m) => /^Cabo/.test(m.descricao));

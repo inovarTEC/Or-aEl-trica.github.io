@@ -7,7 +7,7 @@ import { STEP_ATERRAMENTO, STEP_ENTRADA, STEP_PREVIA } from './navegacao';
 import { carregarEstado, limparEstado, novoEstado, salvarEstado } from './storage-local';
 import { sincronizarTomadas } from './tomadas-auto';
 import { comandoTemTomada, limparOrfaos } from './limpeza';
-import { configPadrao, podarConfig } from './circuitos-config';
+import { configPadrao, migrarModo, podarConfig } from './circuitos-config';
 
 function defaultState(): AppState {
   return {
@@ -280,7 +280,7 @@ export const useStore = create<Store>((set) => {
           potenciaManual: d.entrada?.potenciaManual ?? !!d.entrada?.potenciaDemandada,
         },
         aterramento: { ...aterramentoPadrao(), ...(d.aterramento ?? {}) },
-        circuitos: podarConfig({ ...configPadrao(), ...(d.circuitos ?? {}) }, limpo.rooms),
+        circuitos: podarConfig(migrarModo({ ...configPadrao(), ...(d.circuitos ?? {}) }), limpo.rooms),
       });
     },
   };

@@ -1,7 +1,7 @@
 /* ===== UF → distribuidora → tensão, e pré-dimensionamento da entrada pela DIS-NOR-030 Rev.05 ===== */
 import {
   cargaTomadasW, cargaIluminacaoW, fatorTabela6, fatorTabela7, fatorTabela8, fatorTabela9, fatorTabela10, fatorTabela12,
-  categoriaAtendimento, type Ligacao,
+  categoriaAtendimento, CATEGORIAS, type Ligacao,
 } from './motor/demanda';
 
 export type VoltageSystem = '220/127' | '380/220';
@@ -64,11 +64,6 @@ export function sistemaSugeridoUf(tensao: VoltageSystem, cargaKw: number): Siste
 
 /* ---------- Tabelas DIS-NOR-030 Rev.05 ---------- */
 
-/** Tabela 5: carga de tomadas por área construída (W), quando não há levantamento por cômodo. */
-export const TABELA_5_W: [number, number][] = [
-  [8, 700], [15, 900], [20, 1600], [30, 1700], [50, 2400], [70, 2500], [90, 2600],
-  [110, 2700], [140, 2800], [170, 2900], [200, 3000], [220, 3100], [250, 3200],
-];
 export const tabela5 = (areaM2: number) => cargaTomadasW(areaM2, 0);
 export { fatorTabela6 as tabela6, fatorTabela7 as tabela7, fatorTabela8 as tabela8, fatorTabela9 as tabela9, fatorTabela10 as tabela10, fatorTabela12 as tabela12 };
 
@@ -150,6 +145,12 @@ export function calcularDemandaDIS(c: CargasDIS): DemandaDIS {
 }
 
 /* ---------- Categoria de atendimento ---------- */
+
+/** Limite da categoria quando ela é decidida pela carga instalada (M e B, em kW). Trifásicas decidem pela demanda: null. */
+export function limiteCargaCategoriaKw(tensao: VoltageSystem, codigo: string): number | null {
+  const c = CATEGORIAS[tensao]?.find((x) => x.codigo === codigo);
+  return c && c.por === 'kW' ? c.max : null;
+}
 
 /** Tabela 2 (380/220 V): ramal de conexão e cabo de cobre do ramal de entrada. */
 const CABOS_TAB2: Record<string, { ramal: string; entrada: string; secaoCu: number }> = {

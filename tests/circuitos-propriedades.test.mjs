@@ -35,7 +35,7 @@ function loadTs(file) {
 
 
 const { calcularMateriais } = loadTs(ROOT + '/lib/server/calc-materiais.ts');
-const { resolverUnidades } = loadTs(ROOT + '/lib/server/circuitos.ts');
+const { resolverUnidades, particoesTomadas } = loadTs(ROOT + '/lib/server/circuitos.ts');
 // Gerador pseudo-aleatório fixo: o teste é reproduzível.
 let seed = 12345; const rnd = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
 const pick = (a) => a[Math.floor(rnd() * a.length)];
@@ -71,10 +71,16 @@ for (let it = 0; it < 400; it++) {
   // 2) iluminação e tomadas de cada cômodo aparecem em exatamente 1 circuito (nunca 2 disjuntores p/ o mesmo)
   for (const u of unidades) {
     const nome = u.rooms.map((x) => x.nome).join(' + ');
-    const meus = r.circuitos.filter((c) => c.comodo === nome && c.tipo !== 'tue');
+    const partes = particoesTomadas(u.rooms);
+    const nm = (rs) => rs.map((x) => x.nome).join(' + ');
+    // cada circuito leva o nome de quem usa: luz = cômodos com luz; tomadas = os da parte; misto = os que têm luz ou tomadas
+    const comLuz = u.rooms.filter((x) => x.luzes.length > 0);
+    const comAlgo = u.rooms.filter((x) => x.luzes.length > 0 || x.pontos.length > 0);
+    const meus = r.circuitos.filter((c) => (c.tipo === 'misto' ? c.comodo === nm(comAlgo) : c.tipo === 'iluminacao' ? c.comodo === nm(comLuz) : c.tipo === 'tug' ? partes.map(nm).includes(c.comodo) : false));
     const temI = u.rooms.some((x) => x.luzes.length > 0);
     const temT = u.rooms.some((x) => x.pontos.length > 0);
-    const esperado = u.unico && temI && temT ? 1 : (temI ? 1 : 0) + (temT ? 1 : 0);
+    // luz 1 circuito por unidade; tomadas 1 por parte compatível (cozinha/serviço não dividem com os comuns); misto = 1 só
+    const esperado = u.unico && temI && temT ? 1 : (temI ? 1 : 0) + partes.length;
     assert.equal(meus.length, esperado, `${nome}: ${meus.length} circuitos, esperado ${esperado}`);
   }
   // 3) nomes únicos entre circuitos de luz/tomada
@@ -91,8 +97,8 @@ for (let it = 0; it < 400; it++) {
   assert.ok(r.circuitos.length <= norma.circuitos.length);
   const m = (x) => x.circuitos.reduce((s, c) => s + c.comprimentoM, 0);
   assert.ok(m(r) <= m(norma) + 1e-9, 'cabo aumentou');
-  // 7) cômodo isolado/serviço nunca em circuito misto
-  for (const c of r.circuitos.filter((c) => c.tipo === 'misto')) assert.ok(!/Banheiro|Lavabo|Varanda|Cozinha|serviço/i.test(c.comodo), c.comodo);
+  // 7) cozinha/serviço/área externa nunca em circuito misto (banheiro pode: carga pequena, com DR)
+  for (const c of r.circuitos.filter((c) => c.tipo === 'misto')) assert.ok(!/Varanda|Cozinha|serviço/i.test(c.comodo), c.comodo);
   casos++;
 }
 assert.equal(casos, 400);

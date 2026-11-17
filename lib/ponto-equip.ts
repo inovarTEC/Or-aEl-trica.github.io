@@ -86,3 +86,19 @@ export function resumoLinhaEquip(e: Pick<Equip, 'tipo' | 'pot' | 'room' | 'tens'
   ];
   return partes.join(' · ');
 }
+
+
+/** Aparelhos que SEMPRE têm circuito próprio (carga alta, aquecimento ou risco de sobrecarga). */
+const SEMPRE_PROPRIO = /chuveiro|torneira|forno|fog[aã]o|cooktop|aquecedor|boiler|secadora|carregador/i;
+
+/**
+ * Pode dividir o circuito de tomadas do cômodo? Regra: nunca os aparelhos de aquecimento/carga alta e nada acima de 10 A
+ * (NBR 5410 9.5.3.1: acima de 10 A, circuito exclusivo). Tensão e capacidade do circuito são conferidas no servidor.
+ */
+export function podeDividirCircuito(e: Pick<Equip, 'tipo' | 'pot' | 'tens'>): { ok: boolean; motivo?: string } {
+  if (SEMPRE_PROPRIO.test(e?.tipo ?? '')) return { ok: false, motivo: `${e.tipo} sempre tem circuito próprio.` };
+  const I = correnteEquip(e?.pot, e?.tens, e?.tipo);
+  if (I === null) return { ok: false, motivo: 'informe a potência e a tensão para saber a corrente.' };
+  if (I > 10) return { ok: false, motivo: `a corrente é ${I.toFixed(1).replace('.', ',')} A: acima de 10 A a norma pede circuito próprio.` };
+  return { ok: true };
+}

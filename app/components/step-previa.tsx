@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
 import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
-import { entradaPadrao, sincronizarEntrada } from '@/lib/entrada-calc';
+import { entradaPadrao, sincronizarEntrada, potenciaAuto, type PadraoEntrada } from '@/lib/entrada-calc';
 import { AFILIADOS, LINK_NOSSOS_APPS } from '@/lib/afiliados';
 
 interface Previa {
@@ -22,7 +22,7 @@ interface Previa {
   totais: any;
   pendencias: Pendencia[];
   resumo: { nCircuitos: number; nMateriais: number };
-  entrada?: { demandaKva: number; categoria: string; disjuntorGeralA: number; sistema: string; uf: string | null };
+  entrada?: PadraoEntrada;
 }
 
 /** Só os campos que alimentam o cálculo — o resto do estado (step, id...) não vai ao servidor. */
@@ -67,8 +67,8 @@ export default function StepPrevia() {
   // potência automática, bitola e sistema acompanham a demanda, para a prévia e o PDF saírem iguais.
   useEffect(() => {
     if (!previa || !store.entrada) return;
-    const demanda = (store.rooms?.length || store.equips?.length) && previa.entrada?.disjuntorGeralA ? previa.entrada.demandaKva : null;
     const atual = { ...entradaPadrao(), ...store.entrada };
+    const demanda = (store.rooms?.length || store.equips?.length) && previa.entrada?.disjuntorGeralA ? (potenciaAuto(previa.entrada, atual.sistemaManual)?.valor ?? null) : null;
     const patch = sincronizarEntrada(atual, demanda);
     if (Object.keys(patch).length) store.updateEntrada(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,7 +130,7 @@ export default function StepPrevia() {
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
             {[
-              { label: 'Demanda total', value: previa.entrada ? `${previa.entrada.demandaKva.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} kVA` : '-' },
+              { label: previa.entrada ? (potenciaAuto(previa.entrada, !!store.entrada?.sistemaManual)?.label ?? 'Demanda total') : 'Demanda total', value: previa.entrada ? `${(potenciaAuto(previa.entrada, !!store.entrada?.sistemaManual)?.valor ?? previa.entrada.demandaKva).toLocaleString('pt-BR', { maximumFractionDigits: 2 })} ${potenciaAuto(previa.entrada, !!store.entrada?.sistemaManual)?.unidade ?? 'kVA'}` : '-' },
               { label: 'Categoria', value: previa.entrada?.categoria ?? '-' },
               { label: 'Disjuntor geral', value: previa.entrada?.disjuntorGeralA ? `${previa.entrada.disjuntorGeralA} A` : '-' },
               { label: 'Tensão da localidade', value: previa.entrada ? `${previa.entrada.uf ? `${previa.entrada.uf} · ` : ''}${previa.entrada.sistema} V` : '-' },
@@ -142,6 +142,9 @@ export default function StepPrevia() {
             ))}
           </div>
           <p className="mt-3 text-[11px] text-muted-foreground">Pré-dimensionamento (DIS-NOR-030) — verificar com a distribuidora.</p>
+          {previa.entrada?.avisoCircuitos && (
+            <p className="mt-2 flex items-start gap-1.5 text-[11px] text-amber-700"><AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {previa.entrada.avisoCircuitos}</p>
+          )}
         </CardContent>
       </Card>
 

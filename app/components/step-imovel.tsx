@@ -2,7 +2,8 @@
 import { useStore } from '@/lib/store-cliente';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Building2, Hammer, Layers, Zap } from 'lucide-react';
+import { Building2, Hammer, Layers, MapPin, Zap } from 'lucide-react';
+import LocalObra from './local-obra';
 import { motion } from 'framer-motion';
 
 const OPTIONS: { key: 'imovel' | 'obra' | 'cobertura' | 'rede'; label: string; icon: any; items: string[]; help: string }[] = [
@@ -51,6 +52,16 @@ export default function StepImovel() {
           </Card>
         );
       })}
+      <Card className="shadow-sm">
+        <CardContent className="pt-5 pb-5">
+          <div className="flex items-center gap-2 mb-1">
+            <MapPin className="w-4 h-4 text-primary" />
+            <Label className="text-sm font-semibold">Onde fica o imóvel?</Label>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">O estado define a tensão da rede (127 V ou 220 V nas tomadas) e já preenche a entrada de energia.</p>
+          <LocalObra />
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }

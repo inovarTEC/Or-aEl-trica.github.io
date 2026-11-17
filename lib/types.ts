@@ -103,6 +103,10 @@ export interface Equip {
   dint: string; // dist dentro do cômodo
   dist: string; // dist direta ao quadro
   alim: 'Unidade externa' | 'Unidade interna' | '';
+  /** Ar-condicionado: capacidade em BTU/h escolhida. A demanda usa a Tabela 11 (BTU → VA). Ausente = usa a potência digitada. */
+  btu?: number;
+  /** 'comodo' = divide o circuito de tomadas do cômodo (só aparelho pequeno: ≤ 10 A, mesma tensão). Ausente/'proprio' = circuito próprio. */
+  circuito?: 'proprio' | 'comodo';
   /** Caixa do ponto do equipamento (opcional — orçamentos antigos não têm). */
   cx?: '4x2' | '4x4';
   /** O que vai na caixa: tomada 20A, tomada 20A dupla, borne/conector ou só tampa (ligação direta). */
@@ -162,7 +166,7 @@ export interface AterramentoPrincipal {
 }
 
 /** Como dividir os circuitos do quadro (cada circuito = 1 disjuntor). */
-export type ModoCircuitos = 'norma' | 'economico' | 'maximo' | 'manual';
+export type ModoCircuitos = 'norma' | 'economico' | 'maximo' | 'manual' | 'personalizado';
 
 /** Cômodos vizinhos que dividem o mesmo circuito (iluminação juntos e tomadas juntos; ou tudo junto se `unico`). */
 export interface GrupoCircuito {
@@ -175,8 +179,23 @@ export interface GrupoCircuito {
   unico?: boolean;
 }
 
+/**
+ * Um circuito de iluminação/tomadas escolhido pela pessoa (modo 'personalizado'): 1 item = 1 disjuntor.
+ * Um cômodo aparece no máximo uma vez por tipo (luz, tomadas); 'misto' = luz e tomadas do cômodo no mesmo disjuntor.
+ */
+export interface CircuitoManual {
+  id: string;
+  tipo: 'luz' | 'tomadas' | 'misto';
+  /** ids dos cômodos; o primeiro é o mais próximo do quadro (o trajeto até o quadro é o dele). */
+  rooms: string[];
+  /** Mesmo tamanho de `rooms`; dists[i] = metros de cabo a mais para chegar em rooms[i] saindo do anterior (dists[0] vazio). */
+  dists: string[];
+}
+
 export interface ConfigCircuitos {
   modo: ModoCircuitos;
+  /** Só no modo personalizado: a lista de circuitos. */
+  lista?: CircuitoManual[];
   /** Só no modo manual: cômodos soltos com iluminação e tomadas no mesmo disjuntor. */
   unico: string[];
   /** Só no modo manual: grupos de cômodos. */

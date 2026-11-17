@@ -5,10 +5,11 @@ import { AlertTriangle, Lock, PlugZap, Package, Zap } from 'lucide-react';
 import { useStore } from '@/lib/store-cliente';
 import { semNegativo } from '@/lib/validacao';
 import {
-  avisosEntrada, entradaPadrao, materiaisEntrada, sincronizarEntrada, textoPotencia,
+  avisosEntrada, entradaPadrao, materiaisEntrada, sincronizarEntrada, textoPotencia, potenciaAuto, patchUf, patchTensao, patchTrifasico, type PadraoEntrada,
   tensaoDoSistema, tipoEletrodutoPadrao,
 } from '@/lib/entrada-calc';
-import { UFS, infoUf, sistemaSugeridoUf } from '@/lib/tensao-por-uf';
+import { UFS, infoUf } from '@/lib/tensao-por-uf';
+import { Button } from '@/components/ui/button';
 import type {
   BitolaCabo, DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada, TipoPoste, UnidadeEletroduto,
 } from '@/lib/types';
@@ -19,8 +20,6 @@ import { Label } from '@/components/ui/label';
 const selCls = 'mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm';
 const sug = (manual: boolean) => (manual ? '' : ' (sugerido)');
 
-/** Resultado do motor (mesmo campo `entrada` que /api/calcular devolve para a prévia). */
-interface PadraoEntrada { demandaKva: number; categoria: string; disjuntorGeralA: number; sistema: string; uf: string | null }
 
 export default function StepEntrada() {
   const store = useStore();
@@ -59,22 +58,17 @@ export default function StepEntrada() {
     return () => ctrl.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e.uf, e.sistemaTensao, e.sistema, e.ligacao]);
-  const [fn, ff] = vs === '220/127' ? ['127', '220'] : ['220', '380'];
+  const [fn, ff] = vs === '380/220' ? ['220', '380'] : ['127', '220']; // "não sei" adota 220/127 V, como no cálculo
 
   /** UF escolhida: grava a tensão da localidade e pré-preenche o sistema (o usuário pode alterar abaixo). */
-  const escolherUf = (sigla: string) => {
-    const u = infoUf(sigla);
-    if (!u) { up({ uf: '', sistemaTensao: undefined }); return; }
-    const s = sistemaSugeridoUf(u.tensao, potKw);
-    up({ uf: u.uf, sistemaTensao: u.tensao, sistema: s, sistemaManual: false, tensao: tensaoDoSistema(s, u.tensao) });
-  };
+  const escolherUf = (sigla: string) => up(patchUf(sigla, potKw));
 
   // Potência estimada = demanda do padrão de entrada (kVA), enquanto a pessoa não editar.
   // Sem cômodo/equipamento o campo esvazia. Sistema, bitola e diâmetro acompanham (só se não forem manuais).
   // O mesmo cálculo roda na prévia, então tela, prévia e PDF não divergem.
   useEffect(() => {
     if (!pronto || calculando) return;
-    const patch = sincronizarEntrada(e, padrao ? padrao.demandaKva : null);
+    const patch = sincronizarEntrada(e, potenciaAuto(padrao, e.sistemaManual)?.valor ?? null);
     if (Object.keys(patch).length) up(patch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [padrao, pronto, calculando, e.potenciaManual, e.potenciaDemandada, e.percurso, e.sistemaTensao, e.sistema, e.sistemaManual, e.bitolaManual, e.diametroManual]);
@@ -108,7 +102,7 @@ export default function StepEntrada() {
             <div>
               <Label className="text-xs">Tensão da localidade</Label>
               <select value={e.sistemaTensao ?? 'nao-sei'} className={selCls}
-                onChange={(ev) => { const t = ev.target.value as NonNullable<EntradaPrincipal['sistemaTensao']>; up({ sistemaTensao: t, tensao: tensaoDoSistema(e.sistema, t) }); }}>
+                onChange={(ev) => up(patchTensao(e, ev.target.value as NonNullable<EntradaPrincipal['sistemaTensao']>))}>
                 <option value="nao-sei">Não sei (adota 220/127 V)</option>
                 <option value="220/127">220/127 V</option>
                 <option value="380/220">380/220 V</option>
@@ -149,7 +143,7 @@ export default function StepEntrada() {
               <p className="mt-1 text-[11px] text-muted-foreground">Inclua descidas, curvas e percurso horizontal</p>
             </div>
             <div>
-              <Label className="text-xs">Potência estimada (kVA){e.potenciaManual ? '' : ' (automática)'}</Label>
+              <Label className="text-xs">Potência estimada ({potenciaAuto(padrao, e.sistemaManual)?.unidade ?? 'kVA'}){e.potenciaManual ? '' : ' (automática)'}</Label>
               <Input type="number" step="0.01" min="0" value={e.potenciaDemandada} placeholder="Ex: 8" className="mt-1"
                 onChange={(ev) => up({ potenciaDemandada: semNegativo(ev.target.value), potenciaManual: true })}
                 onBlur={() => { if (e.potenciaManual && e.potenciaDemandada === '') up({ potenciaManual: false }); }} />
@@ -157,12 +151,12 @@ export default function StepEntrada() {
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   Valor editado por você.{' '}
                   <button type="button" className="text-primary hover:underline"
-                    onClick={() => up({ potenciaManual: false, potenciaDemandada: textoPotencia(padrao?.demandaKva) })}>
-                    Voltar ao automático{padrao ? ` (${textoPotencia(padrao.demandaKva).replace('.', ',')} kVA)` : ''}
+                    onClick={() => up({ potenciaManual: false, potenciaDemandada: textoPotencia(potenciaAuto(padrao, e.sistemaManual)?.valor) })}>
+                    Voltar ao automático{padrao ? ` (${textoPotencia(potenciaAuto(padrao, e.sistemaManual)?.valor).replace('.', ',')} ${potenciaAuto(padrao, e.sistemaManual)?.unidade})` : ''}
                   </button>
                 </p>
               ) : (
-                <p className="mt-1 text-[11px] text-muted-foreground">Vem da demanda do padrão de entrada (soma das cargas). Você pode editar; a bitola e o sistema usam este valor.</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">Vem do padrão de entrada: carga instalada (kW) nas ligações monofásica e bifásica, demanda (kVA) na trifásica. Você pode editar; a bitola e o sistema usam este valor.</p>
               )}
             </div>
           </div>
@@ -176,7 +170,7 @@ export default function StepEntrada() {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                   {[
-                    { label: 'Demanda total', value: `${padrao.demandaKva.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} kVA` },
+                    { label: potenciaAuto(padrao, e.sistemaManual)?.label ?? 'Demanda total', value: `${(potenciaAuto(padrao, e.sistemaManual)?.valor ?? padrao.demandaKva).toLocaleString('pt-BR', { maximumFractionDigits: 2 })} ${potenciaAuto(padrao, e.sistemaManual)?.unidade ?? 'kVA'}` },
                     { label: 'Categoria', value: padrao.categoria },
                     { label: 'Disjuntor geral', value: `${padrao.disjuntorGeralA} A` },
                     { label: 'Tensão da localidade', value: `${padrao.uf ? `${padrao.uf} · ` : ''}${padrao.sistema} V` },
@@ -188,6 +182,14 @@ export default function StepEntrada() {
                   ))}
                 </div>
                 <p className="mt-3 text-[11px] text-muted-foreground">Pré-dimensionamento (DIS-NOR-030) — verificar com a distribuidora.</p>
+                {padrao.avisoCircuitos && (
+                  <div className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] text-amber-900 space-y-2">
+                    <p className="flex items-start gap-1.5"><AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {padrao.avisoCircuitos}</p>
+                    {padrao.sugestaoTrifasica && e.sistema !== 'trifasico' && (
+                      <Button type="button" size="sm" onClick={() => up(patchTrifasico(e))}>Usar trifásico {padrao.sugestaoTrifasica.tensao}</Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

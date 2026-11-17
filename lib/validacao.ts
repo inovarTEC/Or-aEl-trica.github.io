@@ -25,6 +25,7 @@ export function errosEtapa(s: DadosOrcamento, step: number): string[] {
   if (step === 0) {
     if (!s?.imovel) e.push('Escolha o tipo de imóvel');
     if (!s?.obra) e.push('Escolha o tipo de obra');
+    if (!s?.entrada?.uf) e.push('Escolha o estado (UF) da obra');
   }
   if (step === 1) {
     if (rooms.length === 0) e.push('Adicione pelo menos um cômodo');
@@ -141,6 +142,8 @@ export function problemaEstrutura(d: any): string | null {
   for (const q of d.equips ?? []) {
     if (!q || typeof q !== 'object' || !opcional(q.tipo, EQUIP) || !opcional(q.tens, TENSAO) || !texto(q.room, 64)
       || !opcional(q.cx, EQUIP_CX) || !opcional(q.ponto, EQUIP_PONTO)) return 'equipamento inválido';
+    if (!opcional(q.circuito, ['proprio', 'comodo'])) return 'equipamento inválido';
+    if (q.btu !== undefined && !(Number.isInteger(q.btu) && q.btu > 0 && q.btu <= 200_000)) return 'equipamento inválido';
     if (!medida(q.pot, LIM.watts) || !medida(q.dist, LIM.metros) || !medida(q.dint, LIM.metros)) return 'medida do equipamento inválida';
   }
   const en = d.entrada;
@@ -158,7 +161,16 @@ export function problemaEstrutura(d: any): string | null {
   const ci = d.circuitos;
   if (ci !== undefined) {
     if (!ci || typeof ci !== 'object' || Array.isArray(ci)) return 'circuitos inválido';
-    if (!opcional(ci.modo, ['norma', 'economico', 'maximo', 'manual']) || !lista(ci.unico, LIM.comodos) || !lista(ci.grupos, LIM.comodos)) return 'circuitos inválido';
+    if (!opcional(ci.modo, ['norma', 'economico', 'maximo', 'manual', 'personalizado']) || !lista(ci.unico, LIM.comodos) || !lista(ci.grupos, LIM.comodos)) return 'circuitos inválido';
+    if (ci.lista !== undefined) {
+      if (!Array.isArray(ci.lista) || ci.lista.length > LIM.comodos * 3) return 'lista de circuitos inválida';
+      for (const it of ci.lista) {
+        if (!it || typeof it !== 'object' || typeof it.id !== 'string' || it.id.length > 80 || !['luz', 'tomadas', 'misto'].includes(it.tipo)
+          || !Array.isArray(it.rooms) || it.rooms.length > LIM.comodos || !Array.isArray(it.dists) || it.dists.length > LIM.comodos) return 'lista de circuitos inválida';
+        for (const id of it.rooms) if (typeof id !== 'string' || id.length > 64) return 'lista de circuitos inválida';
+        for (const x of it.dists) if (!medida(x, LIM.metros)) return 'distância do circuito inválida';
+      }
+    }
     for (const id of ci.unico ?? []) if (typeof id !== 'string' || id.length > 64) return 'circuitos inválido';
     for (const g of ci.grupos ?? []) {
       if (!g || typeof g !== 'object' || typeof g.id !== 'string' || g.id.length > 80 || !Array.isArray(g.rooms) || g.rooms.length > LIM.comodos

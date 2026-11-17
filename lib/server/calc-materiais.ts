@@ -1,7 +1,7 @@
 /* ===== Lista de materiais — circuitos dimensionados pelo motor lib/motor (NBR 5410:2004) ===== */
-import { AppState, Comando, Room } from '../types';
+import { AppState, Comando } from '../types';
 import { countMods } from './calculator';
-import { circuitosBrutos, resolverUnidades } from './circuitos';
+import { decidirEquipamentos, montarCircuitos } from './circuitos';
 import { tomadasFisicas, gruposTeclas } from '../nbr5410-regras';
 export { gruposTeclas };
 import { materiaisEntrada } from '../entrada-calc';
@@ -12,7 +12,7 @@ import {
   dimensionarCircuito, reservaQuadro,
 } from '../motor/eletrica';
 import { cargaTomadasW, cargaIluminacaoW } from '../motor/demanda';
-import { calcularDemandaDIS, categoriaDisNor, infoUf, type CargasDIS, type SistemaLigacao } from '../tensao-por-uf';
+import { calcularDemandaDIS, categoriaDisNor, infoUf, tabela11, limiteCargaCategoriaKw, type CargasDIS, type SistemaLigacao } from '../tensao-por-uf';
 import { num, routeLen, areaMolhada } from '../util';
 import { fpEquip } from '../ponto-equip';
 
@@ -51,7 +51,8 @@ function cargasDosEquipamentos(equips: AppState['equips'], iluminacaoTomadasKw: 
     else if (/chuveiro|torneira|aquecedor|ferro/.test(t)) c.resistivos.push(kw);
     else if (/lavar|secadora|lava-lou|micro/.test(t)) c.maquinas.push(kw);
     else if (/forno|fogão|fogao|cooktop/.test(t)) c.fogoes.push(kw);
-    else if (/ar-cond|ar cond/.test(t)) c.arKva.push(kw);
+    // Ar-condicionado: com a capacidade em BTU escolhida vale a Tabela 11 (BTU → VA); sem ela, a potência digitada.
+    else if (/ar-cond|ar cond/.test(t)) c.arKva.push(e.btu && e.btu > 0 ? tabela11(e.btu) / 1000 : kw);
     else if (/bomba|hidromassagem/.test(t)) c.bombas.push(kw);
     else if (/motor/.test(t)) c.motoresKva.push(kw / 0.92);
     else if (/veículo|veiculo/.test(t)) c.veiculoKva.push(kw);
@@ -96,12 +97,17 @@ export interface QuadroGeral {
   demandaKva: number;
   cargaInstaladaKw: number;
   avisoCategoria?: string;
+  /** Aviso quando a soma real dos circuitos (NBR 5410) passa do limite em kW da categoria (monofásica/bifásica). */
+  avisoCircuitos?: string;
+  sugestaoTrifasica?: { categoria: string; disjuntorGeralA: number; tensao: string; secaoCu: number };
   versaoMotor: string;
   /** Localidade e padrão de entrada (pré-dimensionamento DIS-NOR-030; verificar com a distribuidora). */
   uf?: string;
   distribuidora?: string;
   verificarDistribuidora: boolean;
   ligacaoSistema?: SistemaLigacao;
+  /** Ligação mínima exigida pela carga (monofásica/bifásica decidem pela carga em kW; trifásica pela demanda em kVA). Não depende do sistema escolhido. */
+  ligacaoNecessaria?: SistemaLigacao;
   caboRamal?: string;
   caboEntrada?: string;
   eletrodutoEntrada?: string;
@@ -111,6 +117,8 @@ export interface ResultadoCalculo {
   circuitos: CircuitoCalc[];
   quadro: QuadroGeral;
   materiais: MaterialItem[];
+  /** Avisos de aparelhos que pediram dividir o circuito do cômodo mas ficaram em circuito próprio (e o porquê). */
+  avisosEquip: string[];
 }
 
 /* ---------- Motor principal ---------- */
@@ -124,17 +132,22 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   const equips = (state.equips ?? []).filter((e) => e.tipo && e.pot);
 
   // Divisão dos circuitos (config do usuário): cada unidade é um cômodo ou um grupo de cômodos vizinhos.
-  const { unidades } = resolverUnidades(rooms, state.circuitos);
-  const unidadeDoComodo = new Map<string, number>();
-  unidades.forEach((u, k) => u.rooms.forEach((r) => unidadeDoComodo.set(r.id, k)));
+  const lista = montarCircuitos(rooms, state.circuitos);
+  const { unidades, unidadeDoComodo } = lista;
+  // Aparelho pequeno pode dividir o circuito de tomadas do cômodo (se a pessoa escolheu e for permitido): a potência dele entra no circuito.
+  const divisao = decidirEquipamentos(equips, lista, { fn, tensaoEquip: (e) => tensaoEquipamento(e.tens, sistema, rede).v });
+  const brutos = lista.circuitos.map((b, i) => ({
+    ...b,
+    potenciaW: b.potenciaW + (divisao.extra.get(i) ?? 0),
+    nome: divisao.nomes.has(i) ? `${b.nome} (+ ${(divisao.nomes.get(i) ?? []).join(', ')})` : b.nome,
+  }));
   const nCircPorUnidade: number[] = unidades.map(() => 0);
-  const brutos = circuitosBrutos(unidades);
   for (const b of brutos) {
     const u = unidades[b.unidade];
     // NBR 5410 6.2.5.5 / Tabela 42: circuitos no mesmo trecho (decisão 10.3: ilum + TUG por cômodo + TUEs dele)
     const nAgrupados = brutos.filter((x) => x.unidade === b.unidade).length
-      + equips.filter((e) => u.rooms.some((r) => r.id === e.room)).length;
-    const dr = u.rooms.some((r) => areaMolhada(`${r.base} ${r.nome}`)); // NBR 5410 5.1.3.2.2
+      + divisao.proprios.filter((e) => u.rooms.some((r) => r.id === e.room)).length;
+    const dr = b.rooms.some((r) => areaMolhada(`${r.base} ${r.nome}`)); // NBR 5410 5.1.3.2.2 — DR se o circuito atende área molhada
     const primeiro = u.rooms[0];
     const d = dimensionarCircuito({
       potencia: b.potenciaW, tensao: fn, tipo: b.tipo === 'iluminacao' ? 'iluminacao' : 'tug', comprimentoM: b.comprimentoM, nAgrupados,
@@ -149,7 +162,7 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
   }
 
   /* NBR 5410 9.5.3.1: equipamento acima de 10 A em circuito próprio (TUE) */
-  for (const eq of equips) {
+  for (const eq of divisao.proprios) {
     const room = rooms.find((r) => r.id === eq.room);
     const potW = num(eq.pot);
     const tri = !!eq.trifasico && sistema === '380/220';
@@ -187,6 +200,25 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
       : ent?.tipoEntrada && ent?.sistema ? ent.sistema
         : rede === 'Trifásico' ? 'trifasico' : rede === 'Bifásico' ? 'bifasico' : rede === 'Monofásico' ? 'monofasico' : null;
   const cat = categoriaDisNor(dem.cargaInstaladaKw, dem.demandaKva, sistema, sistLig);
+  const limiteKw = cat ? limiteCargaCategoriaKw(sistema, cat.categoria) : null;
+  const cargaCircuitosKw = cargaTotal / 1000;
+  const kw1 = (v: number) => v.toFixed(1).replace('.', ',');
+  const acima = !!cat && limiteKw !== null && cargaCircuitosKw > limiteKw;
+  const perto = !!cat && limiteKw !== null && !acima && cargaCircuitosKw > (limiteKw as number) * 0.9;
+  // Como ficaria em ligação trifásica (a categoria passa a ser decidida pela demanda): a saída para quem estourou ou está no limite.
+  const tensaoTrif = sistema === '380/220' ? '380 V' : '220 V';
+  const catTrif = (acima || perto) && cat && cat.sistema !== 'trifasico' ? categoriaDisNor(dem.cargaInstaladaKw, dem.demandaKva, sistema, 'trifasico') : null;
+  const alternativa = catTrif ? `ligação trifásica ${tensaoTrif} (categoria ${catTrif.categoria}, disjuntor geral ${catTrif.disjuntor} A, cabo a partir de ${catTrif.secaoCu} mm²)` : '';
+  // O botão "Usar trifásico" só aparece quando a carga JÁ passou do limite; perto do limite é só um alerta.
+  const sugestaoTrifasica = acima && catTrif ? { categoria: catTrif.categoria, disjuntorGeralA: catTrif.disjuntor, tensao: tensaoTrif, secaoCu: catTrif.secaoCu } : undefined;
+  const avisoCircuitos = acima
+    ? `A soma dos circuitos (NBR 5410) é ${kw1(cargaCircuitosKw)} kW, acima do limite de ${kw1(limiteKw as number)} kW da categoria ${cat?.categoria}, calculada pela carga da DIS-NOR-030.`
+      + (alternativa ? ` Recomendamos ${alternativa}. Se o imóvel já tem ligação monofásica, a mudança precisa ser pedida à distribuidora.` : ' Confirme com a distribuidora se a entrada comporta.')
+    : perto
+      ? `A soma dos circuitos (NBR 5410) é ${kw1(cargaCircuitosKw)} kW, perto do limite de ${kw1(limiteKw as number)} kW da categoria ${cat?.categoria}.`
+        + (alternativa ? ` Se for acrescentar carga, a alternativa é ${alternativa}.` : ' Se for acrescentar carga, a entrada pode não comportar.')
+      : undefined;
+  const catMinima = categoriaDisNor(dem.cargaInstaladaKw, dem.demandaKva, sistema, null);
   const uf = infoUf(ent?.uf);
   const reserva = reservaQuadro(circuitos.length); // NBR 5410 6.5.4.7 Tabela 59
 
@@ -207,6 +239,9 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     distribuidora: uf?.distribuidora,
     verificarDistribuidora: !uf || uf.verificar,
     ligacaoSistema: cat?.sistema,
+    ligacaoNecessaria: catMinima?.sistema,
+    avisoCircuitos,
+    sugestaoTrifasica,
     caboRamal: cat?.caboRamal,
     caboEntrada: cat?.caboEntrada,
     eletrodutoEntrada: cat?.eletroduto,
@@ -519,5 +554,5 @@ export function calcularMateriais(state: AppState): ResultadoCalculo {
     }
   }
 
-  return { circuitos, quadro, materiais };
+  return { circuitos, quadro, materiais, avisosEquip: divisao.avisos };
 }

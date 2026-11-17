@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, Zap, Cpu, AlertTriangle, ClipboardList, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { infoUf } from '@/lib/tensao-por-uf';
-import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto, correnteEquip, avisoCorrente, faltasEquip, resumoLinhaEquip } from '@/lib/ponto-equip';
+import { PONTO_LABEL, PontoEquip, pontoSugerido, distanciaEquip, resumoPonto, correnteEquip, avisoCorrente, faltasEquip, resumoLinhaEquip, podeDividirCircuito } from '@/lib/ponto-equip';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CircuitosCard from './circuitos-card';
@@ -159,12 +159,13 @@ export default function StepEquipamentos() {
                 {(e?.tipo === 'Ar-condicionado' || e?.tipo === 'Bomba') && (
                   <div>
                     <Label className="text-xs">{e?.tipo === 'Bomba' ? 'Potência da bomba (CV)' : 'Capacidade (BTU/h)'}</Label>
-                    <select defaultValue="" className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
+                    <select {...(e?.tipo === 'Ar-condicionado' ? { value: e?.btu ? String(e.btu) : '' } : { defaultValue: '' })} className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
                       onChange={(ev: any) => {
                         const v = parseFloat(ev?.target?.value);
-                        if (!v) return;
+                        if (!v) { if (e?.tipo === 'Ar-condicionado') store.updateEquip(e?.id ?? '', { btu: undefined }); return; }
                         const w = e?.tipo === 'Bomba' ? cvParaWatts(v) : btuParaWatts(v);
-                        store.updateEquip(e?.id ?? '', { pot: String(w) });
+                        // Ar-condicionado: guarda os BTU (a demanda usa a Tabela 11) além da potência em watts do circuito.
+                        store.updateEquip(e?.id ?? '', e?.tipo === 'Ar-condicionado' ? { pot: String(w), btu: v } : { pot: String(w) });
                       }}>
                       <option value="">Selecione para preencher a potência…</option>
                       {(e?.tipo === 'Bomba' ? BOMBA_CV_OPTIONS : AC_BTU_OPTIONS).map((v) => (
@@ -173,14 +174,14 @@ export default function StepEquipamentos() {
                         </option>
                       ))}
                     </select>
-                    <p className="mt-1 text-[11px] text-muted-foreground">Preenche a potência em watts; você pode ajustar o valor abaixo.</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Preenche a potência em watts e a demanda usa a Tabela 11 (BTU → VA). Se você editar a potência à mão, a demanda passa a usar o valor digitado.</p>
                   </div>
                 )}
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <Label className="text-xs">Potência (W)</Label>
-                    <Input type="number" min="0" value={e?.pot ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { pot: semNegativo(ev?.target?.value) })} placeholder="Ex: 5500" className="mt-1" />
+                    <Input type="number" min="0" value={e?.pot ?? ''} onChange={(ev: any) => store.updateEquip(e?.id ?? '', { pot: semNegativo(ev?.target?.value), ...(e?.btu ? { btu: undefined } : {}) })} placeholder="Ex: 5500" className="mt-1" />
                   </div>
                   <div>
                     <Label className="text-xs">Tensão</Label>
@@ -237,6 +238,26 @@ export default function StepEquipamentos() {
                   ) : dst.origem === 'comodo' ? (
                     <p className="text-[11px] text-muted-foreground">Distância considerada: {dst.metros} m (trajeto do cômodo + distância dentro do cômodo)</p>
                   ) : null;
+                })()}
+
+                {(() => {
+                  const pode = podeDividirCircuito(e);
+                  const divide = e?.circuito === 'comodo' && pode.ok;
+                  return (
+                    <div>
+                      <Label className="text-xs">Circuito deste equipamento</Label>
+                      <select value={divide ? 'comodo' : 'proprio'} className="mt-1 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm"
+                        onChange={(ev: any) => store.updateEquip(e?.id ?? '', { circuito: ev?.target?.value === 'comodo' ? 'comodo' : 'proprio' })}>
+                        <option value="proprio">Circuito próprio (recomendado)</option>
+                        <option value="comodo" disabled={!pode.ok}>Dividir o circuito de tomadas do cômodo</option>
+                      </select>
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        {pode.ok
+                          ? 'Aparelho pequeno (até 10 A) pode dividir o circuito do cômodo se a soma não passar do limite e a tensão for a mesma das tomadas.'
+                          : `Circuito próprio: ${pode.motivo}`}
+                      </p>
+                    </div>
+                  );
                 })()}
 
                 <div>

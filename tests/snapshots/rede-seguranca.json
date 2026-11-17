@@ -1,0 +1,7348 @@
+{
+ "A apartamento pequeno / norma": {
+  "circuitos": [
+   {
+    "nome": "Iluminação — Sala",
+    "tipo": "iluminacao",
+    "comodo": "Sala",
+    "potenciaW": 200,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.57,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Sala",
+    "tipo": "tug",
+    "comodo": "Sala",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Quarto",
+    "tipo": "iluminacao",
+    "comodo": "Quarto",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto",
+    "tipo": "tug",
+    "comodo": "Quarto",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 9,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 63,
+   "nCircuitos": 9,
+   "reserva": 3,
+   "posicoes": 12,
+   "cargaTotalW": 9200,
+   "correnteTotalA": 54.13,
+   "sistema": "220/127",
+   "categoria": "M1",
+   "demandaKva": 7.57,
+   "cargaInstaladaKw": 9,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "avisoCircuitos": "A soma dos circuitos (NBR 5410) é 9,2 kW, perto do limite de 10,0 kW da categoria M1. Se for acrescentar carga, a alternativa é ligação trifásica 220 V (categoria T0, disjuntor geral 50 A, cabo a partir de 10 mm²).",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "16 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 11 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 62 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 10 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 7 un | Curva C, monopolar",
+   "Disjuntor 16A | 1 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 63A | 1 un | Curva C, monopolar — categoria M1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 12 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 16 un | ",
+   "Caixa redonda (fundo) | 5 un | Embutir na laje/forro",
+   "Placa 4x2 | 12 un | Com espelho",
+   "Placa 4x2 1 tecla | 3 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 36 un | ",
+   "Fita isolante | 3 rolo | ",
+   "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 1,
+   "modos": {
+    "norma": {
+     "circuitos": 8,
+     "disjuntores": 9,
+     "metrosCabo": 56,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 8,
+    "disjuntores": 9,
+    "metrosCabo": 56,
+    "avisos": [],
+    "modo": "norma"
+   },
+   "lista": [
+    {
+     "id": "c0l",
+     "tipo": "luz",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 200,
+     "tomadas": 400
+    },
+    "#Quarto": {
+     "luz": 100,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Cozinha": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 25785,
+   "sha1": "e0e4a2d3fa74a11e256fff107e64ebc9d53fa40b"
+  }
+ },
+ "A apartamento pequeno / economico": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto",
+    "tipo": "misto",
+    "comodo": "Quarto",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 9,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 63,
+   "nCircuitos": 6,
+   "reserva": 2,
+   "posicoes": 8,
+   "cargaTotalW": 9200,
+   "correnteTotalA": 54.13,
+   "sistema": "220/127",
+   "categoria": "M1",
+   "demandaKva": 7.57,
+   "cargaInstaladaKw": 9,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "avisoCircuitos": "A soma dos circuitos (NBR 5410) é 9,2 kW, perto do limite de 10,0 kW da categoria M1. Se for acrescentar carga, a alternativa é ligação trifásica 220 V (categoria T0, disjuntor geral 50 A, cabo a partir de 10 mm²).",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "16 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 11 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 42 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 10 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 4 un | Curva C, monopolar",
+   "Disjuntor 16A | 1 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 63A | 1 un | Curva C, monopolar — categoria M1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 16 un | ",
+   "Caixa redonda (fundo) | 5 un | Embutir na laje/forro",
+   "Placa 4x2 | 12 un | Com espelho",
+   "Placa 4x2 1 tecla | 3 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 24 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 1,
+   "modos": {
+    "norma": {
+     "circuitos": 8,
+     "disjuntores": 9,
+     "metrosCabo": 56,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 5,
+    "disjuntores": 6,
+    "metrosCabo": 38,
+    "avisos": [],
+    "modo": "economico"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 200,
+     "tomadas": 400
+    },
+    "#Quarto": {
+     "luz": 100,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Cozinha": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 25367,
+   "sha1": "348dec32fa53dbbc45cad242fa7a07e75b931ca8"
+  }
+ },
+ "A apartamento pequeno / maximo": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto",
+    "tipo": "misto",
+    "comodo": "Quarto",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 9,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 63,
+   "nCircuitos": 6,
+   "reserva": 2,
+   "posicoes": 8,
+   "cargaTotalW": 9200,
+   "correnteTotalA": 54.13,
+   "sistema": "220/127",
+   "categoria": "M1",
+   "demandaKva": 7.57,
+   "cargaInstaladaKw": 9,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "avisoCircuitos": "A soma dos circuitos (NBR 5410) é 9,2 kW, perto do limite de 10,0 kW da categoria M1. Se for acrescentar carga, a alternativa é ligação trifásica 220 V (categoria T0, disjuntor geral 50 A, cabo a partir de 10 mm²).",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "16 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 12 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 11 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 42 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 10 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 4 un | Curva C, monopolar",
+   "Disjuntor 16A | 1 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 63A | 1 un | Curva C, monopolar — categoria M1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 16 un | ",
+   "Caixa redonda (fundo) | 5 un | Embutir na laje/forro",
+   "Placa 4x2 | 12 un | Com espelho",
+   "Placa 4x2 1 tecla | 3 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 24 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 1,
+   "modos": {
+    "norma": {
+     "circuitos": 8,
+     "disjuntores": 9,
+     "metrosCabo": 56,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 5,
+    "disjuntores": 6,
+    "metrosCabo": 38,
+    "avisos": [],
+    "modo": "maximo"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 200,
+     "tomadas": 400
+    },
+    "#Quarto": {
+     "luz": 100,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Cozinha": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 25350,
+   "sha1": "06e0185e7f07e6056ba702524f4330cdb3cd9fcf"
+  }
+ },
+ "A apartamento pequeno / manual": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Quarto",
+    "tipo": "iluminacao",
+    "comodo": "Quarto",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto",
+    "tipo": "tug",
+    "comodo": "Quarto",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 10,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 9,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 63,
+   "nCircuitos": 8,
+   "reserva": 3,
+   "posicoes": 11,
+   "cargaTotalW": 9200,
+   "correnteTotalA": 54.13,
+   "sistema": "220/127",
+   "categoria": "M1",
+   "demandaKva": 7.57,
+   "cargaInstaladaKw": 9,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "avisoCircuitos": "A soma dos circuitos (NBR 5410) é 9,2 kW, perto do limite de 10,0 kW da categoria M1. Se for acrescentar carga, a alternativa é ligação trifásica 220 V (categoria T0, disjuntor geral 50 A, cabo a partir de 10 mm²).",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "16 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 11 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 11 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 58 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 10 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 6 un | Curva C, monopolar",
+   "Disjuntor 16A | 1 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 63A | 1 un | Curva C, monopolar — categoria M1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 12 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 16 un | ",
+   "Caixa redonda (fundo) | 5 un | Embutir na laje/forro",
+   "Placa 4x2 | 12 un | Com espelho",
+   "Placa 4x2 1 tecla | 3 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 32 un | ",
+   "Fita isolante | 3 rolo | ",
+   "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 1,
+   "modos": {
+    "norma": {
+     "circuitos": 8,
+     "disjuntores": 9,
+     "metrosCabo": 56,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 5,
+     "disjuntores": 6,
+     "metrosCabo": 38,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 7,
+    "disjuntores": 8,
+    "metrosCabo": 52,
+    "avisos": [],
+    "modo": "manual"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 200,
+     "tomadas": 400
+    },
+    "#Quarto": {
+     "luz": 100,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Cozinha": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 25790,
+   "sha1": "4ef2bd164aeba6c7809fc0327eb59291872eb673"
+  }
+ },
+ "B casa 6 comodos / norma": {
+  "circuitos": [
+   {
+    "nome": "Iluminação — Sala",
+    "tipo": "iluminacao",
+    "comodo": "Sala",
+    "potenciaW": 280,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.2,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Sala",
+    "tipo": "tug",
+    "comodo": "Sala",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto",
+    "tipo": "iluminacao",
+    "comodo": "Quarto",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto",
+    "tipo": "tug",
+    "comodo": "Quarto",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1800,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.17,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 13,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 1066,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 5.27,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 1500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 7.41,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 70,
+   "nCircuitos": 15,
+   "reserva": 4,
+   "posicoes": 19,
+   "cargaTotalW": 14386,
+   "correnteTotalA": 87.43,
+   "sistema": "220/127",
+   "categoria": "B1",
+   "demandaKva": 11.14,
+   "cargaInstaladaKw": 13.2,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria B1.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "bifasico",
+   "ligacaoNecessaria": "bifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "2x25 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 63 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 63 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 63 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 15 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 139 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 15 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 12 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 70A | 1 un | Curva C, bipolar — categoria B1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 24 un | ",
+   "Caixa redonda (fundo) | 7 un | Embutir na laje/forro",
+   "Placa 4x2 | 18 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 60 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 3,
+   "modos": {
+    "norma": {
+     "circuitos": 12,
+     "disjuntores": 15,
+     "metrosCabo": 108,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 12,
+    "disjuntores": 15,
+    "metrosCabo": 108,
+    "avisos": [],
+    "modo": "norma"
+   },
+   "lista": [
+    {
+     "id": "c0l",
+     "tipo": "luz",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 1066,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 1500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Cozinha": {
+     "luz": 160,
+     "tomadas": 1900
+    },
+    "#Quarto": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1800
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 28966,
+   "sha1": "80e2501438bfab1df74c88850ffd9f06281c92af"
+  }
+ },
+ "B casa 6 comodos / economico": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 680,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.35,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto",
+    "tipo": "misto",
+    "comodo": "Quarto",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte",
+    "tipo": "misto",
+    "comodo": "Suíte",
+    "potenciaW": 520,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1800,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.17,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 13,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 1066,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 5.27,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 1500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 7.41,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 70,
+   "nCircuitos": 11,
+   "reserva": 3,
+   "posicoes": 14,
+   "cargaTotalW": 14386,
+   "correnteTotalA": 87.43,
+   "sistema": "220/127",
+   "categoria": "B1",
+   "demandaKva": 11.14,
+   "cargaInstaladaKw": 13.2,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria B1.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "bifasico",
+   "ligacaoNecessaria": "bifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "2x25 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 15 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 102 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 15 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 8 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 70A | 1 un | Curva C, bipolar — categoria B1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 12 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 24 un | ",
+   "Caixa redonda (fundo) | 7 un | Embutir na laje/forro",
+   "Placa 4x2 | 18 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 44 un | ",
+   "Fita isolante | 4 rolo | ",
+   "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 3,
+   "modos": {
+    "norma": {
+     "circuitos": 12,
+     "disjuntores": 15,
+     "metrosCabo": 108,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 8,
+    "disjuntores": 11,
+    "metrosCabo": 74,
+    "avisos": [],
+    "modo": "economico"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 1066,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 1500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Cozinha": {
+     "luz": 160,
+     "tomadas": 1900
+    },
+    "#Quarto": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1800
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 28307,
+   "sha1": "7a0e397ce70f593252685829331a7b8333eeb8d3"
+  }
+ },
+ "B casa 6 comodos / maximo": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 680,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.35,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto",
+    "tipo": "misto",
+    "comodo": "Quarto",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte",
+    "tipo": "misto",
+    "comodo": "Suíte",
+    "potenciaW": 520,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1800,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.17,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 13,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 1066,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 5.27,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 1500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 7.41,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 70,
+   "nCircuitos": 11,
+   "reserva": 3,
+   "posicoes": 14,
+   "cargaTotalW": 14386,
+   "correnteTotalA": 87.43,
+   "sistema": "220/127",
+   "categoria": "B1",
+   "demandaKva": 11.14,
+   "cargaInstaladaKw": 13.2,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria B1.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "bifasico",
+   "ligacaoNecessaria": "bifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "2x25 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 23 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 15 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 102 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 15 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 8 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 70A | 1 un | Curva C, bipolar — categoria B1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 12 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 24 un | ",
+   "Caixa redonda (fundo) | 7 un | Embutir na laje/forro",
+   "Placa 4x2 | 18 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 44 un | ",
+   "Fita isolante | 4 rolo | ",
+   "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 3,
+   "modos": {
+    "norma": {
+     "circuitos": 12,
+     "disjuntores": 15,
+     "metrosCabo": 108,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 8,
+    "disjuntores": 11,
+    "metrosCabo": 74,
+    "avisos": [],
+    "modo": "maximo"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 1066,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 1500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Cozinha": {
+     "luz": 160,
+     "tomadas": 1900
+    },
+    "#Quarto": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1800
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 28290,
+   "sha1": "d58b8c5fe891e39cf5c5b6dc4a0b84c9c5e119a9"
+  }
+ },
+ "B casa 6 comodos / manual": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 680,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.35,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto",
+    "tipo": "iluminacao",
+    "comodo": "Quarto",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto",
+    "tipo": "tug",
+    "comodo": "Quarto",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1800,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.17,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 13,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 1066,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 5.27,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 1500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 7.41,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 70,
+   "nCircuitos": 14,
+   "reserva": 4,
+   "posicoes": 18,
+   "cargaTotalW": 14386,
+   "correnteTotalA": 87.43,
+   "sistema": "220/127",
+   "categoria": "B1",
+   "demandaKva": 11.14,
+   "cargaInstaladaKw": 13.2,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria B1.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "bifasico",
+   "ligacaoNecessaria": "bifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "2x25 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "40 mm (1¼\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 58 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 58 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 58 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 15 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 15 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 135 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 15 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 11 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 25A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 70A | 1 un | Curva C, bipolar — categoria B1 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 24 un | ",
+   "Caixa redonda (fundo) | 7 un | Embutir na laje/forro",
+   "Placa 4x2 | 18 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 56 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 3,
+   "modos": {
+    "norma": {
+     "circuitos": 12,
+     "disjuntores": 15,
+     "metrosCabo": 108,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 8,
+     "disjuntores": 11,
+     "metrosCabo": 74,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 11,
+    "disjuntores": 14,
+    "metrosCabo": 104,
+    "avisos": [],
+    "modo": "manual"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 1066,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 1500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Cozinha": {
+     "luz": 160,
+     "tomadas": 1900
+    },
+    "#Quarto": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 300
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1800
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 28971,
+   "sha1": "b2391ae98b2edd3b43dc1c6fa1002780cdbb297d"
+  }
+ },
+ "C casa grande com varanda / norma": {
+  "circuitos": [
+   {
+    "nome": "Iluminação — Sala",
+    "tipo": "iluminacao",
+    "comodo": "Sala",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Sala",
+    "tipo": "tug",
+    "comodo": "Sala",
+    "potenciaW": 500,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.94,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 15.75,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto 1",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 1",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 1",
+    "tipo": "tug",
+    "comodo": "Quarto 1",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Quarto 2",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 2",
+    "potenciaW": 160,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.26,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5.5,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 2",
+    "tipo": "tug",
+    "comodo": "Quarto 2",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5.5,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro social",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro social",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro social",
+    "tipo": "tug",
+    "comodo": "Banheiro social",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Banheiro suíte",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4.5,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro suíte",
+    "tipo": "tug",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4.5,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Varanda",
+    "tipo": "tug",
+    "comodo": "Varanda",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro social",
+    "tipo": "tue",
+    "comodo": "Banheiro social",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro suíte",
+    "tipo": "tue",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 5.5,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3200,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 14.55,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 50,
+   "nCircuitos": 21,
+   "reserva": 4,
+   "posicoes": 25,
+   "cargaTotalW": 23820,
+   "correnteTotalA": 136.19,
+   "sistema": "220/127",
+   "categoria": "T0",
+   "demandaKva": 15.91,
+   "cargaInstaladaKw": 21.15,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T0.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "3x10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 83 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 24 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 24 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 24 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 162 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 43 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 16 un | Curva C, monopolar",
+   "Disjuntor 16A | 3 un | Curva C, monopolar",
+   "Disjuntor 25A | 2 un | Curva C, monopolar",
+   "Disjuntor geral 50A | 1 un | Curva C, tripolar — categoria T0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 24 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 35 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 7 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 84 un | ",
+   "Fita isolante | 7 rolo | ",
+   "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 4,
+   "modos": {
+    "norma": {
+     "circuitos": 17,
+     "disjuntores": 21,
+     "metrosCabo": 149,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 11,
+     "disjuntores": 15,
+     "metrosCabo": 101,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 13,
+     "metrosCabo": 96,
+     "avisos": [
+      "Sala + Varanda: tomadas de área externa dividindo circuito com outro tipo de cômodo — o circuito precisa de DR de 30 mA. Confirme com um eletricista."
+     ]
+    }
+   },
+   "atual": {
+    "circuitos": 17,
+    "disjuntores": 21,
+    "metrosCabo": 149,
+    "avisos": [],
+    "modo": "norma"
+   },
+   "lista": [
+    {
+     "id": "c0l",
+     "tipo": "luz",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c7l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c7t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c8t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Varanda"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro social",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro suíte",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3200,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Quarto 2": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Banheiro social": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Banheiro suíte": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    },
+    "#Varanda": {
+     "luz": 0,
+     "tomadas": 100
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 33164,
+   "sha1": "f184812318d43b0e0cbe2e81b5ce5ae84fec2e9a"
+  }
+ },
+ "C casa grande com varanda / economico": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 960,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 7.56,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 15.75,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 1",
+    "tipo": "misto",
+    "comodo": "Quarto 1",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 2",
+    "tipo": "misto",
+    "comodo": "Quarto 2",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5.5,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte",
+    "tipo": "misto",
+    "comodo": "Suíte",
+    "potenciaW": 620,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.88,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro social",
+    "tipo": "misto",
+    "comodo": "Banheiro social",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro suíte",
+    "tipo": "misto",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4.5,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Varanda",
+    "tipo": "tug",
+    "comodo": "Varanda",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro social",
+    "tipo": "tue",
+    "comodo": "Banheiro social",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro suíte",
+    "tipo": "tue",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 5.5,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3200,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 14.55,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 50,
+   "nCircuitos": 15,
+   "reserva": 4,
+   "posicoes": 19,
+   "cargaTotalW": 23820,
+   "correnteTotalA": 136.19,
+   "sistema": "220/127",
+   "categoria": "T0",
+   "demandaKva": 15.91,
+   "cargaInstaladaKw": 21.15,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T0.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "3x10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 28 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 87 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 45 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 45 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 45 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 109 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 43 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 10 un | Curva C, monopolar",
+   "Disjuntor 16A | 3 un | Curva C, monopolar",
+   "Disjuntor 25A | 2 un | Curva C, monopolar",
+   "Disjuntor geral 50A | 1 un | Curva C, tripolar — categoria T0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 35 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 7 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 60 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 4,
+   "modos": {
+    "norma": {
+     "circuitos": 17,
+     "disjuntores": 21,
+     "metrosCabo": 149,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 11,
+     "disjuntores": 15,
+     "metrosCabo": 101,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 13,
+     "metrosCabo": 96,
+     "avisos": [
+      "Sala + Varanda: tomadas de área externa dividindo circuito com outro tipo de cômodo — o circuito precisa de DR de 30 mA. Confirme com um eletricista."
+     ]
+    }
+   },
+   "atual": {
+    "circuitos": 11,
+    "disjuntores": 15,
+    "metrosCabo": 101,
+    "avisos": [],
+    "modo": "economico"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c7l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c7t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c8t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Varanda"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro social",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro suíte",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3200,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Quarto 2": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Banheiro social": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Banheiro suíte": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    },
+    "#Varanda": {
+     "luz": 0,
+     "tomadas": 100
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 31486,
+   "sha1": "5571d6b8dfd1f0f30266afad1d8d6eea1485f422"
+  }
+ },
+ "C casa grande com varanda / maximo": {
+  "circuitos": [
+   {
+    "nome": "Iluminação — Sala",
+    "tipo": "iluminacao",
+    "comodo": "Sala",
+    "potenciaW": 460,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.62,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Sala + Varanda",
+    "tipo": "tug",
+    "comodo": "Sala + Varanda",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 15.75,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 1 + Quarto 2",
+    "tipo": "misto",
+    "comodo": "Quarto 1 + Quarto 2",
+    "potenciaW": 920,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 7.24,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10.5,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte + Banheiro suíte",
+    "tipo": "misto",
+    "comodo": "Suíte + Banheiro suíte",
+    "potenciaW": 1320,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 10.39,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 13.5,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro social",
+    "tipo": "misto",
+    "comodo": "Banheiro social",
+    "potenciaW": 700,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 5.51,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro social",
+    "tipo": "tue",
+    "comodo": "Banheiro social",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro suíte",
+    "tipo": "tue",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 4,
+    "disjuntorA": 25,
+    "comprimentoM": 5.5,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3200,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 14.55,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 50,
+   "nCircuitos": 13,
+   "reserva": 4,
+   "posicoes": 17,
+   "cargaTotalW": 23820,
+   "correnteTotalA": 136.18,
+   "sistema": "220/127",
+   "categoria": "T0",
+   "demandaKva": 15.91,
+   "cargaInstaladaKw": 21.15,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T0.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "3x10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 33 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 45 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 45 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 45 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 104 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 43 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 7 un | Curva C, monopolar",
+   "Disjuntor 16A | 4 un | Curva C, monopolar",
+   "Disjuntor 25A | 2 un | Curva C, monopolar",
+   "Disjuntor geral 50A | 1 un | Curva C, tripolar — categoria T0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 35 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 7 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 52 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 4,
+   "modos": {
+    "norma": {
+     "circuitos": 17,
+     "disjuntores": 21,
+     "metrosCabo": 149,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 11,
+     "disjuntores": 15,
+     "metrosCabo": 101,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 13,
+     "metrosCabo": 96,
+     "avisos": [
+      "Sala + Varanda: tomadas de área externa dividindo circuito com outro tipo de cômodo — o circuito precisa de DR de 30 mA. Confirme com um eletricista."
+     ]
+    }
+   },
+   "atual": {
+    "circuitos": 9,
+    "disjuntores": 13,
+    "metrosCabo": 96,
+    "avisos": [
+     "Sala + Varanda: tomadas de área externa dividindo circuito com outro tipo de cômodo — o circuito precisa de DR de 30 mA. Confirme com um eletricista."
+    ],
+    "modo": "maximo"
+   },
+   "lista": [
+    {
+     "id": "c0l",
+     "tipo": "luz",
+     "rooms": [
+      "#Sala",
+      "#Varanda"
+     ],
+     "dists": [
+      "",
+      "2"
+     ]
+    },
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Sala",
+      "#Varanda"
+     ],
+     "dists": [
+      "",
+      "2"
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 1",
+      "#Quarto 2"
+     ],
+     "dists": [
+      "",
+      "2.5"
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte",
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      "",
+      "1.5"
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro social",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro suíte",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3200,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Quarto 2": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Banheiro social": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Banheiro suíte": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    },
+    "#Varanda": {
+     "luz": 0,
+     "tomadas": 100
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 30927,
+   "sha1": "213d249d77e27cd6b77a928e96eaac64b72972b8"
+  }
+ },
+ "C casa grande com varanda / manual": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 960,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 7.56,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 15.75,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto 1 + Quarto 2",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 1 + Quarto 2",
+    "potenciaW": 320,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.52,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 1 + Quarto 2",
+    "tipo": "tug",
+    "comodo": "Quarto 1 + Quarto 2",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 220,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 1.73,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 400,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 3.15,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro social",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro social",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro social",
+    "tipo": "tug",
+    "comodo": "Banheiro social",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Banheiro suíte",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4.5,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro suíte",
+    "tipo": "tug",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 600,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 4.72,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4.5,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 14.96,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 18,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Varanda",
+    "tipo": "tug",
+    "comodo": "Varanda",
+    "potenciaW": 100,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 0.79,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 5,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro social",
+    "tipo": "tue",
+    "comodo": "Banheiro social",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro suíte",
+    "tipo": "tue",
+    "comodo": "Banheiro suíte",
+    "potenciaW": 5500,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 25,
+    "bitolaMM2": 6,
+    "disjuntorA": 25,
+    "comprimentoM": 5.5,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3200,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 14.55,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-F",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 50,
+   "nCircuitos": 18,
+   "reserva": 4,
+   "posicoes": 22,
+   "cargaTotalW": 23820,
+   "correnteTotalA": 136.19,
+   "sistema": "220/127",
+   "categoria": "T0",
+   "demandaKva": 15.91,
+   "cargaInstaladaKw": 21.15,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T0.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "3x10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 76 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 84 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 84 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 84 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 21 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Preto (fase) | 24 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Azul claro (neutro) | 24 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 6 mm² — Verde-amarelo (terra) | 24 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 152 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 43 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 13 un | Curva C, monopolar",
+   "Disjuntor 16A | 3 un | Curva C, monopolar",
+   "Disjuntor 25A | 2 un | Curva C, monopolar",
+   "Disjuntor geral 50A | 1 un | Curva C, tripolar — categoria T0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 24 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 35 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 7 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 1 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 72 un | ",
+   "Fita isolante | 6 rolo | ",
+   "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 4,
+   "modos": {
+    "norma": {
+     "circuitos": 17,
+     "disjuntores": 21,
+     "metrosCabo": 149,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 11,
+     "disjuntores": 15,
+     "metrosCabo": 101,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 13,
+     "metrosCabo": 96,
+     "avisos": [
+      "Sala + Varanda: tomadas de área externa dividindo circuito com outro tipo de cômodo — o circuito precisa de DR de 30 mA. Confirme com um eletricista."
+     ]
+    }
+   },
+   "atual": {
+    "circuitos": 14,
+    "disjuntores": 18,
+    "metrosCabo": 140,
+    "avisos": [],
+    "modo": "manual"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 1",
+      "#Quarto 2"
+     ],
+     "dists": [
+      "",
+      "3"
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 1",
+      "#Quarto 2"
+     ],
+     "dists": [
+      "",
+      "3"
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro social"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c7t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Varanda"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro social",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro suíte",
+     "pot": 5500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3200,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Quarto 2": {
+     "luz": 160,
+     "tomadas": 300
+    },
+    "#Suíte": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Banheiro social": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Banheiro suíte": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    },
+    "#Varanda": {
+     "luz": 0,
+     "tomadas": 100
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 32634,
+   "sha1": "3a035f3924da50a5c4a33dc9b8486be60b8dd3b4"
+  }
+ },
+ "D comodo unico / norma": {
+  "circuitos": [
+   {
+    "nome": "Tomadas (TUG) — Edícula",
+    "tipo": "tug",
+    "comodo": "Edícula",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 40,
+   "nCircuitos": 1,
+   "reserva": 2,
+   "posicoes": 3,
+   "cargaTotalW": 300,
+   "correnteTotalA": 2.36,
+   "sistema": "220/127",
+   "categoria": "M0",
+   "demandaKva": 0.86,
+   "cargaInstaladaKw": 1,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 2,5 mm² — Preto (fase) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 5 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 5 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 40A | 1 un | Curva C, monopolar — categoria M0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 3 un | ",
+   "Placa 4x2 | 3 un | Com espelho",
+   "Conector de emenda (tipo Wago ou similar) | 4 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 0,
+   "modos": {
+    "norma": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 1,
+    "disjuntores": 1,
+    "metrosCabo": 4,
+    "avisos": [],
+    "modo": "norma"
+   },
+   "lista": [
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Edícula"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [],
+   "cargas": {
+    "#Edícula": {
+     "luz": 0,
+     "tomadas": 300
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 18914,
+   "sha1": "55bc0bbc80d824b33a318e88288537340ea89ad7"
+  }
+ },
+ "D comodo unico / economico": {
+  "circuitos": [
+   {
+    "nome": "Tomadas (TUG) — Edícula",
+    "tipo": "tug",
+    "comodo": "Edícula",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 40,
+   "nCircuitos": 1,
+   "reserva": 2,
+   "posicoes": 3,
+   "cargaTotalW": 300,
+   "correnteTotalA": 2.36,
+   "sistema": "220/127",
+   "categoria": "M0",
+   "demandaKva": 0.86,
+   "cargaInstaladaKw": 1,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 2,5 mm² — Preto (fase) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 5 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 5 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 40A | 1 un | Curva C, monopolar — categoria M0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 3 un | ",
+   "Placa 4x2 | 3 un | Com espelho",
+   "Conector de emenda (tipo Wago ou similar) | 4 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 0,
+   "modos": {
+    "norma": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 1,
+    "disjuntores": 1,
+    "metrosCabo": 4,
+    "avisos": [],
+    "modo": "economico"
+   },
+   "lista": [
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Edícula"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [],
+   "cargas": {
+    "#Edícula": {
+     "luz": 0,
+     "tomadas": 300
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 19256,
+   "sha1": "e96e4f4872d1e1c8bfe53f221eaf38803628f621"
+  }
+ },
+ "D comodo unico / maximo": {
+  "circuitos": [
+   {
+    "nome": "Tomadas (TUG) — Edícula",
+    "tipo": "tug",
+    "comodo": "Edícula",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 40,
+   "nCircuitos": 1,
+   "reserva": 2,
+   "posicoes": 3,
+   "cargaTotalW": 300,
+   "correnteTotalA": 2.36,
+   "sistema": "220/127",
+   "categoria": "M0",
+   "demandaKva": 0.86,
+   "cargaInstaladaKw": 1,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 2,5 mm² — Preto (fase) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 5 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 5 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 40A | 1 un | Curva C, monopolar — categoria M0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 3 un | ",
+   "Placa 4x2 | 3 un | Com espelho",
+   "Conector de emenda (tipo Wago ou similar) | 4 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 0,
+   "modos": {
+    "norma": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 1,
+    "disjuntores": 1,
+    "metrosCabo": 4,
+    "avisos": [],
+    "modo": "maximo"
+   },
+   "lista": [
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Edícula"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [],
+   "cargas": {
+    "#Edícula": {
+     "luz": 0,
+     "tomadas": 300
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 19239,
+   "sha1": "89a36758a7623e8ab694ed51ac815e32eb2c5423"
+  }
+ },
+ "D comodo unico / manual": {
+  "circuitos": [
+   {
+    "nome": "Tomadas (TUG) — Edícula",
+    "tipo": "tug",
+    "comodo": "Edícula",
+    "potenciaW": 300,
+    "tensaoV": 127,
+    "ligacao": "F-N",
+    "correnteA": 2.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 40,
+   "nCircuitos": 1,
+   "reserva": 2,
+   "posicoes": 3,
+   "cargaTotalW": 300,
+   "correnteTotalA": 2.36,
+   "sistema": "220/127",
+   "categoria": "M0",
+   "demandaKva": 0.86,
+   "cargaInstaladaKw": 1,
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "monofasico",
+   "ligacaoNecessaria": "monofasico",
+   "caboRamal": "conforme distribuidora",
+   "caboEntrada": "10 mm² Cu + neutro (estimado)",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 2,5 mm² — Preto (fase) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 5 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 5 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 5 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 40A | 1 un | Curva C, monopolar — categoria M0 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 8 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 3 un | ",
+   "Placa 4x2 | 3 un | Com espelho",
+   "Conector de emenda (tipo Wago ou similar) | 4 un | ",
+   "Fita isolante | 2 rolo | ",
+   "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 0,
+   "modos": {
+    "norma": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 1,
+     "disjuntores": 1,
+     "metrosCabo": 4,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 1,
+    "disjuntores": 1,
+    "metrosCabo": 4,
+    "avisos": [],
+    "modo": "manual"
+   },
+   "lista": [
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Edícula"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [],
+   "cargas": {
+    "#Edícula": {
+     "luz": 0,
+     "tomadas": 300
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 19206,
+   "sha1": "d7d8d91e6d360e8db47f3826a88fc5641f889b41"
+  }
+ },
+ "E casa trifasica 380 / norma": {
+  "circuitos": [
+   {
+    "nome": "Iluminação — Sala",
+    "tipo": "iluminacao",
+    "comodo": "Sala",
+    "potenciaW": 460,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.09,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Sala",
+    "tipo": "tug",
+    "comodo": "Sala",
+    "potenciaW": 500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.27,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto 1",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 1",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 1",
+    "tipo": "tug",
+    "comodo": "Quarto 1",
+    "potenciaW": 400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Quarto 2",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 2",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 2",
+    "tipo": "tug",
+    "comodo": "Quarto 2",
+    "potenciaW": 400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 280,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.27,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.73,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 8.64,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 7500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 34.09,
+    "bitolaMM2": 16,
+    "disjuntorA": 40,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 15.91,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.88,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 13,
+    "dr": false
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 2500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 12.35,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 32,
+   "nCircuitos": 19,
+   "reserva": 4,
+   "posicoes": 23,
+   "cargaTotalW": 24700,
+   "correnteTotalA": 114.6,
+   "sistema": "380/220",
+   "categoria": "T6",
+   "demandaKva": 20.34,
+   "cargaInstaladaKw": 23.31,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T6.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "3x10+10 mm² Al multiplexado",
+   "caboEntrada": "3x6/6/6 mm² Cu",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 81 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 81 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 81 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Preto (fase) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Azul claro (neutro) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Verde-amarelo (terra) | 18 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 186 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 8 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 40mm | 17 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 16 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 40A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 32A | 1 un | Curva C, tripolar — categoria T6 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 24 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 34 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 2 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 76 un | ",
+   "Fita isolante | 7 rolo | ",
+   "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 5,
+   "modos": {
+    "norma": {
+     "circuitos": 14,
+     "disjuntores": 19,
+     "metrosCabo": 140,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 14,
+    "disjuntores": 19,
+    "metrosCabo": 140,
+    "avisos": [],
+    "modo": "norma"
+   },
+   "lista": [
+    {
+     "id": "c0l",
+     "tipo": "luz",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c0t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 7500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 2000,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq4",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 2500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Quarto 2": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Suíte": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 31897,
+   "sha1": "f256e180d0b5fec20d44135834031f9826d7b73b"
+  }
+ },
+ "E casa trifasica 380 / economico": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 960,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 4.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 1",
+    "tipo": "misto",
+    "comodo": "Quarto 1",
+    "potenciaW": 620,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 2",
+    "tipo": "misto",
+    "comodo": "Quarto 2",
+    "potenciaW": 620,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte",
+    "tipo": "misto",
+    "comodo": "Suíte",
+    "potenciaW": 680,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 3.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 3.18,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 8.64,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 7500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 34.09,
+    "bitolaMM2": 10,
+    "disjuntorA": 40,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 15.91,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.88,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 13,
+    "dr": false
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 2500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 12.35,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 32,
+   "nCircuitos": 14,
+   "reserva": 4,
+   "posicoes": 18,
+   "cargaTotalW": 24700,
+   "correnteTotalA": 114.6,
+   "sistema": "380/220",
+   "categoria": "T6",
+   "demandaKva": 20.34,
+   "cargaInstaladaKw": 23.31,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T6.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "3x10+10 mm² Al multiplexado",
+   "caboEntrada": "3x6/6/6 mm² Cu",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Preto (fase) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Azul claro (neutro) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Verde-amarelo (terra) | 18 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 134 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 8 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 32mm | 17 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 11 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 40A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 32A | 1 un | Curva C, tripolar — categoria T6 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 34 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 2 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 56 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 5,
+   "modos": {
+    "norma": {
+     "circuitos": 14,
+     "disjuntores": 19,
+     "metrosCabo": 140,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 9,
+    "disjuntores": 14,
+    "metrosCabo": 92,
+    "avisos": [],
+    "modo": "economico"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 7500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 2000,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq4",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 2500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Quarto 2": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Suíte": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 31006,
+   "sha1": "611a025dff6a381ed70ad69d44e2b97822932325"
+  }
+ },
+ "E casa trifasica 380 / maximo": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 960,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 4.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 1",
+    "tipo": "misto",
+    "comodo": "Quarto 1",
+    "potenciaW": 620,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 8,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Quarto 2",
+    "tipo": "misto",
+    "comodo": "Quarto 2",
+    "potenciaW": 620,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 10,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Suíte",
+    "tipo": "misto",
+    "comodo": "Suíte",
+    "potenciaW": 680,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 3.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação e tomadas — Banheiro",
+    "tipo": "misto",
+    "comodo": "Banheiro",
+    "potenciaW": 700,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 3.18,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 8.64,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 7500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 34.09,
+    "bitolaMM2": 10,
+    "disjuntorA": 40,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 15.91,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.88,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 13,
+    "dr": false
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 2500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 12.35,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 32,
+   "nCircuitos": 14,
+   "reserva": 4,
+   "posicoes": 18,
+   "cargaTotalW": 24700,
+   "correnteTotalA": 114.6,
+   "sistema": "380/220",
+   "categoria": "T6",
+   "demandaKva": 20.34,
+   "cargaInstaladaKw": 23.31,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T6.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "3x10+10 mm² Al multiplexado",
+   "caboEntrada": "3x6/6/6 mm² Cu",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 26 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 114 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Preto (fase) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Azul claro (neutro) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 10 mm² — Verde-amarelo (terra) | 18 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 134 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 8 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 32mm | 17 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 11 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 40A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 32A | 1 un | Curva C, tripolar — categoria T6 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 34 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 2 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 56 un | ",
+   "Fita isolante | 5 rolo | ",
+   "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 5,
+   "modos": {
+    "norma": {
+     "circuitos": 14,
+     "disjuntores": 19,
+     "metrosCabo": 140,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 9,
+    "disjuntores": 14,
+    "metrosCabo": 92,
+    "avisos": [],
+    "modo": "maximo"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 1"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3",
+     "tipo": "misto",
+     "rooms": [
+      "#Quarto 2"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4",
+     "tipo": "misto",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5",
+     "tipo": "misto",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c6t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 7500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 2000,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq4",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 2500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Quarto 2": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Suíte": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 30989,
+   "sha1": "8b8a3102655b1c0261450dae76a5cc36cda8710c"
+  }
+ },
+ "E casa trifasica 380 / manual": {
+  "circuitos": [
+   {
+    "nome": "Iluminação e tomadas — Sala",
+    "tipo": "misto",
+    "comodo": "Sala",
+    "potenciaW": 960,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 4.36,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 4,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Cozinha",
+    "tipo": "iluminacao",
+    "comodo": "Cozinha",
+    "potenciaW": 220,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Cozinha",
+    "tipo": "tug",
+    "comodo": "Cozinha",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.09,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 6,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Quarto 1 + Quarto 2",
+    "tipo": "iluminacao",
+    "comodo": "Quarto 1 + Quarto 2",
+    "potenciaW": 440,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Quarto 1 + Quarto 2",
+    "tipo": "tug",
+    "comodo": "Quarto 1 + Quarto 2",
+    "potenciaW": 800,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 3.64,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 11,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Suíte",
+    "tipo": "iluminacao",
+    "comodo": "Suíte",
+    "potenciaW": 280,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.27,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Tomadas (TUG) — Suíte",
+    "tipo": "tug",
+    "comodo": "Suíte",
+    "potenciaW": 400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 1.82,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 12,
+    "dr": false
+   },
+   {
+    "nome": "Iluminação — Banheiro",
+    "tipo": "iluminacao",
+    "comodo": "Banheiro",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Banheiro",
+    "tipo": "tug",
+    "comodo": "Banheiro",
+    "potenciaW": 600,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 2.73,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 14,
+    "dr": true
+   },
+   {
+    "nome": "Iluminação — Área de serviço",
+    "tipo": "iluminacao",
+    "comodo": "Área de serviço",
+    "potenciaW": 100,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 0.45,
+    "bitolaMM2": 1.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Tomadas (TUG) — Área de serviço",
+    "tipo": "tug",
+    "comodo": "Área de serviço",
+    "potenciaW": 1900,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 8.64,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 16,
+    "dr": true
+   },
+   {
+    "nome": "Chuveiro elétrico — Banheiro",
+    "tipo": "tue",
+    "comodo": "Banheiro",
+    "potenciaW": 7500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 34.09,
+    "bitolaMM2": 16,
+    "disjuntorA": 40,
+    "comprimentoM": 15,
+    "dr": true
+   },
+   {
+    "nome": "Torneira elétrica — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 3500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 15.91,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   },
+   {
+    "nome": "Ar-condicionado — Suíte",
+    "tipo": "tue",
+    "comodo": "Suíte",
+    "potenciaW": 2000,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 9.88,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 13,
+    "dr": false
+   },
+   {
+    "nome": "Ar-condicionado — Quarto 1",
+    "tipo": "tue",
+    "comodo": "Quarto 1",
+    "potenciaW": 1400,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 6.92,
+    "bitolaMM2": 2.5,
+    "disjuntorA": 10,
+    "comprimentoM": 9,
+    "dr": false
+   },
+   {
+    "nome": "Forno elétrico — Cozinha",
+    "tipo": "tue",
+    "comodo": "Cozinha",
+    "potenciaW": 2500,
+    "tensaoV": 220,
+    "ligacao": "F-N",
+    "correnteA": 12.35,
+    "bitolaMM2": 4,
+    "disjuntorA": 16,
+    "comprimentoM": 7,
+    "dr": true
+   }
+  ],
+  "quadro": {
+   "disjuntorGeralA": 32,
+   "nCircuitos": 16,
+   "reserva": 4,
+   "posicoes": 20,
+   "cargaTotalW": 24700,
+   "correnteTotalA": 114.6,
+   "sistema": "380/220",
+   "categoria": "T6",
+   "demandaKva": 20.34,
+   "cargaInstaladaKw": 23.31,
+   "avisoCategoria": "A carga pede ligação maior que a escolhida: sugerida categoria T6.",
+   "versaoMotor": "2.0.0",
+   "verificarDistribuidora": true,
+   "ligacaoSistema": "trifasico",
+   "ligacaoNecessaria": "trifasico",
+   "caboRamal": "3x10+10 mm² Al multiplexado",
+   "caboEntrada": "3x6/6/6 mm² Cu",
+   "eletrodutoEntrada": "32 mm (1\")"
+  },
+  "materiais": [
+   "Cabo flexível 1,5 mm² — Preto (fase) | 68 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Azul claro (neutro) | 68 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 1,5 mm² — Verde-amarelo (terra) | 68 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Preto (fase) | 106 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Azul claro (neutro) | 106 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 2,5 mm² — Verde-amarelo (terra) | 106 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Preto (fase) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Azul claro (neutro) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 4 mm² — Verde-amarelo (terra) | 9 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Preto (fase) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Azul claro (neutro) | 18 m | Cobre, isolação PVC 750V",
+   "Cabo flexível 16 mm² — Verde-amarelo (terra) | 18 m | Cobre, isolação PVC 750V",
+   "Eletroduto flexível corrugado 20mm | 167 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 25mm | 8 m | 10% de folga — embutido na parede",
+   "Eletroduto flexível corrugado 40mm | 17 m | 10% de folga — embutido na parede",
+   "Disjuntor 10A | 13 un | Curva C, monopolar",
+   "Disjuntor 16A | 2 un | Curva C, monopolar",
+   "Disjuntor 40A | 1 un | Curva C, monopolar",
+   "Disjuntor geral 32A | 1 un | Curva C, tripolar — categoria T6 (pré-dimensionamento, verificar com a distribuidora)",
+   "Quadro de distribuição 18 disjuntores | 1 un | Embutir ou sobrepor, com barramento e tampa",
+   "Caixa de embutir 4x2 | 34 un | ",
+   "Caixa redonda (fundo) | 9 un | Embutir na laje/forro",
+   "Placa 4x2 | 27 un | Com espelho",
+   "Placa 4x2 1 tecla | 5 un | Interruptor simples — 1 luz no conjunto",
+   "Placa 4x2 2 teclas | 2 un | Interruptor duplo — 2 luzes no conjunto",
+   "Conector de emenda (tipo Wago ou similar) | 64 un | ",
+   "Fita isolante | 6 rolo | ",
+   "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
+   "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
+   "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
+   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
+   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
+   "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
+   "Conector de haste de aterramento | 3 un | Sistema de aterramento",
+   "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
+  ],
+  "comparacao": {
+   "nTUE": 5,
+   "modos": {
+    "norma": {
+     "circuitos": 14,
+     "disjuntores": 19,
+     "metrosCabo": 140,
+     "avisos": []
+    },
+    "economico": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    },
+    "maximo": {
+     "circuitos": 9,
+     "disjuntores": 14,
+     "metrosCabo": 92,
+     "avisos": []
+    }
+   },
+   "atual": {
+    "circuitos": 11,
+    "disjuntores": 16,
+    "metrosCabo": 122,
+    "avisos": [],
+    "modo": "manual"
+   },
+   "lista": [
+    {
+     "id": "c0",
+     "tipo": "misto",
+     "rooms": [
+      "#Sala"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1l",
+     "tipo": "luz",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c1t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Cozinha"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c2l",
+     "tipo": "luz",
+     "rooms": [
+      "#Quarto 1",
+      "#Quarto 2"
+     ],
+     "dists": [
+      "",
+      "3"
+     ]
+    },
+    {
+     "id": "c2t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Quarto 1",
+      "#Quarto 2"
+     ],
+     "dists": [
+      "",
+      "3"
+     ]
+    },
+    {
+     "id": "c3l",
+     "tipo": "luz",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c3t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Suíte"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4l",
+     "tipo": "luz",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c4t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Banheiro"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5l",
+     "tipo": "luz",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    },
+    {
+     "id": "c5t",
+     "tipo": "tomadas",
+     "rooms": [
+      "#Área de serviço"
+     ],
+     "dists": [
+      ""
+     ]
+    }
+   ],
+   "equipamentos": [
+    {
+     "id": "eq0",
+     "tipo": "Chuveiro elétrico",
+     "room": "#Banheiro",
+     "pot": 7500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Chuveiro elétrico sempre tem circuito próprio."
+    },
+    {
+     "id": "eq1",
+     "tipo": "Torneira elétrica",
+     "room": "#Cozinha",
+     "pot": 3500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Torneira elétrica sempre tem circuito próprio."
+    },
+    {
+     "id": "eq2",
+     "tipo": "Ar-condicionado",
+     "room": "#Suíte",
+     "pot": 2000,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq3",
+     "tipo": "Ar-condicionado",
+     "room": "#Quarto 1",
+     "pot": 1400,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "tensão do sistema não informada."
+    },
+    {
+     "id": "eq4",
+     "tipo": "Forno elétrico",
+     "room": "#Cozinha",
+     "pot": 2500,
+     "divide": false,
+     "alvo": null,
+     "podeDividir": false,
+     "motivo": "Forno elétrico sempre tem circuito próprio."
+    }
+   ],
+   "cargas": {
+    "#Sala": {
+     "luz": 460,
+     "tomadas": 500
+    },
+    "#Cozinha": {
+     "luz": 220,
+     "tomadas": 2000
+    },
+    "#Quarto 1": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Quarto 2": {
+     "luz": 220,
+     "tomadas": 400
+    },
+    "#Suíte": {
+     "luz": 280,
+     "tomadas": 400
+    },
+    "#Banheiro": {
+     "luz": 100,
+     "tomadas": 600
+    },
+    "#Área de serviço": {
+     "luz": 100,
+     "tomadas": 1900
+    }
+   },
+   "limiteVA": 2500,
+   "tomadasV": null
+  },
+  "pdf": {
+   "tamanho": 31372,
+   "sha1": "27f1fa612839ad4fcf2d42de3ee0cc273ea6d023"
+  }
+ }
+}

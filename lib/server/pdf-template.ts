@@ -2,7 +2,7 @@
 import { AppState, Room } from '../types';
 import { calcTotais } from './calculator';
 import { calcularMateriais, CircuitoCalc, ResultadoCalculo } from './calc-materiais';
-import { resolverUnidades } from './circuitos';
+import { montarCircuitos } from './circuitos';
 
 import { num, routeLen } from '../util';
 
@@ -87,16 +87,21 @@ export function gerarHtmlPdf(dados: AppState): string {
     economico: 'econômico (iluminação e tomadas no mesmo disjuntor, por cômodo)',
     maximo: 'mais econômico (também junta cômodos vizinhos)',
     manual: 'ajuste manual',
+    personalizado: 'personalizado (circuitos escolhidos pelo cliente)',
   };
-  const divisao = resolverUnidades(dados.rooms ?? [], dados.circuitos);
+  const divisao = montarCircuitos(dados.rooms ?? [], dados.circuitos);
   const modoCirc = dados.circuitos?.modo ?? 'norma';
-  const juntados = divisao.unidades.filter((u) => u.rooms.length > 1 || u.unico);
-  const circuitosObsHtml = modoCirc === 'norma' && juntados.length === 0 ? '' : `
-    <li>Divisão de circuitos: ${esc(ROTULO_MODO[modoCirc] ?? modoCirc)}. ${juntados.length === 0 ? 'Nenhum circuito foi juntado.' : 'Circuitos juntados: ' + juntados.map((u) => {
+  // Frases dos circuitos juntados: nos modos prontos, por unidade (cômodos/grupos); no personalizado, por circuito.
+  const juntadosTxt: string[] = modoCirc === 'personalizado'
+    ? divisao.circuitos.filter((c) => c.rooms.length > 1 || c.tipo === 'misto').map((c) => esc(c.nome))
+    : divisao.unidades.filter((u) => u.rooms.length > 1 || u.unico).map((u) => {
       const nomes = u.rooms.map((r) => r.nome || r.base || 'Cômodo').join(' + ');
       return esc(`${nomes} (${u.unico ? 'iluminação e tomadas no mesmo disjuntor' : 'iluminação juntas e tomadas juntas'})`);
-    }).join('; ') + '.'} Juntar circuitos é escolha do cliente para reduzir disjuntores e cabo: o padrão da NBR 5410 é separar iluminação e tomadas — confirme com o profissional responsável.</li>
-    ${divisao.avisos.map((a) => `<li>Circuitos: ${esc(a)}</li>`).join('')}`;
+    });
+  const circuitosObsHtml = (modoCirc === 'norma' && juntadosTxt.length === 0 ? '' : `
+    <li>Divisão de circuitos: ${esc(ROTULO_MODO[modoCirc] ?? modoCirc)}. ${juntadosTxt.length === 0 ? 'Nenhum circuito foi juntado.' : 'Circuitos juntados: ' + juntadosTxt.join('; ') + '.'} Juntar circuitos é escolha do cliente para reduzir disjuntores e cabo: o padrão da NBR 5410 é separar iluminação e tomadas — confirme com o profissional responsável.</li>
+    ${divisao.avisos.map((a) => `<li>Circuitos: ${esc(a)}</li>`).join('')}`)
+    + resultado.avisosEquip.map((a: string) => `<li>Equipamentos: ${esc(a)}</li>`).join('');
 
   const circuitosHtml = resultado.circuitos.map((c: CircuitoCalc, i: number) => `
     <tr>
@@ -390,6 +395,7 @@ ${aterramentoHtml}
     <div><div class="label">Corrente total</div><div class="value">${fmtD(resultado.quadro.correnteTotalA)} A</div></div>
   </div>
   <p class="aviso-box">Pré-dimensionamento (DIS-NOR-030 Rev.05) — verificar com a distribuidora${resultado.quadro.verificarDistribuidora ? ' local: a tabela de categorias usada é apenas referência para esta UF' : ''}.</p>
+  ${resultado.quadro.avisoCircuitos ? `<p class="aviso-box">${esc(resultado.quadro.avisoCircuitos)}</p>` : ''}
 </div>
 
 <div class="section">

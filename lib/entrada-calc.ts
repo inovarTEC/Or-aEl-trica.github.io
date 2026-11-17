@@ -2,7 +2,7 @@
 import type {
   DiametroEletroduto, EntradaPrincipal, SistemaAlimentacao, TipoEletroduto, TipoEntrada,
 } from './types';
-import { bitolaEntrada, categoriaDisNor, sistemaSugeridoUf } from './tensao-por-uf';
+import { bitolaEntrada, categoriaDisNor, infoUf, sistemaSugeridoUf } from './tensao-por-uf';
 
 export const LIMIAR_PERCURSO_AVISO = 30; // metros
 
@@ -26,8 +26,27 @@ export function tipoEletrodutoPadrao(t: TipoEntrada): TipoEletroduto {
 
 /** Tensão de referência do sistema: em 380/220 V o trifásico é 380 V; em 220/127 V a tensão entre fases é 220 V. */
 export function tensaoDoSistema(s: SistemaAlimentacao, sistemaTensao?: string): string {
-  if (sistemaTensao === '220/127') return s === 'monofasico' ? '127' : '220';
-  return s === 'trifasico' ? '380' : '220';
+  // 380/220 V: fase-neutro 220, entre fases 380. Qualquer outra (inclui "não sei"): o app adota 220/127 V.
+  if (sistemaTensao === '380/220') return s === 'trifasico' ? '380' : '220';
+  return s === 'monofasico' ? '127' : '220';
+}
+
+/** Estado (UF) escolhido: grava a tensão da localidade e pré-preenche o sistema (a pessoa pode alterar depois). Etapa 1 e etapa 5 usam esta mesma função. */
+export function patchUf(sigla: string, potKw: number): Partial<EntradaPrincipal> {
+  const u = infoUf(sigla);
+  if (!u) return { uf: '', sistemaTensao: undefined };
+  const s = sistemaSugeridoUf(u.tensao, potKw);
+  return { uf: u.uf, sistemaTensao: u.tensao, sistema: s, sistemaManual: false, tensao: tensaoDoSistema(s, u.tensao) };
+}
+
+/** Tensão da localidade escolhida à mão. */
+export function patchTensao(e: Pick<EntradaPrincipal, 'sistema'>, t: NonNullable<EntradaPrincipal['sistemaTensao']>): Partial<EntradaPrincipal> {
+  return { sistemaTensao: t, tensao: tensaoDoSistema(e.sistema, t) };
+}
+
+/** "Usar trifásico": troca o sistema para trifásico (fica manual: a sugestão automática não desfaz). */
+export function patchTrifasico(e: Pick<EntradaPrincipal, 'sistemaTensao'>): Partial<EntradaPrincipal> {
+  return { sistema: 'trifasico', sistemaManual: true, tensao: tensaoDoSistema('trifasico', e.sistemaTensao) };
 }
 
 /**
@@ -55,19 +74,51 @@ export function sugestoesEntrada(e: EntradaPrincipal): Partial<EntradaPrincipal>
   return patch;
 }
 
-/** Potência (kVA) como texto do campo: sem demanda = vazio. */
+/** Padrão de entrada devolvido por /api/calcular (campo `entrada`). */
+export interface PadraoEntrada {
+  demandaKva: number;
+  cargaInstaladaKw?: number;
+  ligacaoNecessaria?: SistemaAlimentacao | null;
+  avisoCircuitos?: string | null;
+  categoria: string;
+  disjuntorGeralA: number;
+  sistema: string;
+  uf: string | null;
+  /** Ligação que o cálculo está usando agora (a da categoria exibida). */
+  ligacao?: SistemaAlimentacao | null;
+  /** Se a carga passa (ou está perto) do limite da categoria: como ficaria em ligação trifásica. */
+  sugestaoTrifasica?: { categoria: string; disjuntorGeralA: number; tensao: string; secaoCu: number } | null;
+}
+
+
+/**
+ * Valor que a entrada usa como potência (DIS-NOR-030 6.28): ligação monofásica/bifásica decide pela carga instalada (kW);
+ * trifásica pela demanda (kVA). O quadro "Padrão de entrada" e o campo "Potência estimada" usam esta mesma função.
+ * - `ligacaoAtual = true` (a pessoa escolheu o sistema): vale a ligação do sistema escolhido.
+ * - `false` (sistema automático): vale a ligação mínima que a carga exige, que não depende do sistema (evita laço de sincronização).
+ */
+export function potenciaAuto(p: PadraoEntrada | null | undefined, ligacaoAtual = false): { valor: number; unidade: 'kW' | 'kVA'; label: string } | null {
+  if (!p) return null;
+  const lig = ligacaoAtual ? p.ligacao : p.ligacaoNecessaria;
+  const porCarga = !!lig && lig !== 'trifasico' && typeof p.cargaInstaladaKw === 'number';
+  return porCarga
+    ? { valor: p.cargaInstaladaKw as number, unidade: 'kW', label: 'Carga instalada' }
+    : { valor: p.demandaKva, unidade: 'kVA', label: 'Demanda total' };
+}
+
+/** Potência como texto do campo: sem valor = vazio. */
 export const textoPotencia = (demandaKva: number | null | undefined): string =>
   demandaKva && demandaKva > 0 ? String(Math.round(demandaKva * 100) / 100) : '';
 
 /**
  * Sincroniza a entrada com a demanda calculada (padrão de entrada): se a pessoa não editou a potência,
  * ela acompanha a demanda (some quando não há mais carga) e sistema/bitola/diâmetro se ajustam junto.
- * `demandaKva` null = não há cômodo nem equipamento. Devolve só o que mudou.
+ * `potenciaKva` = valor de potenciaAuto() (kW ou kVA); null = não há cômodo nem equipamento. Devolve só o que mudou.
  */
-export function sincronizarEntrada(e: EntradaPrincipal, demandaKva: number | null): Partial<EntradaPrincipal> {
+export function sincronizarEntrada(e: EntradaPrincipal, potenciaKva: number | null): Partial<EntradaPrincipal> {
   const patch: Partial<EntradaPrincipal> = {};
   if (!e.potenciaManual) {
-    const alvo = textoPotencia(demandaKva);
+    const alvo = textoPotencia(potenciaKva);
     if (alvo !== (e.potenciaDemandada ?? '')) patch.potenciaDemandada = alvo;
   }
   const depois: EntradaPrincipal = { ...e, ...patch };
