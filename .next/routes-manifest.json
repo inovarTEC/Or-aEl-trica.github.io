@@ -1,0 +1,99 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api/calcular",
+      "regex": "^/api/calcular(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/calcular(?:/)?$"
+    },
+    {
+      "page": "/api/circuitos",
+      "regex": "^/api/circuitos(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/circuitos(?:/)?$"
+    },
+    {
+      "page": "/api/liberar",
+      "regex": "^/api/liberar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/liberar(?:/)?$"
+    },
+    {
+      "page": "/api/pagar",
+      "regex": "^/api/pagar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/pagar(?:/)?$"
+    },
+    {
+      "page": "/api/regerar",
+      "regex": "^/api/regerar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/regerar(?:/)?$"
+    },
+    {
+      "page": "/api/verificar",
+      "regex": "^/api/verificar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/verificar(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

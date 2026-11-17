@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/calcular/route": "/api/calcular",
+  "/api/circuitos/route": "/api/circuitos",
+  "/api/liberar/route": "/api/liberar",
+  "/api/pagar/route": "/api/pagar",
+  "/api/regerar/route": "/api/regerar",
+  "/api/verificar/route": "/api/verificar",
+  "/page": "/"
+}
