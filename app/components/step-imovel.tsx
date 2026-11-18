@@ -40,7 +40,7 @@ export default function StepImovel() {
                     onClick={() => store.setField(opt.key, item as any)}
                     className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all border ${
                       current === item
-                        ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                        ? 'bg-selected text-selected-foreground border-selected shadow-sm'
                         : 'bg-card border-border hover:border-primary/50 hover:bg-primary/5'
                     }`}
                   >

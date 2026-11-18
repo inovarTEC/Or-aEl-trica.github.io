@@ -140,7 +140,7 @@ export default function StepComodos() {
                       <Label className="text-xs">De onde vem a fiação deste cômodo?</Label>
                       <div className="grid grid-cols-2 gap-2 mt-1">
                         <button type="button" onClick={() => store.updateRoom(r?.id ?? '', { via: '' })}
-                          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${!r?.via ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary/50'}`}>
+                          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${!r?.via ? 'bg-selected text-selected-foreground border-selected' : 'border-border hover:border-primary/50'}`}>
                           Direto do quadro
                         </button>
                         <button type="button" onClick={() => {
@@ -148,7 +148,7 @@ export default function StepComodos() {
                           if (others.length === 0) { toast.error('Adicione outro cômodo primeiro'); return; }
                           store.updateRoom(r?.id ?? '', { via: others[0]?.id ?? '' });
                         }}
-                          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${r?.via ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary/50'}`}>
+                          className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${r?.via ? 'bg-selected text-selected-foreground border-selected' : 'border-border hover:border-primary/50'}`}>
                           Pelo caminho de outro
                         </button>
                       </div>

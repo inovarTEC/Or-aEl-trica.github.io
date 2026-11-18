@@ -151,7 +151,7 @@ export default function StepPontos() {
         {rooms.map((rm: Room) => (
           <button key={rm?.id} type="button" onClick={() => setActiveRoom(rm?.id ?? '')}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap border transition-all ${
-              activeRoom === rm?.id ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary/50 bg-card'
+              activeRoom === rm?.id ? 'bg-selected text-selected-foreground border-selected' : 'border-border hover:border-primary/50 bg-card'
             }`}>
             <MapPin className="w-3 h-3" /> {rm?.nome || rm?.base || 'Cômodo'}
           </button>

@@ -293,7 +293,7 @@ export default function StepEquipamentos() {
                     <div className="flex gap-2 mt-1">
                       {(['Unidade externa', 'Unidade interna'] as const).map((v) => (
                         <button key={v} type="button" onClick={() => store.updateEquip(e?.id ?? '', { alim: v })}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${e?.alim === v ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary/50'}`}>
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${e?.alim === v ? 'bg-selected text-selected-foreground border-selected' : 'border-border hover:border-primary/50'}`}>
                           {v}
                         </button>
                       ))}

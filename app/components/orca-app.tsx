@@ -15,13 +15,20 @@ import StepPrevia from './step-previa';
 import { Button } from '@/components/ui/button';
 import DialogoConfirmar from './dialogo-confirmar';
 import { carregarEstado, edicoesRestantes, estadoExpirado, formatarData, type EstadoLocal } from '@/lib/storage-local';
-import { ChevronLeft, ChevronRight, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Moon, Sun, Zap } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 export default function OrcaApp() {
   const store = useStore();
   const step = store?.step ?? 0;
   /** Estado salvo lido no momento do clique em «Novo orçamento» (null = caixa fechada). */
   const [confirmarNovo, setConfirmarNovo] = useState<{ salvo: EstadoLocal | null } | null>(null);
+
+  /** Tema claro/escuro (next-themes guarda a escolha no navegador). `montado` evita diferença entre servidor e navegador. */
+  const { resolvedTheme, setTheme } = useTheme();
+  const [montado, setMontado] = useState(false);
+  useEffect(() => setMontado(true), []);
+  const escuro = montado && resolvedTheme === 'dark';
 
   useEffect(() => {
     store.hydrateFromStorage();
@@ -68,18 +75,28 @@ export default function OrcaApp() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+      <header className="sticky top-0 z-40 bg-header text-header-foreground border-b border-header-border">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-8 h-8 shrink-0 rounded-lg bg-primary flex items-center justify-center">
               <Zap className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg tracking-tight">OrçaElétrica</span>
+            <span className="font-bold text-lg tracking-tight truncate">OrçaElétrica</span>
           </div>
-          {/* Apaga tudo do navegador (dados, Pix e PDF) e volta ao início — só depois de confirmar. */}
-          <button type="button" onClick={pedirNovoOrcamento} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
-            Novo orçamento
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setTheme(escuro ? 'light' : 'dark')}
+              aria-label={escuro ? 'Mudar para o tema claro' : 'Mudar para o tema escuro'}
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-header-foreground/80 hover:bg-white/10 hover:text-header-foreground transition-colors"
+            >
+              {escuro ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            {/* Apaga tudo do navegador (dados, Pix e PDF) e volta ao início — só depois de confirmar. */}
+            <button type="button" onClick={pedirNovoOrcamento} className="rounded-lg bg-primary px-3.5 py-2 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap">
+              Novo orçamento
+            </button>
+          </div>
         </div>
       </header>
 
@@ -102,11 +119,11 @@ export default function OrcaApp() {
       {/* Navegação: fica no fim da página (não fixa), com folga embaixo para o selo do Netlify não cobrir o botão */}
       <div className="border-t border-border">
         <div className="max-w-4xl mx-auto px-4 pt-4 pb-32 flex items-center justify-between">
-          <Button variant="outline" onClick={() => store.setStep(Math.max(0, step - 1))} disabled={step === 0}>
+          <Button className="h-11 w-36" onClick={() => store.setStep(Math.max(0, step - 1))} disabled={step === 0}>
             <ChevronLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
           {step < STEP_PREVIA ? (
-            <Button onClick={avancar}>
+            <Button className="h-11 w-36" onClick={avancar}>
               Avançar <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           ) : null}

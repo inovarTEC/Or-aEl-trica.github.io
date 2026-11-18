@@ -55,6 +55,15 @@ const config: Config = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+        selected: {
+          DEFAULT: 'hsl(var(--selected))',
+          foreground: 'hsl(var(--selected-foreground))',
+        },
+        header: {
+          DEFAULT: 'hsl(var(--header))',
+          foreground: 'hsl(var(--header-foreground))',
+          border: 'hsl(var(--header-border))',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

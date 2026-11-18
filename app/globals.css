@@ -4,34 +4,35 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 48 17% 94%;
+    --foreground: 215 28% 17%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 215 28% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 215 28% 17%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 215 28% 17%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 47 19% 91%;
+    --secondary-foreground: 215 28% 17%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 47 22% 92%;
+    --muted-foreground: 217 11% 40%;
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 47 61% 91%;
+    --accent-foreground: 215 28% 17%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --border: 45 18% 87%;
+    --input: 44 17% 83%;
+    --ring: 32 95% 44%;
 
+    color-scheme: light;
     --radius: 0.75rem;
     --radius-sm: calc(0.75rem - 4px);
     --radius-lg: calc(0.75rem + 4px);
@@ -63,36 +64,45 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+
+    /* Tema claro: grafite + amarelo elétrico */
+    --primary-text: 26 90% 37%;
+    --selected: 215 28% 17%;
+    --selected-foreground: 0 0% 100%;
+    --header: 215 28% 17%;
+    --header-foreground: 0 0% 100%;
+    --header-border: 221 39% 11%;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    color-scheme: dark;
+    --background: 213 23% 8%;
+    --foreground: 220 14% 96%;
 
-    --card: 222 47% 9%;
-    --card-foreground: 210 40% 98%;
+    --card: 214 21% 13%;
+    --card-foreground: 220 14% 96%;
 
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 214 21% 13%;
+    --popover-foreground: 220 14% 96%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 221 39% 11%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 213 21% 17%;
+    --secondary-foreground: 220 14% 96%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 213 21% 17%;
+    --muted-foreground: 215 13% 65%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 214 20% 21%;
+    --accent-foreground: 220 14% 96%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
+    --border: 215 17% 20%;
+    --input: 214 17% 24%;
+    --ring: 43 96% 56%;
 
     --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.2);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
@@ -108,6 +118,14 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
+
+    /* Tema escuro: grafite escuro + amarelo elétrico */
+    --primary-text: 43 96% 56%;
+    --selected: 43 96% 56%;
+    --selected-foreground: 221 39% 11%;
+    --header: 215 21% 11%;
+    --header-foreground: 220 14% 96%;
+    --header-border: 215 17% 20%;
   }
 }
 
@@ -156,3 +174,43 @@
       radial-gradient(ellipse 40% 40% at 80% 0%, hsl(217 91% 60% / 0.1), transparent);
   }
 }
+
+
+/* ---- Tema: ajustes que valem para os dois temas ---- */
+
+/* Texto/ícone/link em «primary»: o amarelo cheio é só para fundos; no texto usa o tom de contraste. */
+:root .text-primary,
+:root .hover\:text-primary:hover { color: hsl(var(--primary-text)); }
+
+/* ---- Tema escuro: avisos e caixas coloridas (as cores claras fixas do Tailwind viram versões escuras) ---- */
+.dark .bg-amber-50 { background-color: #2B2412; }
+.dark .bg-amber-100 { background-color: #3A2F0F; }
+.dark .border-amber-300 { border-color: #7A5A14; }
+.dark .border-amber-400 { border-color: #B7791F; }
+.dark .text-amber-900,
+.dark .text-amber-800 { color: #FBD38D; }
+.dark .text-amber-700 { color: #FCD34D; }
+
+.dark .bg-green-50,
+.dark .bg-green-50\/50 { background-color: #14351F; }
+.dark .bg-green-100,
+.dark .bg-green-200 { background-color: #1A4527; }
+.dark .border-green-200,
+.dark .border-green-300 { border-color: #2F7D46; }
+.dark .text-green-800 { color: #A7F3C0; }
+.dark .text-green-700 { color: #86EFAC; }
+.dark .from-green-50 {
+  --tw-gradient-from: #14351F var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(20 53 31 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .to-green-100\/60 { --tw-gradient-to: #1A4527 var(--tw-gradient-to-position); }
+
+.dark .bg-blue-50 { background-color: #16243B; }
+.dark .border-blue-200 { border-color: #2C4A7A; }
+.dark .text-blue-900 { color: #BFD7FF; }
+.dark .text-blue-800,
+.dark .text-blue-700 { color: #93C5FD; }
+
+.dark .bg-red-100 { background-color: #3A1A1A; }
+.dark .text-red-700 { color: #FCA5A5; }
