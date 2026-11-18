@@ -166,9 +166,6 @@
    "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -318,8 +315,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 25785,
-   "sha1": "e0e4a2d3fa74a11e256fff107e64ebc9d53fa40b"
+   "tamanho": 25251,
+   "sha1": "9ffe3e053f4f431c95bc19291ec1ce3794e64c3a"
   }
  },
  "A apartamento pequeno / economico": {
@@ -450,9 +447,6 @@
    "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -572,8 +566,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 25367,
-   "sha1": "348dec32fa53dbbc45cad242fa7a07e75b931ca8"
+   "tamanho": 24833,
+   "sha1": "8a71538fe4285495085dfe17eeccc82b01aa1eda"
   }
  },
  "A apartamento pequeno / maximo": {
@@ -704,9 +698,6 @@
    "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -826,8 +817,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 25350,
-   "sha1": "06e0185e7f07e6056ba702524f4330cdb3cd9fcf"
+   "tamanho": 24816,
+   "sha1": "667477d552cdd3e5b4a021ae3fb4610a4609e6bc"
   }
  },
  "A apartamento pequeno / manual": {
@@ -984,9 +975,6 @@
    "Padrão de entrada categoria M1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 16 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -1126,8 +1114,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 25790,
-   "sha1": "4ef2bd164aeba6c7809fc0327eb59291872eb673"
+   "tamanho": 25256,
+   "sha1": "f75db69b94c30d411f88f6858f52e39384e292a3"
   }
  },
  "B casa 6 comodos / norma": {
@@ -1375,9 +1363,6 @@
    "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -1595,8 +1580,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 28966,
-   "sha1": "80e2501438bfab1df74c88850ffd9f06281c92af"
+   "tamanho": 28432,
+   "sha1": "da156c6efab566cce5aa94fdbee238e09c67f8f0"
   }
  },
  "B casa 6 comodos / economico": {
@@ -1792,9 +1777,6 @@
    "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -1972,8 +1954,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 28307,
-   "sha1": "7a0e397ce70f593252685829331a7b8333eeb8d3"
+   "tamanho": 27773,
+   "sha1": "aef0287c72cdfd7baa7e7eb89e8331deac375029"
   }
  },
  "B casa 6 comodos / maximo": {
@@ -2169,9 +2151,6 @@
    "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -2349,8 +2328,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 28290,
-   "sha1": "d58b8c5fe891e39cf5c5b6dc4a0b84c9c5e119a9"
+   "tamanho": 27756,
+   "sha1": "fc23adfdb1e6793dd0f342a6b6d7eb01b6aa1689"
   }
  },
  "B casa 6 comodos / manual": {
@@ -2585,9 +2564,6 @@
    "Padrão de entrada categoria B1 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 2x25 mm² Cu + neutro (estimado); eletroduto 40 mm (1¼\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -2795,8 +2771,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 28971,
-   "sha1": "b2391ae98b2edd3b43dc1c6fa1002780cdbb297d"
+   "tamanho": 28437,
+   "sha1": "67c8b13093e638dcea007ae2abfdf94afeee35f1"
   }
  },
  "C casa grande com varanda / norma": {
@@ -3125,9 +3101,6 @@
    "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -3419,8 +3392,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 33164,
-   "sha1": "f184812318d43b0e0cbe2e81b5ce5ae84fec2e9a"
+   "tamanho": 32630,
+   "sha1": "293f6df26517e718e60eea36295bd98680e881e2"
   }
  },
  "C casa grande com varanda / economico": {
@@ -3668,9 +3641,6 @@
    "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -3902,8 +3872,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 31486,
-   "sha1": "5571d6b8dfd1f0f30266afad1d8d6eea1485f422"
+   "tamanho": 30952,
+   "sha1": "e07a20938f3251dca7cba4f7315890bfd65464f0"
   }
  },
  "C casa grande com varanda / maximo": {
@@ -4125,9 +4095,6 @@
    "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -4349,8 +4316,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 30927,
-   "sha1": "213d249d77e27cd6b77a928e96eaac64b72972b8"
+   "tamanho": 30393,
+   "sha1": "cc17c21c9f481c09444a17cf0d346a225e65de0b"
   }
  },
  "C casa grande com varanda / manual": {
@@ -4640,9 +4607,6 @@
    "Padrão de entrada categoria T0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 3x10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -4908,8 +4872,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 32634,
-   "sha1": "3a035f3924da50a5c4a33dc9b8486be60b8dd3b4"
+   "tamanho": 32100,
+   "sha1": "2e748911c7975a20ba576f44da46788765906e0d"
   }
  },
  "D comodo unico / norma": {
@@ -4962,9 +4926,6 @@
    "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -5021,8 +4982,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 18914,
-   "sha1": "55bc0bbc80d824b33a318e88288537340ea89ad7"
+   "tamanho": 18380,
+   "sha1": "51d7970b511106eeb9cb430c1dd61a3974e7203d"
   }
  },
  "D comodo unico / economico": {
@@ -5075,9 +5036,6 @@
    "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -5134,8 +5092,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 19256,
-   "sha1": "e96e4f4872d1e1c8bfe53f221eaf38803628f621"
+   "tamanho": 18722,
+   "sha1": "38036604532c3890ac92f1960bc31d7341bb3bb6"
   }
  },
  "D comodo unico / maximo": {
@@ -5188,9 +5146,6 @@
    "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -5247,8 +5202,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 19239,
-   "sha1": "89a36758a7623e8ab694ed51ac815e32eb2c5423"
+   "tamanho": 18705,
+   "sha1": "9c11585f7fb33e904be860127fa49f63445ecb57"
   }
  },
  "D comodo unico / manual": {
@@ -5301,9 +5256,6 @@
    "Padrão de entrada categoria M0 | 1 conjunto | Ramal de conexão conforme distribuidora; ramal de entrada 10 mm² Cu + neutro (estimado); eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -5360,8 +5312,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 19206,
-   "sha1": "d7d8d91e6d360e8db47f3826a88fc5641f889b41"
+   "tamanho": 18672,
+   "sha1": "e6225c55503ca8aff10b461d3443d43952f0f4ad"
   }
  },
  "E casa trifasica 380 / norma": {
@@ -5665,9 +5617,6 @@
    "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -5929,8 +5878,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 31897,
-   "sha1": "f256e180d0b5fec20d44135834031f9826d7b73b"
+   "tamanho": 31363,
+   "sha1": "29159baf76acbfd3d35f12c6a93cb0fba5525712"
   }
  },
  "E casa trifasica 380 / economico": {
@@ -6169,9 +6118,6 @@
    "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -6383,8 +6329,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 31006,
-   "sha1": "611a025dff6a381ed70ad69d44e2b97822932325"
+   "tamanho": 30472,
+   "sha1": "65b77bccec342703227a54756d137d1af810f411"
   }
  },
  "E casa trifasica 380 / maximo": {
@@ -6623,9 +6569,6 @@
    "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -6837,8 +6780,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 30989,
-   "sha1": "8b8a3102655b1c0261450dae76a5cc36cda8710c"
+   "tamanho": 30455,
+   "sha1": "ceeaef2fac21beea9fa7d9e76540b47db5b38925"
   }
  },
  "E casa trifasica 380 / manual": {
@@ -7103,9 +7046,6 @@
    "Padrão de entrada categoria T6 | 1 conjunto | Ramal de conexão 3x10+10 mm² Al multiplexado; ramal de entrada 3x6/6/6 mm² Cu; eletroduto 32 mm (1\") — verificar com a distribuidora",
    "Cabo 6 mm² isolação 1 kV (alimentador) | 0 m | Entrada / alimentador principal",
    "Caixa padrão concessionária Monofásica | 1 un | Entrada / alimentador principal",
-   "Haste de aterramento 1,5 m | 1 un | Entrada / alimentador principal",
-   "Conector de haste de aterramento | 1 un | Entrada / alimentador principal",
-   "Caixa de inspeção de aterramento | 1 un | Entrada / alimentador principal",
    "Haste de aterramento 2,4 m | 3 un | Sistema de aterramento",
    "Conector de haste de aterramento | 3 un | Sistema de aterramento",
    "Caixa de inspeção de aterramento | 3 un | Sistema de aterramento"
@@ -7341,8 +7281,8 @@
    "tomadasV": null
   },
   "pdf": {
-   "tamanho": 31372,
-   "sha1": "27f1fa612839ad4fcf2d42de3ee0cc273ea6d023"
+   "tamanho": 30838,
+   "sha1": "87a91273239e44e71c53c826d9f9f17bca61f311"
   }
  }
 }

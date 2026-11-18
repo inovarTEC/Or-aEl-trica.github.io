@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import CheckoutModal from './checkout-modal';
+import DialogoConfirmar from './dialogo-confirmar';
 import { abrirPendencia, STEP_COMODOS, STEP_PONTOS } from '@/lib/navegacao';
 import { entradaPadrao, sincronizarEntrada, potenciaAuto, type PadraoEntrada } from '@/lib/entrada-calc';
 import { AFILIADOS, LINK_NOSSOS_APPS } from '@/lib/afiliados';
@@ -42,8 +43,16 @@ export default function StepPrevia() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [local, setLocal] = useState<EstadoLocal | null>(null);
   const [cep, setCep] = useState('');
+  const [confirmarEdicao, setConfirmarEdicao] = useState(false);
 
   const dados = JSON.stringify(dadosDoOrcamento(store));
+
+  /** PDF atualizado: se algo mudou desde o último PDF, abrir o modal gasta 1 edição — avisa antes. Sem mudança, abre direto. */
+  const gerarAtualizado = () => {
+    const mudou = !!local?.entrega && local.entrega.assinatura !== dados;
+    if (mudou) setConfirmarEdicao(true);
+    else setShowCheckout(true);
+  };
 
   // Releitura do estado salvo a cada abertura/fechamento do modal (o modal altera pagamento/entrega).
   useEffect(() => { setLocal(carregarEstado()); }, [showCheckout]);
@@ -294,7 +303,7 @@ export default function StepPrevia() {
             <p className="text-sm text-muted-foreground mt-1 mb-4">
               Este orçamento já foi pago. {edicoesRestantes(local) === 1 ? 'Resta 1 edição gratuita' : `Restam ${edicoesRestantes(local)} edições gratuitas`} até {formatarData(local.expiraEm)}.
             </p>
-            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={() => setShowCheckout(true)} disabled={faltas.length > 0}>
+            <Button size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white" onClick={gerarAtualizado} disabled={faltas.length > 0}>
               <Zap className="w-4 h-4 mr-2" /> Gerar PDF atualizado
             </Button>
           </CardContent>
@@ -316,6 +325,27 @@ export default function StepPrevia() {
       )}
 
       {showCheckout && <CheckoutModal valor={previa.valor} onClose={() => setShowCheckout(false)} />}
+
+      {confirmarEdicao && local && (() => {
+        const restantes = edicoesRestantes(local);
+        const ultima = restantes <= 1;
+        return (
+          <DialogoConfirmar
+            titulo="Gerar PDF atualizado?"
+            rotuloVoltar="Cancelar"
+            rotuloConfirmar="Gerar PDF atualizado"
+            onVoltar={() => setConfirmarEdicao(false)}
+            onConfirmar={() => { setConfirmarEdicao(false); setShowCheckout(true); }}
+          >
+            {ultima ? (
+              <p>Esta é a sua <strong>última</strong> edição gratuita. Depois dela, um novo orçamento exigirá um novo pagamento.</p>
+            ) : (
+              <p>Isso usa <strong>1 das suas {restantes} edições gratuitas</strong>. Depois restarão <strong>{restantes - 1}</strong>.</p>
+            )}
+            <p>Imprimir de novo o mesmo PDF não gasta edição.</p>
+          </DialogoConfirmar>
+        );
+      })()}
     </motion.div>
   );
 }

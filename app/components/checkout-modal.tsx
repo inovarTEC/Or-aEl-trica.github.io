@@ -25,6 +25,10 @@ function dadosAtuais() {
   return { dados, assinatura: JSON.stringify(dados) };
 }
 
+/** Erros que repetir não resolve (dados inválidos/incompletos ou grandes demais): o usuário precisa corrigir o orçamento. */
+const falhaPermanente = (e: unknown) => [400, 413, 422].includes((e as { status?: number })?.status ?? 0);
+const falha = (status: number) => Object.assign(new Error('falha'), { status });
+
 const gravar = (fn: (e: EstadoLocal) => EstadoLocal) => alterarEstado(fn, useStore.getState());
 
 export default function CheckoutModal({ onClose, valor }: { onClose: () => void; valor: number }) {
@@ -36,6 +40,10 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
   const [estado, setEstado] = useState<EstadoLocal | null>(null);
   const [restante, setRestante] = useState(0);
   const ocupado = useRef(false);
+  /** Falhas seguidas ao liberar o PDF: depois de 5, para de tentar sozinho. */
+  const falhasLiberar = useRef(0);
+  /** 'edicao' = falha ao gerar edição; 'dados' = servidor recusou os dados; 'liberacao' = falhou várias vezes. */
+  const [erroTipo, setErroTipo] = useState<'edicao' | 'dados' | 'liberacao'>('edicao');
 
   const post = (url: string, p: PagamentoLocal) => fetch(url, {
     method: 'POST',
@@ -51,7 +59,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
       setFase('limite');
       return;
     }
-    if (!r.ok) throw new Error('falha');
+    if (!r.ok) throw falha(r.status);
     const { html } = await r.json();
     const { assinatura } = dadosAtuais();
     const e = gravar((s) => ({
@@ -71,7 +79,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
       const r = await post('/api/liberar', p);
       // Já entregue (ex.: a resposta anterior se perdeu): recupera o PDF sem gastar edição.
       if (r.status === 409) return await regerar(p, false);
-      if (!r.ok) throw new Error('falha');
+      if (!r.ok) throw falha(r.status);
       const { html } = await r.json();
       const { assinatura } = dadosAtuais();
       const agora = Date.now();
@@ -82,10 +90,15 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
         expiraEm: agora + (s.expiraEm - s.criadoEm),
         entrega: { html, edicoes: 0, entregueEm: agora, assinatura },
       }));
+      falhasLiberar.current = 0;
       setEstado(e);
       setFase('pronto');
-    } catch {
+    } catch (err) {
       ocupado.current = false;
+      falhasLiberar.current += 1;
+      // O pagamento continua válido e salvo: reabrir esta janela libera o PDF quando o problema for resolvido.
+      if (falhaPermanente(err)) { setErroTipo('dados'); setFase('erro'); return; }
+      if (falhasLiberar.current >= 5) { setErroTipo('liberacao'); setFase('erro'); return; }
       toast.error('Não foi possível liberar o PDF agora. Tentando de novo...');
       setFase('pix');
     }
@@ -103,7 +116,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
       if (ocupado.current) return; // evita gastar duas edições se o efeito rodar duas vezes
       ocupado.current = true;
       setFase('liberando');
-      regerar(p, true).catch(() => setFase('erro'));
+      regerar(p, true).catch((err) => { ocupado.current = false; setErroTipo(falhaPermanente(err) ? 'dados' : 'edicao'); setFase('erro'); });
       return;
     }
     if (p) setFase('pix');
@@ -114,6 +127,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
     if (fase !== 'pix' || !pedido) return;
     let parar = false;
     const checar = async () => {
+      if (typeof document !== 'undefined' && document.hidden) return; // aba em segundo plano: não consulta
       try {
         const q = new URLSearchParams({ orcamentoId: pedido.orcamentoId, pagamentoId: pedido.pagamentoId });
         const r = await fetch(`/api/verificar?${q}`, { headers: { 'x-chave': pedido.chave }, cache: 'no-store' });
@@ -127,7 +141,10 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
     };
     checar();
     const t = setInterval(checar, 3000);
-    return () => { parar = true; clearInterval(t); };
+    // Ao voltar para a aba, confere na hora (o Pix pode ter sido pago enquanto estava em segundo plano).
+    const aoVoltar = () => { if (!document.hidden) checar(); };
+    document.addEventListener('visibilitychange', aoVoltar);
+    return () => { parar = true; clearInterval(t); document.removeEventListener('visibilitychange', aoVoltar); };
   }, [fase, pedido, liberar]);
 
   /* Contagem regressiva do QR Code */
@@ -162,6 +179,7 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
         email: 'email' in corpo ? corpo.email : pedido?.email ?? '',
       };
       ocupado.current = false;
+      falhasLiberar.current = 0;
       setEstado(gravar((s) => ({ ...s, pagamento: novo })));
       setPedido(novo);
       setFase('pix');
@@ -349,7 +367,23 @@ export default function CheckoutModal({ onClose, valor }: { onClose: () => void;
               <div className="space-y-4 text-center py-2">
                 <AlertTriangle className="w-14 h-14 text-amber-500 mx-auto" />
                 <h3 className="text-lg font-bold">Não foi possível gerar o PDF agora</h3>
-                <p className="text-sm text-muted-foreground">Nenhuma edição foi gasta. Verifique a conexão e tente de novo.</p>
+                {erroTipo === 'dados' ? (
+                  <p className="text-sm text-muted-foreground">
+                    Há dados obrigatórios faltando ou inválidos no orçamento. Seu pagamento e suas edições estão preservados e nada foi cobrado de novo.
+                    Feche esta janela, revise as pendências da Prévia e clique em gerar o PDF outra vez.
+                  </p>
+                ) : erroTipo === 'liberacao' ? (
+                  <p className="text-sm text-muted-foreground">
+                    Seu pagamento foi confirmado e está salvo, mas o PDF não pôde ser liberado agora. Verifique a conexão e tente de novo. Você não pagará outra vez.
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Nenhuma edição foi gasta. Verifique a conexão e tente de novo.</p>
+                )}
+                {erroTipo === 'liberacao' && pedido && (
+                  <Button className="w-full" onClick={() => { falhasLiberar.current = 0; ocupado.current = false; setFase('pix'); }}>
+                    <RefreshCw className="w-4 h-4 mr-2" /> Tentar de novo
+                  </Button>
+                )}
                 <Button variant="outline" className="w-full" onClick={onClose}>Fechar</Button>
               </div>
             )}

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store-cliente';
 import { errosEtapa, primeiraEtapaInvalida } from '@/lib/validacao';
 import { STEP_ATERRAMENTO, STEP_COMODOS, STEP_PREVIA } from '@/lib/navegacao';
@@ -13,16 +13,28 @@ import StepEntrada from './step-entrada';
 import StepAterramento from './step-aterramento';
 import StepPrevia from './step-previa';
 import { Button } from '@/components/ui/button';
+import DialogoConfirmar from './dialogo-confirmar';
+import { carregarEstado, edicoesRestantes, estadoExpirado, formatarData, type EstadoLocal } from '@/lib/storage-local';
 import { ChevronLeft, ChevronRight, Zap } from 'lucide-react';
 
 export default function OrcaApp() {
   const store = useStore();
   const step = store?.step ?? 0;
+  /** Estado salvo lido no momento do clique em «Novo orçamento» (null = caixa fechada). */
+  const [confirmarNovo, setConfirmarNovo] = useState<{ salvo: EstadoLocal | null } | null>(null);
 
   useEffect(() => {
     store.hydrateFromStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** «Novo orçamento»: sem nada preenchido recomeça direto; senão pergunta antes de apagar. */
+  const pedirNovoOrcamento = () => {
+    const salvo = carregarEstado();
+    const temDados = (store.rooms?.length ?? 0) > 0 || (store.equips?.length ?? 0) > 0 || !!salvo?.pagamento;
+    if (!temDados) return store.resetState();
+    setConfirmarNovo({ salvo });
+  };
 
   /** Avança só se a etapa atual estiver completa; mostra o que falta. */
   const avancar = () => {
@@ -64,8 +76,8 @@ export default function OrcaApp() {
             </div>
             <span className="font-bold text-lg tracking-tight">OrçaElétrica</span>
           </div>
-          {/* Apaga tudo do navegador (dados, Pix e PDF) e volta ao início, sem confirmação. */}
-          <button type="button" onClick={store.resetState} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
+          {/* Apaga tudo do navegador (dados, Pix e PDF) e volta ao início — só depois de confirmar. */}
+          <button type="button" onClick={pedirNovoOrcamento} className="rounded-md border border-green-300 bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 hover:bg-green-200 transition-colors">
             Novo orçamento
           </button>
         </div>
@@ -100,6 +112,78 @@ export default function OrcaApp() {
           ) : null}
         </div>
       </div>
+
+      {confirmarNovo && (
+        <NovoOrcamentoDialogo
+          salvo={confirmarNovo.salvo}
+          onVoltar={() => setConfirmarNovo(null)}
+          onConfirmar={() => { setConfirmarNovo(null); store.resetState(); }}
+        />
+      )}
     </div>
+  );
+}
+
+/** Texto da confirmação conforme a situação do orçamento (pago com edições, pago sem edições, Pix em aberto, sem pagamento). */
+function NovoOrcamentoDialogo({ salvo, onVoltar, onConfirmar }: { salvo: EstadoLocal | null; onVoltar: () => void; onConfirmar: () => void }) {
+  const entregue = !!salvo?.entrega && !estadoExpirado(salvo);
+  const restantes = salvo && entregue ? edicoesRestantes(salvo) : 0;
+  const ate = salvo ? formatarData(salvo.expiraEm) : '';
+
+  if (entregue && restantes > 0) {
+    return (
+      <DialogoConfirmar
+        titulo="Começar um novo orçamento?"
+        rotuloVoltar="Voltar e usar minhas edições"
+        rotuloConfirmar="Apagar e começar novo"
+        onVoltar={onVoltar}
+        onConfirmar={onConfirmar}
+      >
+        <p>
+          Este orçamento já foi pago e você ainda tem{' '}
+          <strong>{restantes === 1 ? '1 edição gratuita' : `${restantes} edições gratuitas`}</strong> até {ate}.
+        </p>
+        <p>Se continuar, o orçamento e o PDF serão apagados deste navegador, e um novo orçamento precisará de um novo pagamento.</p>
+      </DialogoConfirmar>
+    );
+  }
+  if (entregue) {
+    return (
+      <DialogoConfirmar
+        titulo="Começar um novo orçamento?"
+        rotuloVoltar="Voltar"
+        rotuloConfirmar="Apagar e começar novo"
+        onVoltar={onVoltar}
+        onConfirmar={onConfirmar}
+      >
+        <p>Suas edições gratuitas deste orçamento já foram usadas.</p>
+        <p>Se continuar, o PDF guardado neste navegador será apagado. Baixe uma cópia antes, se ainda precisar dele.</p>
+      </DialogoConfirmar>
+    );
+  }
+  if (salvo?.pagamento) {
+    return (
+      <DialogoConfirmar
+        titulo="Há um pagamento em andamento"
+        rotuloVoltar="Voltar ao orçamento"
+        rotuloConfirmar="Apagar e começar novo"
+        onVoltar={onVoltar}
+        onConfirmar={onConfirmar}
+      >
+        <p>Você gerou um Pix para este orçamento. Se pagou, ou ainda vai pagar, o PDF só pode ser liberado aqui neste navegador.</p>
+        <p>Se continuar, o orçamento e o Pix serão apagados e você poderá perder o PDF pago.</p>
+      </DialogoConfirmar>
+    );
+  }
+  return (
+    <DialogoConfirmar
+      titulo="Começar um novo orçamento?"
+      rotuloVoltar="Voltar ao orçamento"
+      rotuloConfirmar="Apagar e começar novo"
+      onVoltar={onVoltar}
+      onConfirmar={onConfirmar}
+    >
+      <p>Os dados preenchidos neste orçamento serão apagados.</p>
+    </DialogoConfirmar>
   );
 }

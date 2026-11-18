@@ -172,9 +172,8 @@ export function materiaisEntrada(e: EntradaPrincipal): MaterialEntrada[] {
   const caixaTipo = e.sistema === 'monofasico' ? 'Monofásica' : e.sistema === 'bifasico' ? 'Bifásica' : 'Trifásica';
   items.push({ descricao: `Caixa padrão concessionária ${caixaTipo}`, qtd: 1, unidade: 'un', mostrarNaPrevia: true });
 
-  items.push({ descricao: 'Haste de aterramento 1,5 m', qtd: 1, unidade: 'un', mostrarNaPrevia: true });
-  items.push({ descricao: 'Conector de haste de aterramento', qtd: 1, unidade: 'un', mostrarNaPrevia: true });
-  items.push({ descricao: 'Caixa de inspeção de aterramento', qtd: 1, unidade: 'un', mostrarNaPrevia: true });
+  // Haste, conector e caixa de inspeção do aterramento NÃO entram aqui: vêm só da etapa Aterramento
+  // (lib/aterramento-calc.ts), para não aparecerem duas vezes na lista de materiais.
 
   return items;
 }
