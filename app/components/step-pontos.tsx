@@ -206,7 +206,7 @@ export default function StepPontos() {
                   <Plug className="w-4 h-4 text-primary" />
                   <span className="text-sm font-semibold">Tomadas ({r?.pontos?.length ?? 0})</span>
                 </div>
-                <Button size="sm" variant="outline" onClick={addTomada}><Plus className="w-3 h-3 mr-1" /> Tomada</Button>
+                <Button size="sm" variant="soft" onClick={addTomada}><Plus className="w-3 h-3 mr-1" /> Tomada</Button>
               </div>
               {(r?.pontos ?? []).map((p: Ponto, idx: number) => (
                 <div key={p?.id} className="flex items-center gap-2 py-2 border-t border-border/50">
@@ -256,7 +256,7 @@ export default function StepPontos() {
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" variant="ghost" onClick={suggestLuzes} className="text-xs">Sugerir</Button>
-                  <Button size="sm" variant="outline" onClick={addLuz}><Plus className="w-3 h-3 mr-1" /> Luz</Button>
+                  <Button size="sm" variant="soft" onClick={addLuz}><Plus className="w-3 h-3 mr-1" /> Luz</Button>
                 </div>
               </div>
               {(r?.luzes ?? []).map((luz: Luz, idx: number) => {
@@ -309,7 +309,7 @@ export default function StepPontos() {
                   <ToggleLeft className="w-4 h-4 text-primary" />
                   <span className="text-sm font-semibold">Interruptores ({r?.comandos?.length ?? 0})</span>
                 </div>
-                <Button size="sm" variant="outline" onClick={addInterruptor}><Plus className="w-3 h-3 mr-1" /> Interruptor</Button>
+                <Button size="sm" variant="soft" onClick={addInterruptor}><Plus className="w-3 h-3 mr-1" /> Interruptor</Button>
               </div>
               {(r?.comandos ?? []).map((cmd: Comando, idx: number) => (
                 <div key={cmd?.id} className="py-2 border-t border-border/50 space-y-2">

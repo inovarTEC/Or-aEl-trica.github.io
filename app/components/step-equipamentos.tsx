@@ -86,7 +86,7 @@ export default function StepEquipamentos() {
       </div>
 
       {/* Botão no topo: o equipamento novo entra primeiro, já aberto */}
-      <Button variant="outline" className="w-full" onClick={addEquip}>
+      <Button variant="soft" className="w-full" onClick={addEquip}>
         <Plus className="w-4 h-4 mr-2" /> Adicionar equipamento
       </Button>
 

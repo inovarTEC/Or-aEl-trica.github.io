@@ -12,6 +12,7 @@
 - **Claro:** grafite + amarelo elétrico (fundo `#F3F2EE`, cartões brancos, cabeçalho `#1F2937`, botões `#FBBF24`). **Escuro:** grafite escuro + amarelo (fundo `#0F1318`, cartões `#1A2028`).
 - **Chave de tema:** ícone de lua/sol no cabeçalho. A escolha fica salva no navegador (padrão: claro).
 - **Botões:** Voltar, Avançar e Novo orçamento no mesmo amarelo. Voltar e Avançar com o mesmo tamanho (`h-11 w-36`). Novo orçamento um pouco maior. Posição de Voltar/Avançar inalterada (fim da página, sem barra fixa).
+- **Amarelo suave** (variante `soft` do botão, tokens `--soft*`): botões de adicionar — «Adicionar cômodo», «+ Tomada», «+ Luz», «+ Interruptor», «Adicionar equipamento». O «+ Cômodo» tracejado da etapa Pontos manteve o estilo atual.
 - **Avisos no tema escuro:** as caixas amarelas, verdes, azuis e vermelhas têm versão escura no fim do `globals.css`.
 - **Não mudou:** PDF (visual próprio), textos, cálculos, circuitos, pagamento. O QR Code do Pix continua em fundo branco (necessário para leitura).
 - **Verde mantido** onde significa sucesso/PDF (cartão «Gerar meu PDF», pagamento confirmado).

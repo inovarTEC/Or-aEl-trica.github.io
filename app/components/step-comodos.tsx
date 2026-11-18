@@ -58,7 +58,7 @@ export default function StepComodos() {
 
       {/* Botão fixo no topo da lista: não precisa rolar a página para adicionar outro cômodo */}
       {rooms.length > 0 && (
-        <Button variant={showTemplates ? 'secondary' : 'outline'} className="w-full" onClick={() => setShowTemplates((v) => !v)}>
+        <Button variant={showTemplates ? 'secondary' : 'soft'} className="w-full" onClick={() => setShowTemplates((v) => !v)}>
           <Plus className="w-4 h-4 mr-2" /> {showTemplates ? 'Fechar modelos' : 'Adicionar cômodo'}
         </Button>
       )}

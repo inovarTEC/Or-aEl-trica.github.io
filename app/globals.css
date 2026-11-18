@@ -72,6 +72,11 @@
     --header: 215 28% 17%;
     --header-foreground: 0 0% 100%;
     --header-border: 221 39% 11%;
+    /* Amarelo suave: botões de adicionar (cômodo, tomada, luz, interruptor, equipamento) */
+    --soft: 48 96% 89%;
+    --soft-foreground: 22 78% 26%;
+    --soft-border: 44 85% 65%;
+    --soft-hover: 48 97% 77%;
   }
 
   .dark {
@@ -126,6 +131,11 @@
     --header: 215 21% 11%;
     --header-foreground: 220 14% 96%;
     --header-border: 215 17% 20%;
+    /* Amarelo suave: botões de adicionar */
+    --soft: 45 59% 14%;
+    --soft-foreground: 46 97% 65%;
+    --soft-border: 41 72% 28%;
+    --soft-hover: 43 61% 18%;
   }
 }
 

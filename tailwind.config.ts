@@ -59,6 +59,12 @@ const config: Config = {
           DEFAULT: 'hsl(var(--selected))',
           foreground: 'hsl(var(--selected-foreground))',
         },
+        soft: {
+          DEFAULT: 'hsl(var(--soft))',
+          foreground: 'hsl(var(--soft-foreground))',
+          border: 'hsl(var(--soft-border))',
+          hover: 'hsl(var(--soft-hover))',
+        },
         header: {
           DEFAULT: 'hsl(var(--header))',
           foreground: 'hsl(var(--header-foreground))',
